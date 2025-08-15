@@ -1,0 +1,25 @@
+import { lazy } from 'react';
+
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+import { authRoutes } from './auth';
+import { privateRoutes } from './private';
+import { publicRoutes } from './public';
+
+const NotFound = lazy(() => import('../views/NotFound'));
+
+const Routes = () => {
+	const router = createBrowserRouter([
+		...authRoutes,
+		...privateRoutes,
+		...publicRoutes,
+		{
+			path: '*',
+			element: <NotFound />
+		}
+	]);
+
+	return <RouterProvider router={router} />;
+};
+
+export default Routes;

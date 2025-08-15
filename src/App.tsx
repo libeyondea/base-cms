@@ -1,0 +1,35 @@
+import { CssBaseline } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider } from 'react-redux';
+
+import Routes from './routes';
+import { AccessControl } from './routes/guards';
+import { store } from './store';
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+			refetchOnWindowFocus: false
+		}
+	}
+});
+
+const App = () => {
+	return (
+		<Provider store={store}>
+			<QueryClientProvider client={queryClient}>
+				<CssBaseline />
+				<LocalizationProvider dateAdapter={AdapterMoment}>
+					<AccessControl>
+						<Routes />
+					</AccessControl>
+				</LocalizationProvider>
+			</QueryClientProvider>
+		</Provider>
+	);
+};
+
+export default App;
