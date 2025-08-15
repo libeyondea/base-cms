@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 
 import Routes from './routes';
-import { AccessControl } from './routes/guards';
 import { store } from './store';
 
 const queryClient = new QueryClient({
@@ -23,9 +22,7 @@ const App = () => {
 			<QueryClientProvider client={queryClient}>
 				<CssBaseline />
 				<LocalizationProvider dateAdapter={AdapterMoment}>
-					<AccessControl>
-						<Routes />
-					</AccessControl>
+					<Routes />
 				</LocalizationProvider>
 			</QueryClientProvider>
 		</Provider>
