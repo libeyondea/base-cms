@@ -31,14 +31,13 @@ const RHFDropdown = ({ name, keyValue = 'id', labelKey = 'name', options, handle
 		<Controller
 			name={name}
 			control={control}
-			render={({ field, fieldState: { error } }) => {
+			render={({ field, fieldState }) => {
 				return (
 					<TextField
 						{...field}
 						{...props}
 						select
 						fullWidth
-						size="small"
 						autoComplete="off"
 						value={field.value}
 						onChange={(e) => {
@@ -56,8 +55,8 @@ const RHFDropdown = ({ name, keyValue = 'id', labelKey = 'name', options, handle
 								}
 							}
 						}}
-						error={!!error}
-						helperText={error ? error.message : helperText}
+						error={!!fieldState.error}
+						helperText={fieldState.error ? fieldState.error.message : helperText}
 					>
 						{optionsItem}
 					</TextField>

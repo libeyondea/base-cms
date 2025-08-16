@@ -4,6 +4,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 
+import { ToastContainer } from './components/ui/CustomToast';
 import Routes from './routes';
 import { store } from './store';
 
@@ -21,6 +22,7 @@ const App = () => {
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
 				<CssBaseline />
+				<ToastContainer />
 				<LocalizationProvider dateAdapter={AdapterMoment}>
 					<Routes />
 				</LocalizationProvider>

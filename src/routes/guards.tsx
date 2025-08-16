@@ -17,7 +17,7 @@ export const PrivateGuard = ({ children }: { children: React.ReactNode }) => {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
 	if (!isAuthenticated) {
-		return <Navigate to="/auth/signin" state={{ from: location }} replace />;
+		return <Navigate to="/signin" state={{ from: location }} replace />;
 	}
 
 	return children;
