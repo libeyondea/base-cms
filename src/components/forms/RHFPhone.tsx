@@ -11,8 +11,8 @@ type RHFPhoneProps = TextFieldProps & {
 };
 
 type PhoneInputProps = InputBaseComponentProps & {
-	onChange: (event: { target: { name: string; value: string } }) => void;
 	name: string;
+	onChange: (event: { target: { name: string; value: string } }) => void;
 };
 
 const PhonePatternInput = forwardRef<HTMLInputElement, PhoneInputProps>(function PhonePatternInput(props, ref) {

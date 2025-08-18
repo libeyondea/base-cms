@@ -13,19 +13,18 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	AutocompleteProps<T, true, false, false, ChipComponent>,
 	'multiple'
 > & {
+	name: string;
+	label?: string;
 	keyLabel?: string;
 	labelOption?: string;
-	form?: any;
-	label?: string;
-	name: string;
-	isObject?: boolean;
 	helperText?: React.ReactNode;
+	isObject?: boolean;
+	hiddenKeys?: string;
+	maxItems?: number;
 	onInputChange?: (e: any, value: any) => void;
 	handleOnchange?: (value: any) => void;
 	renderOptionStart?: (option: T) => React.ReactNode;
 	renderOptionEnd?: (option: T) => React.ReactNode;
-	hiddenKeys?: string;
-	maxItems?: number;
 };
 
 const RHFMutiSelect = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({

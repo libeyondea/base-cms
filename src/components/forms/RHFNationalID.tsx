@@ -11,13 +11,13 @@ type RHFNationalIDProps = TextFieldProps & {
 };
 
 type NationalIDInputProps = InputBaseComponentProps & {
+	name: string;
 	onChange: (event: {
 		target: {
 			name: string;
 			value: string;
 		};
 	}) => void;
-	name: string;
 };
 
 const NationalIDPatternInput = forwardRef<HTMLInputElement, NationalIDInputProps>(function NationalIDPatternInput(props, ref) {

@@ -9,7 +9,7 @@ type RHFDropdownProps = TextFieldProps & {
 	handleOnchange?: (value: any) => void;
 };
 
-const RHFDropdown = ({ name, keyValue = 'id', labelKey = 'name', options, handleOnchange, helperText, ...props }: RHFDropdownProps) => {
+const RHFDropdown = ({ name, keyValue = 'id', labelKey = 'name', options, helperText, handleOnchange, ...props }: RHFDropdownProps) => {
 	const { control } = useFormContext();
 
 	const optionsItem =

@@ -4,13 +4,13 @@ import { FormProvider as Form, SubmitHandler, UseFormReturn } from 'react-hook-f
 
 type FormProviderProps = {
 	id?: string;
-	children: React.ReactNode;
 	methods: UseFormReturn<any>;
 	onSubmit?: SubmitHandler<any>;
 	style?: CSSProperties;
+	children: React.ReactNode;
 };
 
-const FormProvider = ({ id, onSubmit, methods, style, children }: FormProviderProps) => {
+const FormProvider = ({ id, methods, onSubmit, style, children }: FormProviderProps) => {
 	return (
 		<Form {...methods}>
 			<form id={id} style={{ ...style }} onSubmit={onSubmit}>

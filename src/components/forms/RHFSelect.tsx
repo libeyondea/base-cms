@@ -13,21 +13,20 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	AutocompleteProps<T, false, false, false, ChipComponent>,
 	'multiple'
 > & {
+	name: string;
+	label?: string;
 	keyLabel?: string;
 	labelOption?: string;
-	form?: any;
-	label?: string;
-	name: string;
-	isObject?: boolean;
 	helperText?: React.ReactNode;
+	isObject?: boolean;
+	hiddenKeys?: string;
+	isIconSelect?: boolean;
 	onInputChange?: (e: any, value: any) => void;
 	handleOnchange?: (value: any) => void;
 	renderOptionStart?: (option: T) => React.ReactNode;
 	renderOptionEnd?: (option: T) => React.ReactNode;
 	startAdornment?: (option: T | null) => React.ReactNode;
 	endAdornment?: (option: T | null) => React.ReactNode;
-	hiddenKeys?: string;
-	isIconSelect?: boolean;
 };
 
 const RHFSelect = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({

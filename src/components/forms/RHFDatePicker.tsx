@@ -5,12 +5,11 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 type RHFDatePickerProps = DatePickerProps & {
 	name: string;
-	label: string;
-	endAdornment?: (value: any) => React.ReactNode;
 	helperText?: string;
+	endAdornment?: (value: any) => React.ReactNode;
 };
 
-const RHFDatePicker = ({ label, name, endAdornment, helperText, ...props }: RHFDatePickerProps) => {
+const RHFDatePicker = ({ name, helperText, endAdornment, ...props }: RHFDatePickerProps) => {
 	const { control } = useFormContext();
 
 	return (
@@ -22,7 +21,6 @@ const RHFDatePicker = ({ label, name, endAdornment, helperText, ...props }: RHFD
 					{...field}
 					{...props}
 					format="DD/MM/YYYY"
-					label={label}
 					value={field.value ? moment(field.value, 'DD/MM/YYYY') : null}
 					onChange={(value: Moment | null) => {
 						const stringValue = value ? value.format('DD/MM/YYYY') : '';
