@@ -6,8 +6,14 @@ import { Box, Button, Card, CardContent, Container, Grid, IconButton, InputAdorn
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import PageContainer from '~/components/container/PageContainer';
 import FormProvider from '~/components/forms/FormProvider';
+import RHFDatePicker from '~/components/forms/RHFDatePicker';
+import RHFNationalID from '~/components/forms/RHFNationalID';
+import RHFPhone from '~/components/forms/RHFPhone';
+import RHFSelect from '~/components/forms/RHFSelect';
 import RHFTextField from '~/components/forms/RHFTextField';
+import RHFTextFieldSelect from '~/components/forms/RHFTextFieldSelect';
 import useAuthApi from '~/hooks/api/useAuthApi';
 import { useDispatch } from '~/store';
 import { signin } from '~/store/slices/auth';
@@ -65,97 +71,119 @@ const SignIn = () => {
 	};
 
 	return (
-		<Container component="main" maxWidth="sm">
-			<Box
-				sx={{
-					minHeight: '100vh',
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					alignItems: 'center',
-					padding: 2
-				}}
-			>
-				<Card
-					elevation={3}
+		<PageContainer title="Đăng nhập" description="Đăng nhập vào hệ thống">
+			<Container maxWidth="sm">
+				<Box
 					sx={{
-						width: '100%',
-						maxWidth: 400
+						minHeight: '100vh',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
+						alignItems: 'center',
+						padding: 2
 					}}
 				>
-					<CardContent sx={{ padding: 4 }}>
-						<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-							<Typography component="h1" variant="h4" gutterBottom>
-								Đăng nhập
-							</Typography>
-
-							<Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-								Vui lòng nhập thông tin đăng nhập của bạn
-							</Typography>
-
-							<FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
-								<Grid container spacing={2}>
-									<Grid size={12}>
-										<RHFTextField
-											name="email"
-											label="Email"
-											autoComplete="email"
-											autoFocus
-											slotProps={{
-												input: {
-													startAdornment: (
-														<InputAdornment position="start">
-															<Email color="action" />
-														</InputAdornment>
-													)
-												}
-											}}
-										/>
-									</Grid>
-									<Grid size={12}>
-										<RHFTextField
-											name="password"
-											label="Mật khẩu"
-											type={showPassword ? 'text' : 'password'}
-											autoComplete="current-password"
-											slotProps={{
-												input: {
-													startAdornment: (
-														<InputAdornment position="start">
-															<Lock color="action" />
-														</InputAdornment>
-													),
-													endAdornment: (
-														<InputAdornment position="end">
-															<IconButton aria-label="toggle password visibility" onClick={handleTogglePassword} edge="end">
-																{showPassword ? <VisibilityOff /> : <Visibility />}
-															</IconButton>
-														</InputAdornment>
-													)
-												}
-											}}
-										/>
-									</Grid>
-								</Grid>
-
-								<Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, py: 1.5 }} loading={mSignin.isPending}>
+					<Card
+						elevation={3}
+						sx={{
+							width: '100%',
+							maxWidth: 400
+						}}
+					>
+						<CardContent sx={{ padding: 4 }}>
+							<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+								<Typography component="h1" variant="h4" gutterBottom>
 									Đăng nhập
-								</Button>
+								</Typography>
 
-								<Box sx={{ textAlign: 'center' }}>
-									<Typography variant="body2" color="text.secondary">
-										Chưa có tài khoản?{' '}
-										<Typography component="span" variant="body2" color="primary" sx={{ cursor: 'pointer', textDecoration: 'underline' }}>
-											Đăng ký ngay
+								<Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+									Vui lòng nhập thông tin đăng nhập của bạn
+								</Typography>
+
+								<FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
+									<Grid container spacing={2}>
+										<Grid size={12}>
+											<RHFTextFieldSelect
+												name="phone"
+												label="Số điện thoại"
+												options={[
+													{ id: 1, name: 'Số điện thoại 1' },
+													{ id: 2, name: 'Số điện thoại 2' }
+												]}
+												endAdornment={() => (
+													<>
+														<VisibilityOff />
+													</>
+												)}
+											/>
+										</Grid>
+										<Grid size={12}>
+											<RHFTextField
+												name="email"
+												label="Email"
+												autoComplete="email"
+												autoFocus
+												slotProps={{
+													input: {
+														startAdornment: (
+															<InputAdornment position="start">
+																<Email color="action" />
+															</InputAdornment>
+														)
+													}
+												}}
+											/>
+										</Grid>
+										<Grid size={12}>
+											<RHFTextField
+												name="password"
+												label="Mật khẩu"
+												type={showPassword ? 'text' : 'password'}
+												autoComplete="current-password"
+												slotProps={{
+													input: {
+														startAdornment: (
+															<InputAdornment position="start">
+																<Lock color="action" />
+															</InputAdornment>
+														),
+														endAdornment: (
+															<InputAdornment position="end">
+																<IconButton aria-label="toggle password visibility" onClick={handleTogglePassword} edge="end">
+																	{showPassword ? <VisibilityOff /> : <Visibility />}
+																</IconButton>
+															</InputAdornment>
+														)
+													}
+												}}
+											/>
+										</Grid>
+									</Grid>
+
+									<Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, py: 1.5 }} loading={mSignin.isPending}>
+										Đăng nhập
+									</Button>
+
+									<Box sx={{ textAlign: 'center' }}>
+										<Typography variant="body2" color="text.secondary">
+											Chưa có tài khoản?{' '}
+											<Typography
+												component="span"
+												variant="body2"
+												color="primary"
+												sx={{ cursor: 'pointer', textDecoration: 'underline' }}
+											>
+												Đăng ký ngay
+											</Typography>
 										</Typography>
-									</Typography>
-								</Box>
-							</FormProvider>
-						</Box>
-					</CardContent>
-				</Card>
-			</Box>
-		</Container>
+									</Box>
+								</FormProvider>
+							</Box>
+						</CardContent>
+					</Card>
+				</Box>
+			</Container>
+		</PageContainer>
 	);
 };
 

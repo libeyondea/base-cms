@@ -1,11 +1,13 @@
-import { TextField, TextFieldProps } from '@mui/material';
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
 type RHFTextFieldProps = TextFieldProps & {
 	name: string;
+	startAdornment?: (value: any) => React.ReactNode;
+	endAdornment?: (value: any) => React.ReactNode;
 };
 
-const RHFTextField = ({ name, helperText, ...props }: RHFTextFieldProps) => {
+const RHFTextField = ({ name, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, ...props }: RHFTextFieldProps) => {
 	const { control } = useFormContext();
 
 	return (
@@ -17,10 +19,17 @@ const RHFTextField = ({ name, helperText, ...props }: RHFTextFieldProps) => {
 					<TextField
 						{...field}
 						{...props}
-						fullWidth
+						fullWidth={fullWidth}
+						size={size}
 						value={field.value}
 						error={!!fieldState.error}
 						helperText={fieldState.error ? fieldState.error.message : helperText}
+						slotProps={{
+							input: {
+								startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null,
+								endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(field.value)}</InputAdornment> : null
+							}
+						}}
 					/>
 				);
 			}}

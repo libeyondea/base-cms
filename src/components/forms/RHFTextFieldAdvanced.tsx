@@ -103,7 +103,7 @@ interface FormTextFieldProps<T extends FieldValues> extends Omit<TextFieldProps,
 }
 
 // Component chính - hỗ trợ cả text và format
-const RHFTextField = <T extends FieldValues>({
+const RHFTextFieldAdvanced = <T extends FieldValues>({
 	name,
 	rules,
 	defaultValue = '',
@@ -223,4 +223,4 @@ const RHFTextField = <T extends FieldValues>({
 	);
 };
 
-export default RHFTextField;
+export default RHFTextFieldAdvanced;

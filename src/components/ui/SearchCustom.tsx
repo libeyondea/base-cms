@@ -5,7 +5,7 @@ import { setFilterTable } from 'src/store/slices/table';
 
 import { useDispatch, useSelector } from '~/store';
 
-import NormalTextField from '../input/NormalTextField';
+import NTextField from '../input/NTextField';
 
 interface SearchCustomProps {
 	keyName?: string;
@@ -49,7 +49,7 @@ const SearchCustom = ({ keyName = '' }: SearchCustomProps) => {
 	};
 
 	return (
-		<NormalTextField
+		<NTextField
 			placeholder="Tìm kiếm..."
 			onChange={handleChange}
 			sx={{

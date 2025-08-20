@@ -1,6 +1,4 @@
-import moment from 'moment';
-
-type InputValue = Date | string | number | null | undefined;
+import moment, { MomentInput } from 'moment';
 
 export const fTimeNow = () => {
 	return moment().format('HH:mm');
@@ -14,24 +12,24 @@ export const fDateTimeNow = () => {
 	return moment().format('YYYY-MM-DD HH:mm');
 };
 
-export const fTime = (date: InputValue, newFormat?: string) => {
+export const fTime = (date: MomentInput, newFormat?: string) => {
 	const fm = newFormat || 'HH:mm';
 
 	return date ? moment(date).format(fm) : '';
 };
 
-export const fDate = (date: InputValue, newFormat?: string) => {
+export const fDate = (date: MomentInput, newFormat?: string) => {
 	const fm = newFormat || 'DD/MM/YYYY';
 
 	return date ? moment(date).format(fm) : '';
 };
 
-export const fDateTime = (date: InputValue, newFormat?: string) => {
+export const fDateTime = (date: MomentInput, newFormat?: string) => {
 	const fm = newFormat || 'DD/MM/YYYY HH:mm';
 
 	return date ? moment(date).format(fm) : '';
 };
 
-export const fTimestamp = (date: InputValue) => {
+export const fTimestamp = (date: MomentInput) => {
 	return date ? moment(date).valueOf() : '';
 };

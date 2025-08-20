@@ -27,7 +27,7 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	renderOptionEnd?: (option: T) => React.ReactNode;
 };
 
-const RHFMutiSelect = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
+const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
 	keyLabel = 'id',
 	labelOption = 'name',
 	isObject = false,
@@ -108,7 +108,7 @@ const RHFMutiSelect = <T extends DataProp, ChipComponent extends React.ElementTy
 		<Controller
 			name={name}
 			control={control}
-			render={({ field, fieldState: { error } }) => {
+			render={({ field, fieldState }) => {
 				// For non-object mode, we need to convert the numeric/string IDs to actual option objects
 				const value = isObject ? field.value : getSelectedOptions();
 
@@ -167,7 +167,13 @@ const RHFMutiSelect = <T extends DataProp, ChipComponent extends React.ElementTy
 							));
 						}}
 						renderInput={(params) => (
-							<TextField {...params} size={size} label={label} error={!!error} helperText={error ? error?.message : helperText} />
+							<TextField
+								{...params}
+								size={size}
+								label={label}
+								error={!!fieldState.error}
+								helperText={fieldState.error ? fieldState.error.message : helperText}
+							/>
 						)}
 						slotProps={{
 							listbox: {
@@ -184,4 +190,4 @@ const RHFMutiSelect = <T extends DataProp, ChipComponent extends React.ElementTy
 	);
 };
 
-export default RHFMutiSelect;
+export default RHFAutocompleteMulti;

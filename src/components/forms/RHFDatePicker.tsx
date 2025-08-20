@@ -1,4 +1,4 @@
-import InputAdornment, { InputAdornmentProps } from '@mui/material/InputAdornment';
+import { InputAdornment, InputAdornmentProps } from '@mui/material';
 import { DatePicker, DatePickerProps } from '@mui/x-date-pickers';
 import moment, { Moment } from 'moment';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -6,17 +6,20 @@ import { Controller, useFormContext } from 'react-hook-form';
 type RHFDatePickerProps = DatePickerProps & {
 	name: string;
 	helperText?: string;
+	fullWidth?: boolean;
+	size?: 'small' | 'medium';
+	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
-const RHFDatePicker = ({ name, helperText, endAdornment, ...props }: RHFDatePickerProps) => {
+const RHFDatePicker = ({ name, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, ...props }: RHFDatePickerProps) => {
 	const { control } = useFormContext();
 
 	return (
 		<Controller
 			name={name}
 			control={control}
-			render={({ field, fieldState: { error } }) => (
+			render={({ field, fieldState }) => (
 				<DatePicker
 					{...field}
 					{...props}
@@ -27,25 +30,22 @@ const RHFDatePicker = ({ name, helperText, endAdornment, ...props }: RHFDatePick
 						field.onChange(stringValue);
 					}}
 					slots={{
-						...(endAdornment
-							? {
-									inputAdornment: (adornProps: InputAdornmentProps) => (
-										<>
-											<InputAdornment {...adornProps} sx={{ mr: 2 }}>
-												{adornProps.children}
-											</InputAdornment>
-											{endAdornment?.(field.value)}
-										</>
-									)
-								}
-							: {})
+						inputAdornment: (adornProps: InputAdornmentProps) => (
+							<InputAdornment {...adornProps} sx={{ gap: 1 }}>
+								{adornProps.children}
+								{endAdornment?.(field.value)}
+							</InputAdornment>
+						)
 					}}
 					slotProps={{
 						textField: {
-							fullWidth: true,
-							error: !!error,
-							helperText: error ? error.message : helperText,
-							size: 'medium'
+							fullWidth: fullWidth,
+							size: size,
+							error: !!fieldState.error,
+							helperText: fieldState.error ? fieldState.error.message : helperText,
+							InputProps: {
+								startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null
+							}
 						}
 					}}
 				/>

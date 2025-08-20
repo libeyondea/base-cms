@@ -1,12 +1,13 @@
 import { forwardRef } from 'react';
 
-import { TextField, TextFieldProps } from '@mui/material';
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { Controller, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
 type RHFNationalIDProps = TextFieldProps & {
 	name: string;
+	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
@@ -42,28 +43,37 @@ const NationalIDPatternInput = forwardRef<HTMLInputElement, NationalIDInputProps
 	);
 });
 
-const RHFNationalID = ({ name, label = 'CCCD', endAdornment, helperText, size = 'medium', ...textFieldProps }: RHFNationalIDProps) => {
+const RHFNationalID = ({
+	name,
+	label = 'CCCD',
+	helperText,
+	fullWidth = true,
+	size = 'medium',
+	startAdornment,
+	endAdornment,
+	...textFieldProps
+}: RHFNationalIDProps) => {
 	const { control } = useFormContext();
 
 	return (
 		<Controller
 			name={name}
 			control={control}
-			render={({ field, fieldState: { error } }) => {
+			render={({ field, fieldState }) => {
 				const inputValue = field.value || '';
 
 				const textField = (
 					<TextField
 						{...textFieldProps}
-						fullWidth
+						fullWidth={fullWidth}
 						size={size}
+						name={field.name}
 						label={label}
 						value={inputValue}
 						onChange={field.onChange}
 						onBlur={field.onBlur}
-						name={field.name}
-						helperText={error ? error.message : helperText}
-						error={!!error}
+						error={!!fieldState.error}
+						helperText={fieldState.error ? fieldState.error.message : helperText}
 						autoComplete="off"
 						inputMode="numeric"
 						slotProps={{
@@ -73,7 +83,8 @@ const RHFNationalID = ({ name, label = 'CCCD', endAdornment, helperText, size = 
 									name: field.name,
 									onBlur: field.onBlur
 								},
-								endAdornment: endAdornment?.(inputValue)
+								startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(inputValue)}</InputAdornment> : null,
+								endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(inputValue)}</InputAdornment> : null
 							}
 						}}
 					/>

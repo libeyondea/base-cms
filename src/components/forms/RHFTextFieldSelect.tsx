@@ -1,7 +1,7 @@
-import { FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, SelectProps, SxProps, Theme } from '@mui/material';
+import { FormControl, InputAdornment, MenuItem, SxProps, TextField, TextFieldProps, Theme } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
-type RHFSelectProps = Omit<SelectProps, 'startAdornment' | 'endAdornment'> & {
+type RHFTextFieldSelectProps = Omit<TextFieldProps, 'startAdornment' | 'endAdornment'> & {
 	valueKey?: string | number;
 	labelKey?: string;
 	colorKey?: string;
@@ -17,7 +17,7 @@ type RHFSelectProps = Omit<SelectProps, 'startAdornment' | 'endAdornment'> & {
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
-const RHFSelect = ({
+const RHFTextFieldSelect = ({
 	valueKey = 'id',
 	labelKey = 'name',
 	colorKey = 'color',
@@ -34,7 +34,7 @@ const RHFSelect = ({
 	startAdornment,
 	endAdornment,
 	...props
-}: RHFSelectProps) => {
+}: RHFTextFieldSelectProps) => {
 	const { control } = useFormContext();
 
 	const optionItems =
@@ -61,41 +61,44 @@ const RHFSelect = ({
 
 				return (
 					<FormControl fullWidth={fullWidth} size={size} error={!!fieldState.error}>
-						{label && <InputLabel id={`${name}-label`}>{label}</InputLabel>}
-						<Select
+						<TextField
 							{...field}
 							{...props}
-							labelId={label ? `${name}-label` : undefined}
-							value={field.value}
 							label={label}
+							value={field.value}
 							onChange={(e) => {
 								field.onChange(e);
 								handleOnchange?.(e.target.value);
 							}}
-							MenuProps={{
-								PaperProps: {
+							select
+							slotProps={{
+								select: {
+									MenuProps: {
+										PaperProps: {
+											sx: {
+												maxHeight: maxHeight
+											}
+										}
+									},
+									startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null,
+									endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(field.value)}</InputAdornment> : null,
 									sx: {
-										maxHeight: maxHeight
+										...(endAdornment && {
+											'& .MuiSelect-icon': {
+												right: iconOffset
+											},
+											'& .MuiSelect-select': {
+												color: selectedColor
+											}
+										})
 									}
 								}
 							}}
-							startAdornment={startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null}
-							endAdornment={endAdornment ? <InputAdornment position="end">{endAdornment?.(field.value)}</InputAdornment> : null}
-							sx={{
-								...sx,
-								...(endAdornment && {
-									'& .MuiSelect-icon': {
-										right: iconOffset
-									},
-									'& .MuiSelect-select': {
-										color: selectedColor
-									}
-								})
-							}}
+							sx={sx}
+							helperText={fieldState.error ? fieldState.error.message : helperText}
 						>
 							{optionItems}
-						</Select>
-						{(!!fieldState.error || helperText) && <FormHelperText>{fieldState.error ? fieldState.error.message : helperText}</FormHelperText>}
+						</TextField>
 					</FormControl>
 				);
 			}}
@@ -103,4 +106,4 @@ const RHFSelect = ({
 	);
 };
 
-export default RHFSelect;
+export default RHFTextFieldSelect;

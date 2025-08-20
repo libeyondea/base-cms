@@ -1,18 +1,24 @@
 import { forwardRef } from 'react';
 
-import { TextField, TextFieldProps } from '@mui/material';
+import { InputAdornment, TextField, TextFieldProps } from '@mui/material';
 import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { Controller, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
 type RHFPhoneProps = TextFieldProps & {
 	name: string;
+	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
 type PhoneInputProps = InputBaseComponentProps & {
 	name: string;
-	onChange: (event: { target: { name: string; value: string } }) => void;
+	onChange: (event: {
+		target: {
+			name: string;
+			value: string;
+		};
+	}) => void;
 };
 
 const PhonePatternInput = forwardRef<HTMLInputElement, PhoneInputProps>(function PhonePatternInput(props, ref) {
@@ -37,28 +43,37 @@ const PhonePatternInput = forwardRef<HTMLInputElement, PhoneInputProps>(function
 	);
 });
 
-const RHFPhone = ({ name, label = 'Số điện thoại', endAdornment, helperText, size = 'medium', ...textFieldProps }: RHFPhoneProps) => {
+const RHFPhone = ({
+	name,
+	label = 'Số điện thoại',
+	helperText,
+	fullWidth = true,
+	size = 'medium',
+	startAdornment,
+	endAdornment,
+	...textFieldProps
+}: RHFPhoneProps) => {
 	const { control } = useFormContext();
 
 	return (
 		<Controller
 			name={name}
 			control={control}
-			render={({ field, fieldState: { error } }) => {
+			render={({ field, fieldState }) => {
 				const inputValue = field.value || '';
 
 				const textField = (
 					<TextField
 						{...textFieldProps}
-						fullWidth
+						fullWidth={fullWidth}
 						size={size}
+						name={field.name}
 						label={label}
 						value={inputValue}
 						onChange={field.onChange}
 						onBlur={field.onBlur}
-						name={field.name}
-						helperText={error ? error.message : helperText}
-						error={!!error}
+						error={!!fieldState.error}
+						helperText={fieldState.error ? fieldState.error.message : helperText}
 						autoComplete="off"
 						inputMode="tel"
 						slotProps={{
@@ -68,7 +83,8 @@ const RHFPhone = ({ name, label = 'Số điện thoại', endAdornment, helperTe
 									name: field.name,
 									onBlur: field.onBlur
 								},
-								endAdornment: endAdornment?.(inputValue)
+								startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(inputValue)}</InputAdornment> : null,
+								endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(inputValue)}</InputAdornment> : null
 							}
 						}}
 					/>

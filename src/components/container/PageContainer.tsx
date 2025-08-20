@@ -1,10 +1,10 @@
-type Props = {
+type PageContainerProps = {
 	title?: string;
 	description?: string;
 	children: React.ReactNode;
 };
 
-const PageContainer = ({ title, description, children }: Props) => {
+const PageContainer = ({ title, description, children }: PageContainerProps) => {
 	return (
 		<>
 			<title>{title ? `${title} - BASE CMS` : 'BASE CMS'}</title>
