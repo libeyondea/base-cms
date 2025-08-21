@@ -1,10 +1,11 @@
 import { FormControl, InputAdornment, MenuItem, SxProps, TextField, TextFieldProps, Theme } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
-type RHFTextFieldSelectProps = Omit<TextFieldProps, 'startAdornment' | 'endAdornment'> & {
+type RHFTextFieldSelectProps = TextFieldProps & {
 	valueKey?: string | number;
 	labelKey?: string;
 	colorKey?: string;
+	disabledKey?: string;
 	label?: string;
 	name: string;
 	options: any[];
@@ -21,6 +22,7 @@ const RHFTextFieldSelect = ({
 	valueKey = 'id',
 	labelKey = 'name',
 	colorKey = 'color',
+	disabledKey = 'disabled',
 	label,
 	name,
 	options,
@@ -39,13 +41,11 @@ const RHFTextFieldSelect = ({
 
 	const optionItems =
 		Array.isArray(options) && options.length > 0 ? (
-			options?.map((item) => {
-				return (
-					<MenuItem key={item?.[valueKey]} value={item?.[valueKey]} sx={{ color: item?.[colorKey] || 'inherit' }}>
-						{item?.[labelKey]}
-					</MenuItem>
-				);
-			})
+			options?.map((item) => (
+				<MenuItem key={item?.[valueKey]} value={item?.[valueKey]} sx={{ color: item?.[colorKey] || 'inherit' }} disabled={item?.[disabledKey]}>
+					{item?.[labelKey]}
+				</MenuItem>
+			))
 		) : (
 			<MenuItem value="">
 				<em>N/A</em>
