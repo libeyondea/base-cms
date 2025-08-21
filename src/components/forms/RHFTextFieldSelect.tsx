@@ -60,46 +60,47 @@ const RHFTextFieldSelect = ({
 				const selectedColor = options?.find((item) => item?.[valueKey] === field.value)?.[colorKey] || 'inherit';
 
 				return (
-					<FormControl fullWidth={fullWidth} size={size} error={!!fieldState.error}>
-						<TextField
-							{...field}
-							{...props}
-							label={label}
-							value={field.value}
-							onChange={(e) => {
-								field.onChange(e);
-								handleOnchange?.(e.target.value);
-							}}
-							select
-							slotProps={{
-								select: {
-									MenuProps: {
-										PaperProps: {
-											sx: {
-												maxHeight: maxHeight
-											}
+					<TextField
+						{...field}
+						{...props}
+						select
+						fullWidth={fullWidth}
+						size={size}
+						label={label}
+						value={field.value}
+						error={!!fieldState.error}
+						helperText={fieldState.error ? fieldState.error.message : helperText}
+						onChange={(e) => {
+							field.onChange(e);
+							handleOnchange?.(e.target.value);
+						}}
+						slotProps={{
+							select: {
+								MenuProps: {
+									PaperProps: {
+										sx: {
+											maxHeight: maxHeight
 										}
-									},
-									startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null,
-									endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(field.value)}</InputAdornment> : null,
-									sx: {
-										...(endAdornment && {
-											'& .MuiSelect-icon': {
-												right: iconOffset
-											},
-											'& .MuiSelect-select': {
-												color: selectedColor
-											}
-										})
 									}
+								},
+								startAdornment: startAdornment ? <InputAdornment position="start">{startAdornment?.(field.value)}</InputAdornment> : null,
+								endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment?.(field.value)}</InputAdornment> : null,
+								sx: {
+									...(endAdornment && {
+										'& .MuiSelect-icon': {
+											right: iconOffset
+										},
+										'& .MuiSelect-select': {
+											color: selectedColor
+										}
+									})
 								}
-							}}
-							sx={sx}
-							helperText={fieldState.error ? fieldState.error.message : helperText}
-						>
-							{optionItems}
-						</TextField>
-					</FormControl>
+							}
+						}}
+						sx={sx}
+					>
+						{optionItems}
+					</TextField>
 				);
 			}}
 		/>
