@@ -8,12 +8,7 @@ import * as yup from 'yup';
 
 import PageContainer from '~/components/container/PageContainer';
 import FormProvider from '~/components/forms/FormProvider';
-import RHFDatePicker from '~/components/forms/RHFDatePicker';
-import RHFNationalID from '~/components/forms/RHFNationalID';
-import RHFPhone from '~/components/forms/RHFPhone';
-import RHFSelect from '~/components/forms/RHFSelect';
 import RHFTextField from '~/components/forms/RHFTextField';
-import RHFTextFieldSelect from '~/components/forms/RHFTextFieldSelect';
 import useAuthApi from '~/hooks/api/useAuthApi';
 import { useDispatch } from '~/store';
 import { signin } from '~/store/slices/auth';
@@ -102,21 +97,6 @@ const SignIn = () => {
 
 								<FormProvider methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
 									<Grid container spacing={2}>
-										<Grid size={12}>
-											<RHFTextFieldSelect
-												name="phone"
-												label="Số điện thoại"
-												options={[
-													{ id: 1, name: 'Số điện thoại 1' },
-													{ id: 2, name: 'Số điện thoại 2' }
-												]}
-												endAdornment={() => (
-													<>
-														<VisibilityOff />
-													</>
-												)}
-											/>
-										</Grid>
 										<Grid size={12}>
 											<RHFTextField
 												name="email"

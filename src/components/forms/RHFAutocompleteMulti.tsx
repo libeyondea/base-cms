@@ -15,8 +15,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 > & {
 	name: string;
 	label?: string;
-	keyLabel?: string;
-	labelOption?: string;
+	valueKey?: string;
+	labelKey?: string;
 	helperText?: React.ReactNode;
 	isObject?: boolean;
 	hiddenKeys?: string;
@@ -28,8 +28,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 };
 
 const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
-	keyLabel = 'id',
-	labelOption = 'name',
+	valueKey = 'id',
+	labelKey = 'name',
 	isObject = false,
 	label,
 	name,
@@ -56,7 +56,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 	const handleChange = (newVal: T[]) => {
 		// Apply limit only if maxItems is provided
 		const limitedVal = maxItems && newVal.length > maxItems ? newVal.slice(0, maxItems) : newVal;
-		const newArray = isObject ? limitedVal : limitedVal.map((item) => item?.[keyLabel]);
+		const newArray = isObject ? limitedVal : limitedVal.map((item) => item?.[valueKey]);
 		setValue(name, newArray.length > 0 ? newArray : [], { shouldValidate: true });
 	};
 
@@ -75,7 +75,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 
 			debouncedFnRef.current = _.debounce((e: React.SyntheticEvent, val: any) => {
 				// Kiểm tra xem giá trị có trong options hay chưa
-				const isExist = options.some((option: any) => option?.[labelOption]?.toLowerCase() === val?.toLowerCase());
+				const isExist = options.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
 				// Chỉ gọi API khi giá trị chưa có trong danh sách
 				if (!isExist) {
 					onInputChange?.(e, val);
@@ -84,7 +84,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 
 			debouncedFnRef.current(event, value);
 		},
-		[options, labelOption, onInputChange]
+		[options, labelKey, onInputChange]
 	);
 
 	// Map form value IDs to actual option objects
@@ -93,7 +93,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 			return [];
 		}
 
-		return options.filter((option: T) => formValue.includes(option[keyLabel]));
+		return options.filter((option: T) => formValue.includes(option[valueKey]));
 	};
 
 	useEffect(() => {
@@ -119,7 +119,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 						fullWidth
 						isOptionEqualToValue={(option, value) => {
 							if (!value) return false;
-							return option?.[keyLabel] === value?.[keyLabel];
+							return option?.[valueKey] === value?.[valueKey];
 						}}
 						value={value}
 						onChange={onChange}
@@ -136,15 +136,15 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 									})
 						}
 						loading={loading}
-						getOptionLabel={(option) => _.get(option, [labelOption], '')}
+						getOptionLabel={(option) => _.get(option, [labelKey], '')}
 						disableCloseOnSelect={disableCloseOnSelect}
 						renderOption={(props, option, { selected }) => {
 							const { key, ...otherProps } = props;
 							return (
-								<li key={option?.[keyLabel]} {...otherProps}>
+								<li key={option?.[valueKey]} {...otherProps}>
 									<Checkbox style={{ marginRight: 8 }} checked={selected} />
 									{renderOptionStart?.(option)}
-									{option?.[labelOption]}
+									{option?.[labelKey]}
 									{renderOptionEnd?.(option)}
 								</li>
 							);
@@ -154,14 +154,15 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 								<Chip
 									{...getTagProps({ index })}
 									variant="outlined"
-									label={optionSelect?.[labelOption]}
-									sx={{
-										background: 'white !important',
+									label={optionSelect?.[labelKey]}
+									sx={(theme) => ({
+										backgroundColor: theme.palette.background.paper,
 										borderRadius: '16px !important',
-										borderColor: '#2496FE !important',
+										borderColor: `${theme.palette.primary.main} !important`,
 										padding: '10px 0 !important',
-										margin: '5px 0 0 !important'
-									}}
+										margin: '5px 0 0 !important',
+										color: `${theme.palette.text.primary} !important`
+									})}
 									key={optionSelect?.id}
 								/>
 							));
