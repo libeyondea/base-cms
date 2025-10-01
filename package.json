@@ -1,6 +1,5 @@
 {
-	"name": "base-cms",
-	"private": true,
+	"name": "@libeyondea/base-cms",
 	"version": "1.0.0",
 	"type": "module",
 	"description": "Base CMS library for React",
@@ -8,7 +7,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/de4thzone/base-cms"
+		"url": "git+https://github.com/libeyondea/base-cms.git"
 	},
 	"keywords": [
 		"react",
