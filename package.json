@@ -1,23 +1,50 @@
 {
-	"name": "vite-project",
+	"name": "base-cms",
 	"private": true,
 	"version": "1.0.0",
 	"type": "module",
+	"description": "Base CMS library for React",
+	"author": "Nguyen Thuc",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/de4thzone/base-cms"
+	},
+	"keywords": [
+		"react",
+		"cms",
+		"admin",
+		"mui"
+	],
+	"main": "./dist/base-cms.umd.js",
+	"module": "./dist/base-cms.es.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
 	"scripts": {
 		"dev": "vite --port 1000",
 		"build": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview"
 	},
-	"dependencies": {
+	"peerDependencies": {
+		"react": "19.1.1",
+		"react-dom": "19.1.1",
+		"@mui/material": "7.3.1",
+		"@mui/icons-material": "7.3.1",
 		"@emotion/react": "11.14.0",
 		"@emotion/styled": "11.14.1",
+		"@reduxjs/toolkit": "2.8.2",
+		"react-redux": "9.2.0",
+		"react-router-dom": "7.8.0"
+	},
+	"dependencies": {
 		"@hookform/resolvers": "5.2.1",
-		"@mui/icons-material": "7.3.1",
-		"@mui/material": "7.3.1",
 		"@mui/system": "7.3.1",
 		"@mui/x-date-pickers": "8.10.0",
-		"@reduxjs/toolkit": "2.8.2",
 		"@tanstack/react-query": "5.85.3",
 		"@tanstack/react-table": "8.21.3",
 		"axios": "1.11.0",
@@ -27,16 +54,12 @@
 		"motion": "12.23.12",
 		"numeral": "2.0.6",
 		"qs": "6.14.0",
-		"react": "19.1.1",
 		"react-big-calendar": "1.19.4",
-		"react-dom": "19.1.1",
 		"react-hook-form": "7.62.0",
 		"react-icons": "5.5.0",
 		"react-intl": "7.1.11",
 		"react-mui-sidebar": "1.6.3",
 		"react-number-format": "5.4.4",
-		"react-redux": "9.2.0",
-		"react-router-dom": "7.8.0",
 		"react-toastify": "11.0.5",
 		"react-use": "17.6.0",
 		"react-webcam": "7.2.0",
@@ -61,6 +84,7 @@
 		"prettier": "3.6.2",
 		"typescript": "5.9.2",
 		"typescript-eslint": "8.39.1",
-		"vite": "7.1.2"
+		"vite": "7.1.2",
+		"vite-plugin-dts": "4.5.4"
 	}
 }
