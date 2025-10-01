@@ -6,18 +6,18 @@ import dts from 'vite-plugin-dts';
 // https://vite.dev/config/
 export default defineConfig({
 	plugins: [
-		react(),
-		dts({
-			include: ['src'],
-			insertTypesEntry: true,
-			copyDtsFiles: true,
-			compilerOptions: {
-				declaration: true,
-				declarationMap: false,
-				emitDeclarationOnly: true,
-				noEmit: false
-			}
-		})
+		react()
+		// dts({
+		// 	include: ['src'],
+		// 	insertTypesEntry: true,
+		// 	copyDtsFiles: true,
+		// 	compilerOptions: {
+		// 		declaration: true,
+		// 		declarationMap: false,
+		// 		emitDeclarationOnly: true,
+		// 		noEmit: false
+		// 	}
+		// })
 	],
 	resolve: {
 		alias: {
