@@ -14,7 +14,8 @@ export default defineConfig({
 			compilerOptions: {
 				declaration: true,
 				declarationMap: false,
-				emitDeclarationOnly: true
+				emitDeclarationOnly: true,
+				noEmit: false
 			}
 		})
 	],
@@ -25,7 +26,7 @@ export default defineConfig({
 	},
 	build: {
 		lib: {
-			entry: path.resolve(__dirname, 'src/index.js'),
+			entry: path.resolve(__dirname, 'src/index.ts'),
 			name: 'BaseCms',
 			fileName: (format) => `base-cms.${format}.js`,
 			formats: ['es', 'umd']

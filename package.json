@@ -32,7 +32,9 @@
 	],
 	"scripts": {
 		"dev": "vite --port 1000",
-		"build": "tsc -b && vite build",
+		"build": "tsc -p tsconfig.build.json && vite build",
+		"build:types": "tsc -p tsconfig.build.json",
+		"build:all": "tsc -b && vite build",
 		"lint": "eslint .",
 		"preview": "vite preview"
 	},

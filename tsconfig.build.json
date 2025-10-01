@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.app.json",
+	"compilerOptions": {
+		"noEmit": false,
+		"declaration": true,
+		"declarationMap": false,
+		"emitDeclarationOnly": true,
+		"outDir": "./dist"
+	}
+}
