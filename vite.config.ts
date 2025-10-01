@@ -5,7 +5,19 @@ import dts from 'vite-plugin-dts';
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react(), dts({ include: ['src'] })],
+	plugins: [
+		react(),
+		dts({
+			include: ['src'],
+			insertTypesEntry: true,
+			copyDtsFiles: true,
+			compilerOptions: {
+				declaration: true,
+				declarationMap: false,
+				emitDeclarationOnly: true
+			}
+		})
+	],
 	resolve: {
 		alias: {
 			'~': path.resolve(__dirname, 'src')

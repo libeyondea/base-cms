@@ -18,6 +18,13 @@
 	"main": "./dist/base-cms.umd.js",
 	"module": "./dist/base-cms.es.js",
 	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/base-cms.es.js",
+			"require": "./dist/base-cms.umd.js"
+		}
+	},
 	"files": [
 		"dist",
 		"README.md",
