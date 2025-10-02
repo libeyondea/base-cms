@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { MenuItem, Select, TextField } from '@mui/material';
+import { FilterList as FilterListIcon } from '@mui/icons-material';
+import { IconButton, InputAdornment, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
 import { Column } from '@tanstack/react-table';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
+import moment, { Moment } from 'moment';
 
 interface DefaultColumnFilterProps {
 	column: Column<any, any>;
@@ -16,7 +19,7 @@ interface DefaultColumnFilterProps {
 	};
 }
 
-export const DefaultColumnFilter: React.FC<DefaultColumnFilterProps> = ({ column, filterOptions }) => {
+export const DefaultColumnFilter = ({ column, filterOptions }: DefaultColumnFilterProps) => {
 	// If the column is part of a select filter, render SelectFilter
 	if (
 		filterOptions?.selectType?.key?.includes(column.id) ||
@@ -37,6 +40,7 @@ export const DefaultColumnFilter: React.FC<DefaultColumnFilterProps> = ({ column
 
 const TextFilter = ({ column }: { column: Column<any, any> }) => {
 	const [value, setValue] = useState((column.getFilterValue() as string) || '');
+	const theme = useTheme();
 
 	// Create a function to update the filter value
 	const handleFilterChange = useCallback(
@@ -57,7 +61,7 @@ const TextFilter = ({ column }: { column: Column<any, any> }) => {
 
 	return (
 		<TextField
-			variant="outlined"
+			variant="filled"
 			size="small"
 			fullWidth
 			value={value}
@@ -66,13 +70,48 @@ const TextFilter = ({ column }: { column: Column<any, any> }) => {
 				setValue(val);
 				updateFilter(val);
 			}}
-			placeholder={`Tìm kiếm...`}
+			placeholder="Tìm kiếm..."
+			sx={{
+				'& .MuiFilledInput-root': {
+					padding: 0,
+					borderStartStartRadius: 12,
+					borderStartEndRadius: 12,
+					borderEndStartRadius: 0,
+					borderEndEndRadius: 0,
+					backgroundColor: theme.palette.grey[100],
+					'&:hover': {
+						backgroundColor: theme.palette.grey[100]
+					},
+					'&.Mui-focused': {
+						backgroundColor: theme.palette.grey[200]
+					}
+				},
+				'& .MuiInputBase-input': {
+					padding: 1,
+					fontSize: '0.875rem'
+				},
+				'& .MuiInputAdornment-root': {
+					margin: '0 !important'
+				}
+			}}
+			slotProps={{
+				input: {
+					startAdornment: (
+						<InputAdornment position="start">
+							<IconButton size="small">
+								<FilterListIcon color="primary" fontSize="small" sx={{ opacity: 0.7 }} />
+							</IconButton>
+						</InputAdornment>
+					)
+				}
+			}}
 		/>
 	);
 };
 
 const SelectFilter = ({ column, filterOptions }: DefaultColumnFilterProps) => {
 	const [value, setValue] = useState((column.getFilterValue() as string) || '');
+	const theme = useTheme();
 
 	useEffect(() => {
 		setValue((column.getFilterValue() as string) || '');
@@ -105,7 +144,7 @@ const SelectFilter = ({ column, filterOptions }: DefaultColumnFilterProps) => {
 
 	return (
 		<Select
-			variant="outlined"
+			variant="filled"
 			size="small"
 			fullWidth
 			value={value || defaultValue || ''}
@@ -115,6 +154,24 @@ const SelectFilter = ({ column, filterOptions }: DefaultColumnFilterProps) => {
 				column.setFilterValue(val === '' ? undefined : val);
 			}}
 			displayEmpty
+			sx={{
+				padding: 0,
+				borderStartStartRadius: 12,
+				borderStartEndRadius: 12,
+				borderEndStartRadius: 0,
+				borderEndEndRadius: 0,
+				backgroundColor: theme.palette.grey[100],
+				'&:hover': {
+					backgroundColor: theme.palette.grey[100]
+				},
+				'&.Mui-focused': {
+					backgroundColor: theme.palette.grey[200]
+				},
+				'& .MuiSelect-select': {
+					padding: 1,
+					fontSize: '0.875rem'
+				}
+			}}
 		>
 			<MenuItem value="">
 				<em>Tất cả</em>
@@ -129,24 +186,61 @@ const SelectFilter = ({ column, filterOptions }: DefaultColumnFilterProps) => {
 };
 
 const DateFilter = ({ column }: { column: Column<any, any> }) => {
-	const [value, setValue] = useState<any>((column.getFilterValue() as string) || '');
+	const [value, setValue] = useState<Moment | null>((column.getFilterValue() as string) ? moment(column.getFilterValue() as string, 'DD/MM/YYYY') : null);
+	const theme = useTheme();
 
 	useEffect(() => {
-		setValue((column.getFilterValue() as string) || '');
+		const filterValue = column.getFilterValue() as string;
+		setValue(filterValue ? moment(filterValue, 'DD/MM/YYYY') : null);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [column.getFilterValue()]);
 
+	const handleDateChange = (newValue: Moment | null) => {
+		setValue(newValue);
+		const stringValue = newValue ? newValue.format('DD/MM/YYYY') : '';
+		column.setFilterValue(stringValue || undefined);
+	};
+
 	return (
-		<TextField
-			type="date"
-			variant="outlined"
-			size="small"
-			fullWidth
+		<DatePicker
+			format="DD/MM/YYYY"
 			value={value}
-			onChange={(e) => {
-				const val = e.target.value;
-				setValue(val);
-				column.setFilterValue(val || undefined);
+			onChange={handleDateChange}
+			slotProps={{
+				textField: {
+					variant: 'filled',
+					size: 'small',
+					fullWidth: true,
+					placeholder: 'Chọn ngày...',
+					sx: {
+						'& .MuiPickersInputBase-root': {
+							borderStartStartRadius: 12,
+							borderStartEndRadius: 12,
+							borderEndStartRadius: 0,
+							borderEndEndRadius: 0,
+							backgroundColor: theme.palette.grey[100],
+							'&:hover': {
+								backgroundColor: theme.palette.grey[100]
+							},
+							'&.Mui-focused': {
+								backgroundColor: theme.palette.grey[200]
+							},
+							'& .MuiPickersSectionList-root': {
+								padding: 1
+							},
+							'& .MuiInputAdornment-root': {
+								margin: '0 !important'
+							}
+						},
+						'& .MuiPickersFilledInput-root': {
+							'&:hover:not(.Mui-disabled, .Mui-error)': {
+								'&::before': {
+									borderBottomColor: theme.palette.primary.light
+								}
+							}
+						}
+					}
+				}
 			}}
 		/>
 	);

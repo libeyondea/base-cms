@@ -33,12 +33,21 @@ import {
 	getSortedRowModel,
 	useReactTable
 } from '@tanstack/react-table';
-import _ from 'lodash';
 
 import { DefaultColumnFilter } from './DefaultColumnFilter';
 import { EmptyView } from './EmptyView';
-import { Row, styleCellAction } from './Row';
+import { Row, getStyleCellAction } from './Row';
 import { TableSkeletonRow } from './TableSkeletonRow';
+
+export interface CustomAction<T> {
+	label: string;
+	icon: React.ReactNode;
+	onClick: (params: { ids: string[]; row: T }) => void;
+	show?: (params: { ids: string[]; row: T }) => boolean;
+	color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+	disabled?: (params: { ids: string[]; row: T }) => boolean;
+	tooltip?: string;
+}
 
 export interface MenuActionProps<T> {
 	// Row action handlers
@@ -51,6 +60,9 @@ export interface MenuActionProps<T> {
 	onPermission?: (params: { ids: string[]; row: T }) => void;
 	onDownLoad?: (params: { ids: string[]; row: T }) => void;
 	onChangePassword?: (params: { ids: string[]; row: T }) => void;
+	onViewCamera?: (params: { ids: string[]; row: T }) => void;
+	onAssign?: (params: { ids: string[]; row: T }) => void;
+	onGenerateFaceModel?: (params: { ids: string[]; row: T }) => void;
 
 	// Show action functions
 	showEdit?: (params: { ids: string[]; row: T }) => boolean;
@@ -62,6 +74,12 @@ export interface MenuActionProps<T> {
 	showPermission?: (params: { ids: string[]; row: T }) => boolean;
 	showDownload?: (params: { ids: string[]; row: T }) => boolean;
 	showChangePassword?: (params: { ids: string[]; row: T }) => boolean;
+	showViewCamera?: (params: { ids: string[]; row: T }) => boolean;
+	showAssign?: (params: { ids: string[]; row: T }) => boolean;
+	showGenerateFaceModel?: (params: { ids: string[]; row: T }) => boolean;
+
+	// Custom actions array
+	customActions?: CustomAction<T>[];
 }
 
 export interface StanstackTableProps<T extends Record<string, any>> {
@@ -106,6 +124,7 @@ export interface StanstackTableProps<T extends Record<string, any>> {
 	manualFilters?: boolean;
 	menuActions?: MenuActionProps<T>;
 	sxTableContainer?: SxProps<Theme>;
+	enableMultiRowSelection?: boolean;
 }
 
 const StanstackTable = <T extends Record<string, any>>({
@@ -128,7 +147,7 @@ const StanstackTable = <T extends Record<string, any>>({
 	filterOptions,
 	renderCustomFilter,
 	customPageSize = 10,
-	headerColors = '#2496FE',
+	headerColors,
 	isSortedColumn = true,
 	isRowAction = true,
 	rowId = 'id',
@@ -137,9 +156,13 @@ const StanstackTable = <T extends Record<string, any>>({
 	manualSortBy = true,
 	manualFilters = true,
 	menuActions = {},
-	sxTableContainer = {}
+	sxTableContainer = {},
+	enableMultiRowSelection = true
 }: StanstackTableProps<T>) => {
 	const theme = useTheme();
+
+	// Auto determine header color based on theme if not provided
+	const dynamicHeaderColors = headerColors || theme.palette.primary.main;
 	const tableRef = useRef<HTMLDivElement>(null);
 
 	// State
@@ -163,13 +186,14 @@ const StanstackTable = <T extends Record<string, any>>({
 			if (!hasSelectColumn) {
 				const selectionColumn: ColumnDef<T> = {
 					id: 'select',
-					header: ({ table }) => (
-						<Checkbox
-							indeterminate={table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-							checked={table.getIsAllPageRowsSelected()}
-							onChange={table.getToggleAllPageRowsSelectedHandler()}
-						/>
-					),
+					header: ({ table }) =>
+						enableMultiRowSelection ? (
+							<Checkbox
+								indeterminate={table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+								checked={table.getIsAllPageRowsSelected()}
+								onChange={table.getToggleAllPageRowsSelectedHandler()}
+							/>
+						) : null,
 					cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onChange={row.getToggleSelectedHandler()} onClick={(e) => e.stopPropagation()} />
 				};
 
@@ -208,7 +232,7 @@ const StanstackTable = <T extends Record<string, any>>({
 		}
 
 		return result;
-	}, [columns, disableCheckbox, enableExpand]);
+	}, [columns, disableCheckbox, enableExpand, enableMultiRowSelection]);
 
 	// Initialize column visibility based on hidden columns
 	useEffect(() => {
@@ -262,6 +286,7 @@ const StanstackTable = <T extends Record<string, any>>({
 			expanded
 		},
 		enableRowSelection: true,
+		enableMultiRowSelection,
 		manualPagination,
 		manualSorting: manualSortBy,
 		manualFiltering: manualFilters,
@@ -271,7 +296,7 @@ const StanstackTable = <T extends Record<string, any>>({
 		onColumnVisibilityChange: setColumnVisibility,
 		onPaginationChange: setPagination,
 		onExpandedChange: setExpanded,
-		getRowId: (row) => String(row[rowId]),
+		getRowId: (row) => row[rowId],
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -311,6 +336,7 @@ const StanstackTable = <T extends Record<string, any>>({
 				sx={{
 					// minHeight: data.length ? Math.min(data.length * 45 + 60, window.innerHeight - (hidePagination ? 152 : 206)) : 200,
 					maxHeight: 'calc(100vh - 64px - 76px - 64px - 2px)',
+					borderRadius: 1,
 					...sxTableContainer
 				}}
 				ref={tableRef}
@@ -329,10 +355,11 @@ const StanstackTable = <T extends Record<string, any>>({
 												sx={{
 													backgroundColor: theme.palette.background.paper,
 													'&.MuiTableCell-paddingCheckbox': {
-														pl: '8px !important',
+														pl: '0px !important',
 														pr: '0px !important'
 													}
 												}}
+												align="center"
 											>
 												<Checkbox
 													indeterminate={table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
@@ -354,7 +381,7 @@ const StanstackTable = <T extends Record<string, any>>({
 												key={header.id}
 												align="center"
 												sx={{
-													...styleCellAction,
+													...getStyleCellAction(theme),
 													backgroundColor: theme.palette.background.paper,
 													whiteSpace: 'nowrap',
 													minWidth: 120
@@ -379,12 +406,14 @@ const StanstackTable = <T extends Record<string, any>>({
 													direction={header.column.getIsSorted() === 'desc' ? 'desc' : 'asc'}
 													onClick={header.column.getToggleSortingHandler()}
 												>
-													<span style={{ color: headerColors }}>
+													<span style={{ color: dynamicHeaderColors }}>
 														{flexRender(header.column.columnDef.header, header.getContext())}
 													</span>
 												</TableSortLabel>
 											) : (
-												<span style={{ color: headerColors }}>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+												<span style={{ color: dynamicHeaderColors }}>
+													{flexRender(header.column.columnDef.header, header.getContext())}
+												</span>
 											)}
 										</TableCell>
 									);
@@ -402,7 +431,7 @@ const StanstackTable = <T extends Record<string, any>>({
 												key={column.id}
 												padding="none"
 												className="cell-fix-last"
-												sx={column.id === 'actions' ? styleCellAction : {}}
+												sx={column.id === 'actions' ? getStyleCellAction(theme) : {}}
 											/>
 										);
 									}
@@ -436,8 +465,8 @@ const StanstackTable = <T extends Record<string, any>>({
 
 						{/* Table data */}
 						{!isFetching &&
-							table.getRowModel().rows.map((row) => (
-								<Fragment key={row.id}>
+							table.getRowModel().rows.map((row, index) => (
+								<Fragment key={row.id || index}>
 									<Row<T> row={row} onRowClick={onRowClick} isRowAction={isRowAction} {...menuActions} />
 								</Fragment>
 							))}

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { ColumnFiltersState, PaginationState, SortingState } from '@tanstack/react-table';
-import _ from 'lodash';
 import qs from 'qs';
 
 import { useSelector } from '~/store';
@@ -14,14 +13,15 @@ interface UseTableProps {
 	enabled?: boolean;
 	multiQueryParam?: Record<string, any>;
 	refetchOnWindowFocus?: boolean;
+	defaultPageSize?: number;
 }
 
-const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refetchOnWindowFocus = false }: UseTableProps) => {
+const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refetchOnWindowFocus = false, defaultPageSize = 10 }: UseTableProps) => {
 	// Get filter state from store
 	const filtersTable = useSelector((state) => state.table.filters);
 
 	// Table state
-	const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
+	const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: defaultPageSize });
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [rowSelection, setRowSelection] = useState<any[]>([]);
@@ -114,6 +114,13 @@ const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refe
 		[pagination.pageIndex, pagination.pageSize]
 	);
 
+	const handleSetRowSelection = useCallback(
+		(selectionModel: any[]) => {
+			setRowSelection(selectionModel);
+		},
+		[setRowSelection]
+	);
+
 	return {
 		// Data
 		tableData,
@@ -142,7 +149,8 @@ const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refe
 		selectedRowCount: Object.keys(rowSelection).length,
 
 		// Auto fetch data handler
-		handleFetchData
+		handleFetchData,
+		handleSetRowSelection
 	};
 };
 
