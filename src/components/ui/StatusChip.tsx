@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { Chip, ChipProps, alpha } from '@mui/material';
 
-import { isLightColor } from '../../utils/colorUtils';
+import { isLightColor } from '~/utils/color';
 
 interface ItemChip {
 	id: number | string;
