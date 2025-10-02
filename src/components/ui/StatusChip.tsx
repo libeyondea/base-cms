@@ -1,8 +1,8 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Chip, ChipProps, alpha } from '@mui/material';
 
-import { isLightColor } from '../../utils/color';
+import { isLightColor } from '../../utils/colorUtils';
 
 interface ItemChip {
 	id: number | string;
@@ -17,7 +17,7 @@ interface StatusChipProps {
 	data?: ItemChip[];
 	size?: ChipProps['size'];
 	variant?: ChipProps['variant'];
-	endLabel?: ReactNode | string | number;
+	endLabel?: React.ReactNode;
 }
 
 const StatusChip = ({ value, label, color, data = [], size = 'small', variant = 'filled', endLabel }: StatusChipProps) => {

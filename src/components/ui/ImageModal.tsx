@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -18,7 +18,7 @@ interface ImageModalProps {
 	title?: string;
 }
 
-const ImageModal: React.FC<ImageModalProps> = ({ open, onClose, imageUrl, title }) => {
+const ImageModal = ({ open, onClose, imageUrl, title }: ImageModalProps) => {
 	const [scale, setScale] = useState(1);
 	const [rotation, setRotation] = useState(0);
 	const [dragStart, setDragStart] = useState({ x: 0, y: 0 });

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import { forwardRef, memo, useCallback, useMemo } from 'react';
 
 import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
@@ -11,10 +11,11 @@ export const STATE_MODAL = {
 	UPDATE_MODE: 'UPDATE_MODE',
 	CREATE_MODE: 'CREATE_MODE',
 	DELETE_MODE: 'DELETE_MODE',
-	EXPORT_MODE: 'EXPORT_MODE'
-};
+	EXPORT_MODE: 'EXPORT_MODE',
+	EXTRA_MODE: 'EXTRA_MODE'
+} as const;
 
-export type MODE_MODAL = keyof typeof STATE_MODAL;
+export type MODE_MODAL = (typeof STATE_MODAL)[keyof typeof STATE_MODAL];
 
 interface CommonModalProps {
 	open: boolean;
@@ -49,7 +50,7 @@ interface CommonModalProps {
 }
 
 // Tối ưu Transition component với forwardRef
-const SlideTransition = React.forwardRef<unknown, TransitionProps & { children: React.ReactElement }>((props, ref) => (
+const SlideTransition = forwardRef<unknown, TransitionProps & { children: React.ReactElement }>((props, ref) => (
 	<Slide direction="down" ref={ref} {...props} />
 ));
 
@@ -169,9 +170,10 @@ const CommonModal = ({
 		<Dialog
 			open={open}
 			onClose={handleCloseDialog}
+			disableEnforceFocus={false} // đảm bảo focus bị giới hạn trong dialog
+			disableRestoreFocus={false} // khôi phục focus khi đóng
 			aria-labelledby={title ? 'dialog-title' : undefined}
 			aria-describedby="dialog-description"
-			disableAutoFocus
 			fullWidth
 			scroll={fullScreen ? 'paper' : 'body'}
 			maxWidth={maxWidtSize}
@@ -188,7 +190,7 @@ const CommonModal = ({
 		>
 			{title && (
 				<DialogTitle id="dialog-title" sx={titleStyles}>
-					<DialogContentText variant="h4" component="span" sx={{ letterSpacing: 1, fontWeight: 500 }}>
+					<DialogContentText variant="h5" component="span" sx={{ letterSpacing: 1, fontWeight: 500 }}>
 						{title}
 					</DialogContentText>
 					<Box display="flex" alignItems="center" gap={1}>

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
-import { Box, Button, FormControl, IconButton, InputAdornment, OutlinedInput, Popover, Stack, Typography } from '@mui/material';
+import { Box, Button, FormControl, IconButton, InputAdornment, Popover, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
 
@@ -22,10 +22,11 @@ export interface DateRangePickerProps {
 }
 
 const DateRangePicker = React.memo<DateRangePickerProps>(
-	({ dateRange, onDateRangeChange, placeholder = 'Chọn khoảng thời gian', size = 'small', minWidth = '250px', disabled = false, fullWidth = false }) => {
+	({ dateRange, onDateRangeChange, placeholder = 'Chọn khoảng thời gian', size = 'small', minWidth = '250px', disabled = false, fullWidth = true }) => {
 		const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 		const [localDateRange, setLocalDateRange] = React.useState<DateRangeFilter>(dateRange || {});
 		const open = Boolean(anchorEl);
+		const theme = useTheme();
 
 		// Sync local state when external dateRange changes
 		React.useEffect(() => {
@@ -95,41 +96,35 @@ const DateRangePicker = React.memo<DateRangePickerProps>(
 
 		return (
 			<>
-				<FormControl
+				<TextField
 					size={size}
+					value={formatDateRange()}
+					onClick={handleClick}
+					placeholder={placeholder}
+					disabled={disabled}
+					fullWidth={fullWidth}
+					slotProps={{
+						input: {
+							readOnly: true,
+							endAdornment: (
+								<InputAdornment position="end">
+									<IconButton size="small" onClick={handleClick} disabled={disabled}>
+										<CalendarIcon fontSize="small" />
+									</IconButton>
+								</InputAdornment>
+							)
+						}
+					}}
 					sx={{
 						minWidth: fullWidth ? '100%' : minWidth,
-						width: fullWidth ? '100%' : 'auto'
-					}}
-					disabled={disabled}
-				>
-					<OutlinedInput
-						readOnly
-						value={formatDateRange()}
-						onClick={handleClick}
-						placeholder={placeholder}
-						disabled={disabled}
-						endAdornment={
-							<InputAdornment position="end">
-								<IconButton size="small" onClick={handleClick} disabled={disabled}>
-									<CalendarIcon fontSize="small" />
-								</IconButton>
-							</InputAdornment>
-						}
-						sx={{
+						width: fullWidth ? '100%' : 'auto',
+						cursor: disabled ? 'default' : 'pointer',
+						'& .MuiInputBase-input': {
 							cursor: disabled ? 'default' : 'pointer',
-							'& input': {
-								cursor: disabled ? 'default' : 'pointer',
-								color: hasValue ? 'text.primary' : 'text.secondary'
-							},
-							'&:hover': disabled
-								? {}
-								: {
-										borderColor: 'primary.main'
-									}
-						}}
-					/>
-				</FormControl>
+							color: hasValue ? 'text.primary' : 'text.secondary'
+						}
+					}}
+				/>
 
 				<Popover
 					open={open}
@@ -167,8 +162,20 @@ const DateRangePicker = React.memo<DateRangePickerProps>(
 								format="DD/MM/YYYY"
 								slotProps={{
 									textField: {
+										variant: 'outlined',
 										size: 'small',
-										fullWidth: true
+										fullWidth: true,
+										sx: {
+											'& .MuiPickersOutlinedInput-root': {
+												'&:hover .MuiPickersOutlinedInput-notchedOutline': {
+													borderColor: theme.palette.primary.light
+												},
+												'&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
+													borderColor: theme.palette.primary.main,
+													borderWidth: '2px'
+												}
+											}
+										}
 									}
 								}}
 							/>
@@ -180,8 +187,20 @@ const DateRangePicker = React.memo<DateRangePickerProps>(
 								minDate={localDateRange?.startDate || undefined}
 								slotProps={{
 									textField: {
+										variant: 'outlined',
 										size: 'small',
-										fullWidth: true
+										fullWidth: true,
+										sx: {
+											'& .MuiPickersOutlinedInput-root': {
+												'&:hover .MuiPickersOutlinedInput-notchedOutline': {
+													borderColor: theme.palette.primary.light
+												},
+												'&.Mui-focused .MuiPickersOutlinedInput-notchedOutline': {
+													borderColor: theme.palette.primary.main,
+													borderWidth: '2px'
+												}
+											}
+										}
 									}
 								}}
 							/>
@@ -215,7 +234,5 @@ const DateRangePicker = React.memo<DateRangePickerProps>(
 		);
 	}
 );
-
-DateRangePicker.displayName = 'DateRangePicker';
 
 export default DateRangePicker;

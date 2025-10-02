@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { SyntheticEvent, memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge, Box, Fade, Tab, Tabs, Typography, alpha, styled, useTheme } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';

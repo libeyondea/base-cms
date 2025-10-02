@@ -1,11 +1,11 @@
-import _ from 'lodash';
+import { isArray, isEmpty, isObject } from 'lodash-es';
 
 export const isNonEmptyArray = (arr: any): arr is any[] => {
-	return _.isArray(arr) && !_.isEmpty(arr);
+	return isArray(arr) && !isEmpty(arr);
 };
 
 export const isNonEmptyObject = (obj: any): obj is object => {
-	return _.isObject(obj) && !_.isEmpty(obj);
+	return isObject(obj) && !isEmpty(obj);
 };
 
 export const formatArray = <T = any>(arr: any): T[] => {

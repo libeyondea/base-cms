@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { debounce } from 'lodash';
-import { setFilterTable } from 'src/store/slices/table';
+import { debounce } from 'lodash-es';
 
 import { useDispatch, useSelector } from '~/store';
+import { setFilterTable } from '~/store/slices/table';
 
 import NTextField from '../input/NTextField';
 
 interface SearchCustomProps {
 	keyName?: string;
+	size?: 'small' | 'medium';
 }
 
-const SearchCustom = ({ keyName = '' }: SearchCustomProps) => {
+const SearchCustom = ({ keyName = '', size = 'small' }: SearchCustomProps) => {
 	const dispatch = useDispatch();
 	const { filters } = useSelector((state) => state.table);
 	// Local state để hiển thị ngay lập tức
@@ -55,6 +56,7 @@ const SearchCustom = ({ keyName = '' }: SearchCustomProps) => {
 			sx={{
 				minWidth: '250px'
 			}}
+			size={size}
 			value={searchValue}
 		/>
 	);

@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 
 import { Box, Button, Card, CardActions, CardContent, CardContentProps, CardHeader, CardProps, Divider, Stack } from '@mui/material';
-import { grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material/styles';
 
 import CustomBreadcrumbs from './CustomBreadcrumbs';
@@ -9,7 +8,7 @@ import DateRangePicker, { DateRangeFilter } from './DateRangePicker';
 import SearchCustom from './SearchCustom';
 
 // Types
-export interface MainCardProps {
+interface MainCardProps {
 	// Card Properties
 	children: React.ReactNode | string;
 	border?: boolean;
@@ -117,7 +116,11 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 		const renderSearch = () => {
 			if (!isShowSearch) return null;
 
-			return <SearchCustom keyName={keyName} />;
+			return (
+				<Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
+					<SearchCustom keyName={keyName} />
+				</Box>
+			);
 		};
 
 		// Render date filter component
@@ -125,9 +128,9 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 			if (!isShowDateFilter) return null;
 
 			return (
-				<Stack direction="row" spacing={1} alignItems="center">
+				<Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
 					<DateRangePicker dateRange={dateRange} onDateRangeChange={onDateRangeChange} />
-				</Stack>
+				</Box>
 			);
 		};
 
@@ -136,7 +139,14 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 			if (!isShowSubmitButton) return null;
 
 			return (
-				<Button variant={submitButtonVariant} size={submitButtonSize} onClick={onSubmit} disabled={isSubmitDisabled} loading={isSubmitLoading}>
+				<Button
+					variant={submitButtonVariant}
+					size={submitButtonSize}
+					onClick={onSubmit}
+					disabled={isSubmitDisabled}
+					loading={isSubmitLoading}
+					sx={{ width: { xs: '100%', sm: 'auto' } }}
+				>
 					{submitButtonText}
 				</Button>
 			);
@@ -149,12 +159,12 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 			if (!hasToolbarItems) return null;
 
 			return (
-				<Stack direction={toolbarDirection} spacing={2} alignItems="center" sx={{}}>
-					{componentToolbar && <Box sx={{ minWidth: 300 }}>{componentToolbar}</Box>}
+				<Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
+					{componentToolbar && <Box sx={{ width: { xs: '100%', sm: 300 } }}>{componentToolbar}</Box>}
 
-					<Stack direction="row" spacing={1} alignItems="center">
+					<Stack direction="row" alignItems="center" sx={{ flexWrap: 'wrap', gap: 1 }}>
 						{componentActionLeft && (
-							<Stack direction="row" spacing={1} alignItems="center">
+							<Stack direction="row" alignItems="center" sx={{ gap: 1 }}>
 								{componentActionLeft}
 							</Stack>
 						)}
@@ -162,7 +172,7 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 						{renderSearch()}
 						{renderSubmitButton()}
 						{componentAction && (
-							<Stack direction="row" spacing={1} alignItems="center">
+							<Stack direction="row" alignItems="center" sx={{ gap: 1 }}>
 								{componentAction}
 							</Stack>
 						)}
@@ -179,13 +189,14 @@ const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 				<Box
 					sx={{
 						display: 'flex',
+						flexDirection: { xs: 'column', sm: 'row' },
 						justifyContent: 'space-between',
 						alignItems: 'center',
-						gap: 1,
+						gap: 2,
 						minHeight: 60,
 						paddingY: 1,
-						paddingX: 2,
-						bgcolor: grey[100]
+						paddingX: 2
+						// bgcolor: theme.palette.grey[50]
 					}}
 				>
 					{title && (

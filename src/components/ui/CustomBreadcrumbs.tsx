@@ -1,5 +1,3 @@
-import React from 'react';
-
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Breadcrumbs, Link as MuiLink, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -15,7 +13,7 @@ interface CustomBreadcrumbsProps {
 
 const CustomSeparator = () => <NavigateNextIcon fontSize="small" sx={{ color: 'gray' }} />;
 
-const CustomBreadcrumbs: React.FC<CustomBreadcrumbsProps> = ({ breadcrumbs }) => {
+const CustomBreadcrumbs = ({ breadcrumbs }: CustomBreadcrumbsProps) => {
 	const fullBreadcrumbs: BreadcrumbItem[] = [{ title: 'Trang chủ', link: '/' }, ...breadcrumbs];
 
 	return (
