@@ -1,6 +1,13 @@
 export { default as FormProvider } from './FormProvider';
-export { default as RHFTextField } from './RHFTextField';
-export { default as RHFSelect } from './RHFSelect';
+export { default as FormLabel } from './FormLabel';
 export { default as RHFPhone } from './RHFPhone';
 export { default as RHFDatePicker } from './RHFDatePicker';
+export { default as RHFTextField } from './RHFTextField';
 export { default as RHFTimePicker } from './RHFTimePicker';
+export { default as RHFAutocomplete } from './RHFAutocomplete';
+export { default as RHFAutocompleteMulti } from './RHFAutocompleteMulti';
+export { default as RHFNationalID } from './RHFNationalID';
+export { default as RHFTextFieldSelect } from './RHFTextFieldSelect';
+export { default as RHFSelect } from './RHFSelect';
+export { default as RHFSwitch } from './RHFSwitch';
+export { default as RHFTextFieldAdvanced } from './RHFTextFieldAdvanced';

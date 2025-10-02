@@ -25,33 +25,16 @@ export default defineConfig({
 			entry: path.resolve(__dirname, 'src/index.ts'),
 			name: 'BaseCms',
 			fileName: (format) => `base-cms.${format}.js`,
-			formats: ['es', 'umd']
+			formats: ['es']
 		},
 		rollupOptions: {
-			external: [
-				'react',
-				'react-dom',
-				'react/jsx-runtime',
-				'@mui/material',
-				'@mui/icons-material',
-				'@emotion/react',
-				'@emotion/styled',
-				'@reduxjs/toolkit',
-				'react-redux',
-				'react-router-dom'
-			],
+			external: ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime'],
 			output: {
 				globals: {
 					react: 'React',
 					'react-dom': 'ReactDOM',
-					'react/jsx-runtime': 'ReactJSXRuntime',
-					'@mui/material': 'MaterialUI',
-					'@mui/icons-material': 'MaterialUIIcons',
-					'@emotion/react': 'EmotionReact',
-					'@emotion/styled': 'EmotionStyled',
-					'@reduxjs/toolkit': 'ReduxToolkit',
-					'react-redux': 'ReactRedux',
-					'react-router-dom': 'ReactRouterDOM'
+					'react-router-dom': 'ReactRouterDOM',
+					'react/jsx-runtime': 'ReactJSXRuntime'
 				}
 			}
 		}

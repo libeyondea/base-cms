@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { Autocomplete, AutocompleteProps, AutocompleteValue, Checkbox, Chip, ChipTypeMap, TextField } from '@mui/material';
-import _ from 'lodash';
+import { debounce, get } from 'lodash-es';
 import { Controller, useFormContext } from 'react-hook-form';
 
 type DataProp = {
@@ -48,7 +48,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 	...rest
 }: Omit<Props<T, ChipComponent>, 'renderInput'>) => {
 	const { control, setValue, trigger, watch } = useFormContext();
-	const debouncedFnRef = useRef<ReturnType<typeof _.debounce> | null>(null);
+	const debouncedFnRef = useRef<ReturnType<typeof debounce> | null>(null);
 
 	// Get current form value for this field
 	const formValue = watch(name);
@@ -73,7 +73,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 				debouncedFnRef.current.cancel();
 			}
 
-			debouncedFnRef.current = _.debounce((e: React.SyntheticEvent, val: any) => {
+			debouncedFnRef.current = debounce((e: React.SyntheticEvent, val: any) => {
 				// Kiểm tra xem giá trị có trong options hay chưa
 				const isExist = options.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
 				// Chỉ gọi API khi giá trị chưa có trong danh sách
@@ -136,7 +136,7 @@ const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends React.El
 									})
 						}
 						loading={loading}
-						getOptionLabel={(option) => _.get(option, [labelKey], '')}
+						getOptionLabel={(option) => get(option, [labelKey], '')}
 						disableCloseOnSelect={disableCloseOnSelect}
 						renderOption={(props, option, { selected }) => {
 							const { key, ...otherProps } = props;
