@@ -12,7 +12,14 @@ import { openDrawer } from '~/store/slices/menu';
 
 import Profile from './Profile';
 
-const Header = () => {
+interface HeaderProps {
+	navigationItems?: Array<{
+		node: React.ReactNode;
+	}>;
+	logoUrl: string;
+}
+
+const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 	const { drawerOpen } = useSelector((state) => state.menu);
 	const dispatch = useDispatch();
 	const theme = useTheme();
@@ -44,33 +51,19 @@ const Header = () => {
 				</Tooltip>
 				<Box sx={{ display: { xs: 'none', lg: 'flex' } }}>
 					<Link to="/">
-						<img src="/images/logo.png" alt="logo" height={40} />
+						<img src={logoUrl} alt="logo" height={40} />
 					</Link>
 				</Box>
 			</Box>
 
 			<Stack spacing={1} direction="row" alignItems="center">
-				<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-					<Link to="/map-world" style={{ textDecoration: 'none' }}>
-						<Button variant="outlined" color="success" startIcon={<MapIcon />}>
-							Bản đồ toàn cầu
-						</Button>
-					</Link>
-				</Box>
-				<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-					<Link to="/map" style={{ textDecoration: 'none' }}>
-						<Button variant="outlined" color="success" startIcon={<MapIcon />}>
-							Bản đồ khu vực
-						</Button>
-					</Link>
-				</Box>
-				<Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-					<Link to="/video" style={{ textDecoration: 'none' }}>
-						<Button variant="outlined" color="primary" startIcon={<VideocamIcon />}>
-							Xem tất cả video
-						</Button>
-					</Link>
-				</Box>
+				{/* Render navigation buttons từ custom array */}
+				{navigationItems.length > 0 &&
+					navigationItems.map((item, index) => (
+						<Box key={index} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+							{item.node}
+						</Box>
+					))}
 				<ThemeToggle />
 				<IconButton aria-label="show 11 new notifications" aria-controls="msgs-menu" aria-haspopup="true">
 					<Badge variant="dot" color="primary">

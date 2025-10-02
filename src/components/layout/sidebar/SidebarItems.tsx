@@ -5,15 +5,15 @@ import { Menu } from '~/components/layout/sidebar/components/Menu';
 import { MenuItem } from '~/components/layout/sidebar/components/MenuItem';
 import { Submenu } from '~/components/layout/sidebar/components/Submenu';
 
-import Menuitems from './MenuItems';
+import { SidebarItem } from './MenuItems';
 
-const SidebarItems = () => {
+const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 	const location = useLocation();
 	const pathDirect = location.pathname;
 
 	// Hàm render menu items từ mảng Menuitems
-	const renderMenuItems = (items: any[]) => {
-		return items.map((item: any) => {
+	const renderMenuItems = (items: SidebarItem[]) => {
+		return items.map((item: SidebarItem) => {
 			// Nếu là navlabel (nhóm chính)
 			if (item.navlabel) {
 				return (
@@ -27,8 +27,8 @@ const SidebarItems = () => {
 	};
 
 	// Hàm render sub menu items
-	const renderSubMenuItems = (subItems: any[]) => {
-		return subItems.map((subItem: any) => {
+	const renderSubMenuItems = (subItems: SidebarItem[]) => {
+		return subItems.map((subItem: SidebarItem) => {
 			// Nếu có subMenu (menu lồng nhau) - luôn tạo Submenu
 			if (subItem.subMenu && subItem.subMenu.length > 0) {
 				return (
@@ -53,7 +53,7 @@ const SidebarItems = () => {
 		});
 	};
 
-	return renderMenuItems(Menuitems);
+	return renderMenuItems(items);
 };
 
 export default SidebarItems;

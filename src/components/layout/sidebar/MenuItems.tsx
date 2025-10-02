@@ -11,7 +11,16 @@ import VideocamIcon from '@mui/icons-material/VideocamOutlined';
 import WidgetsIcon from '@mui/icons-material/WidgetsOutlined';
 import { uniqueId } from 'lodash-es';
 
-const Menuitems = [
+export interface SidebarItem {
+	id: string;
+	navlabel?: boolean;
+	title: string;
+	icon?: any;
+	href?: string;
+	subMenu?: SidebarItem[];
+}
+
+const Menuitems: SidebarItem[] = [
 	{
 		id: uniqueId(),
 		navlabel: true,
