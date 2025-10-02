@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { debounce } from 'lodash-es';
 
-import { useDispatch, useSelector } from '~/store';
-import { setFilterTable } from '~/store/slices/table';
+import { useTableContext } from '~/contexts/AppProvider';
 
 import NTextField from '../input/NTextField';
 
@@ -13,8 +12,7 @@ interface SearchCustomProps {
 }
 
 const SearchCustom = ({ keyName = '', size = 'small' }: SearchCustomProps) => {
-	const dispatch = useDispatch();
-	const { filters } = useSelector((state) => state.table);
+	const { filters, setFilterTable } = useTableContext();
 	// Local state để hiển thị ngay lập tức
 	const [searchValue, setSearchValue] = useState(filters[keyName]?.query?.keyword || '');
 
@@ -22,9 +20,9 @@ const SearchCustom = ({ keyName = '', size = 'small' }: SearchCustomProps) => {
 	const debouncedDispatch = useMemo(
 		() =>
 			debounce((value: string) => {
-				dispatch(setFilterTable({ type: keyName, value: { keyword: value } }));
+				setFilterTable({ type: keyName, value: { keyword: value } });
 			}, 500),
-		[dispatch, keyName]
+		[setFilterTable, keyName]
 	);
 
 	// Sync local state với store khi cần thiết

@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ColumnFiltersState, PaginationState, SortingState } from '@tanstack/react-table';
 import qs from 'qs';
 
-import { useSelector } from '~/store';
+import { useTableContext } from '~/contexts/AppProvider';
 import axiosServices from '~/utils/axios';
 
 interface UseTableProps {
@@ -17,8 +17,8 @@ interface UseTableProps {
 }
 
 const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refetchOnWindowFocus = false, defaultPageSize = 10 }: UseTableProps) => {
-	// Get filter state from store
-	const filtersTable = useSelector((state) => state.table.filters);
+	// Get filter state from context
+	const { filters: filtersTable } = useTableContext();
 
 	// Table state
 	const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: defaultPageSize });

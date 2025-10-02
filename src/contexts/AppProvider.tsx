@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 import { CssBaseline } from '@mui/material';
 import { PaletteMode, ThemeProvider, createTheme } from '@mui/material/styles';
@@ -21,28 +21,55 @@ interface SidebarContextType {
 	setDrawerOpen: (open: boolean) => void;
 }
 
+// Table Context Types
+interface TableContextType {
+	filters: {
+		[key: string]: {
+			query: {
+				[key: string]: string | number;
+			};
+		};
+	};
+	setFilterTable: (payload: { type: string; value: Record<string, string | number> }) => void;
+}
+
 // Combined App Context Type
 interface AppContextType {
 	// Theme
 	theme: ThemeContextType;
 	// Sidebar
 	sidebar: SidebarContextType;
+	// Table
+	table: TableContextType;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 interface AppProviderProps {
 	children: ReactNode;
+	customTheme?: (mode: PaletteMode) => any;
 }
 
-export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+export const AppProvider = ({ children, customTheme }: AppProviderProps) => {
 	// Theme state
 	const [mode, setMode] = useState<PaletteMode>('light');
 	const [isInitialized, setIsInitialized] = useState(false);
-	const theme = createTheme(createCustomTheme(mode));
+
+	// Use custom theme if provided, otherwise use default theme
+	const themeConfig = customTheme ? customTheme(mode) : createCustomTheme(mode);
+	const theme = createTheme(themeConfig);
 
 	// Sidebar state
 	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	// Table state
+	const [filters, setFilters] = useState<{
+		[key: string]: {
+			query: {
+				[key: string]: string | number;
+			};
+		};
+	}>({});
 
 	// Theme effects
 	useEffect(() => {
@@ -98,6 +125,30 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 		setDrawerOpen((prev) => !prev);
 	};
 
+	// Table functions
+	const setFilterTable = (payload: { type: string; value: Record<string, string | number> }) => {
+		setFilters((prevFilters) => {
+			const isExistKey = Object.prototype.hasOwnProperty.call(prevFilters, payload?.type);
+			const query = payload?.value || {};
+
+			if (isExistKey) {
+				return {
+					...prevFilters,
+					[payload.type]: {
+						query: { ...prevFilters[payload.type]?.query, ...query }
+					}
+				};
+			} else {
+				return {
+					...prevFilters,
+					[payload.type]: {
+						query
+					}
+				};
+			}
+		});
+	};
+
 	// Context values
 	const themeContextValue: ThemeContextType = {
 		mode,
@@ -111,9 +162,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 		setDrawerOpen
 	};
 
+	const tableContextValue: TableContextType = {
+		filters,
+		setFilterTable
+	};
+
 	const appContextValue: AppContextType = {
 		theme: themeContextValue,
-		sidebar: sidebarContextValue
+		sidebar: sidebarContextValue,
+		table: tableContextValue
 	};
 
 	return (
@@ -142,4 +199,13 @@ export const useSidebar = (): SidebarContextType => {
 		throw new Error('useSidebar must be used within an AppProvider');
 	}
 	return context.sidebar;
+};
+
+// Table hook
+export const useTableContext = (): TableContextType => {
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error('useTable must be used within an AppProvider');
+	}
+	return context.table;
 };

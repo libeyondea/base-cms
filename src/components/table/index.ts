@@ -5,4 +5,4 @@ export { default as StanstackTable } from './StanstackTable';
 export { default as SubTable } from './SubTable';
 export { default as TableSkeletonRow } from './TableSkeletonRow';
 export { default as TableToolbar } from './TableToolbar';
-export { default as useTable } from './useTable';
+export { default as useTableData } from './useTable';
