@@ -1,5 +1,11 @@
+import PageContainer from '~/components/container/PageContainer';
+
 const Dashboard = () => {
-	return <div>Dashboard</div>;
+	return (
+		<PageContainer title="Dashboard">
+			<div>Dashboard</div>
+		</PageContainer>
+	);
 };
 
 export default Dashboard;

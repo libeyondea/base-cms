@@ -7,8 +7,7 @@ import { Badge, Box, Button, IconButton, Stack, Tooltip, useTheme } from '@mui/m
 import { Link } from 'react-router-dom';
 
 import ThemeToggle from '~/components/ui/ThemeToggle';
-import { useDispatch, useSelector } from '~/store';
-import { openDrawer } from '~/store/slices/menu';
+import { useSidebar } from '~/contexts/AppProvider';
 
 import Profile from './Profile';
 
@@ -20,8 +19,7 @@ interface HeaderProps {
 }
 
 const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
-	const { drawerOpen } = useSelector((state) => state.menu);
-	const dispatch = useDispatch();
+	const { drawerOpen, toggleDrawer } = useSidebar();
 	const theme = useTheme();
 
 	return (
@@ -45,7 +43,7 @@ const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 		>
 			<Box sx={{ display: 'flex', alignItems: 'center' }} gap={1}>
 				<Tooltip title="Menu">
-					<IconButton color="inherit" aria-label="menu" onClick={() => dispatch(openDrawer(!drawerOpen))} size="small">
+					<IconButton color="inherit" aria-label="menu" onClick={toggleDrawer} size="small">
 						{!drawerOpen ? <ReorderIcon /> : <CloseIcon />}
 					</IconButton>
 				</Tooltip>

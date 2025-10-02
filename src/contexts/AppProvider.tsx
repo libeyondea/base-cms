@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 import { CssBaseline } from '@mui/material';
 import { PaletteMode, ThemeProvider, createTheme } from '@mui/material/styles';
@@ -7,25 +7,44 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 import { createCustomTheme } from '~/theme';
 
+// Theme Context Types
 interface ThemeContextType {
 	mode: PaletteMode;
 	toggleTheme: () => void;
 	setThemeMode: (mode: PaletteMode) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-interface ThemeProviderProps {
-	children: React.ReactNode;
+// Sidebar Context Types
+interface SidebarContextType {
+	drawerOpen: boolean;
+	toggleDrawer: () => void;
+	setDrawerOpen: (open: boolean) => void;
 }
 
-export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-	// Initialize with light theme to prevent hydration mismatch
+// Combined App Context Type
+interface AppContextType {
+	// Theme
+	theme: ThemeContextType;
+	// Sidebar
+	sidebar: SidebarContextType;
+}
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+interface AppProviderProps {
+	children: ReactNode;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
+	// Theme state
 	const [mode, setMode] = useState<PaletteMode>('light');
 	const [isInitialized, setIsInitialized] = useState(false);
 	const theme = createTheme(createCustomTheme(mode));
 
-	// Initialize theme from localStorage or system preference
+	// Sidebar state
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	// Theme effects
 	useEffect(() => {
 		const initializeTheme = () => {
 			try {
@@ -65,6 +84,7 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
 		}
 	}, [mode, isInitialized]);
 
+	// Theme functions
 	const toggleTheme = () => {
 		setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
 	};
@@ -73,26 +93,53 @@ export const CustomThemeProvider: React.FC<ThemeProviderProps> = ({ children }) 
 		setMode(newMode);
 	};
 
-	const value = {
+	// Sidebar functions
+	const toggleDrawer = () => {
+		setDrawerOpen((prev) => !prev);
+	};
+
+	// Context values
+	const themeContextValue: ThemeContextType = {
 		mode,
 		toggleTheme,
 		setThemeMode
 	};
 
+	const sidebarContextValue: SidebarContextType = {
+		drawerOpen,
+		toggleDrawer,
+		setDrawerOpen
+	};
+
+	const appContextValue: AppContextType = {
+		theme: themeContextValue,
+		sidebar: sidebarContextValue
+	};
+
 	return (
-		<ThemeContext.Provider value={value}>
+		<AppContext.Provider value={appContextValue}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
 			</ThemeProvider>
-		</ThemeContext.Provider>
+		</AppContext.Provider>
 	);
 };
 
+// Theme hook
 export const useTheme = (): ThemeContextType => {
-	const context = useContext(ThemeContext);
+	const context = useContext(AppContext);
 	if (!context) {
-		throw new Error('useTheme must be used within a CustomThemeProvider');
+		throw new Error('useTheme must be used within an AppProvider');
 	}
-	return context;
+	return context.theme;
+};
+
+// Sidebar hook
+export const useSidebar = (): SidebarContextType => {
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error('useSidebar must be used within an AppProvider');
+	}
+	return context.sidebar;
 };

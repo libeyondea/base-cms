@@ -5,7 +5,7 @@ import { Menu } from '~/components/layout/sidebar/components/Menu';
 import { MenuItem } from '~/components/layout/sidebar/components/MenuItem';
 import { Submenu } from '~/components/layout/sidebar/components/Submenu';
 
-import { SidebarItem } from './MenuItems';
+import { SidebarItem } from '../../../layouts/private/MenuItems';
 
 const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 	const location = useLocation();
