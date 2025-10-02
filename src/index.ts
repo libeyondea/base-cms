@@ -20,7 +20,6 @@ export * from './hooks/useStateValue';
 export * from './hooks/useAudioPlayer';
 
 export * from './contexts/AppProvider';
-export * from './contexts/AppProvider';
 
 export * from './theme';
 
