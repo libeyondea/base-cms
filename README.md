@@ -27,10 +27,10 @@ Library này đã bao gồm các dependencies sau, **không cần cài thêm** �
 - `@hookform/resolvers` (5.2.2)
 - `yup` (1.7.1)
 
-#### State Management
+<!-- #### State Management
 
 - `@reduxjs/toolkit` (2.9.0)
-- `react-redux` (9.2.0)
+- `react-redux` (9.2.0) -->
 
 #### Data & API
 

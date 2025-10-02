@@ -4,7 +4,6 @@ export { default as CustomBreadcrumbs } from './CustomBreadcrumbs';
 export { default as CustomTabs } from './CustomTabs';
 export { default as CustomToast } from './CustomToast';
 export { default as DateRangePicker } from './DateRangePicker';
-export { default as DynamicIcon } from './DynamicIcon';
 export { default as ImageModal } from './ImageModal';
 export { default as MainCard } from './MainCard';
 export { default as MenuCustom } from './MenuCustom';
