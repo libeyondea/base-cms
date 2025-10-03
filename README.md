@@ -16,9 +16,9 @@ Library này đã bao gồm các dependencies sau, **không cần cài thêm** �
 
 - `@emotion/react` (11.14.0)
 - `@emotion/styled` (11.14.1)
-- `@mui/material` (7.3.3)
+- `@mui/material` (7.3.4)
 - `@mui/system` (7.3.3)
-- `@mui/icons-material` (7.3.3)
+- `@mui/icons-material` (7.3.4)
 - `@mui/x-date-pickers` (8.12.0)
 
 #### Form & Validation
@@ -27,10 +27,10 @@ Library này đã bao gồm các dependencies sau, **không cần cài thêm** �
 - `@hookform/resolvers` (5.2.2)
 - `yup` (1.7.1)
 
-<!-- #### State Management
+#### State Management
 
 - `@reduxjs/toolkit` (2.9.0)
-- `react-redux` (9.2.0) -->
+- `react-redux` (9.2.0)
 
 #### Data & API
 
@@ -59,10 +59,10 @@ Library này đã bao gồm các dependencies sau, **không cần cài thêm** �
 Các package sau cần được cài đặt trong project của bạn:
 
 ```bash
-npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3 @reduxjs/toolkit@2.9.0 react-redux@9.2.0
 ```
 
-> ℹ️ **Lý do**: Đây là các peer dependencies để tránh xung đột phiên bản React và routing giữa các project khác nhau.
+> ℹ️ **Lý do**: Đây là các peer dependencies để tránh xung đột phiên bản React, routing và state management giữa các project khác nhau.
 
 ## 🚀 Bắt đầu nhanh
 
@@ -406,10 +406,61 @@ function UserTable() {
 }
 ```
 
+### Sử dụng State Management
+
+```tsx
+import React from 'react';
+
+import { AppProvider, useStateValue } from '@libeyondea/base-cms';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+
+// Tạo slice
+const userSlice = createSlice({
+	name: 'user',
+	initialState: { name: '', email: '' },
+	reducers: {
+		setUser: (state, action) => {
+			state.name = action.payload.name;
+			state.email = action.payload.email;
+		}
+	}
+});
+
+// Tạo store
+const store = configureStore({
+	reducer: {
+		user: userSlice.reducer
+	}
+});
+
+function UserProfile() {
+	const { state, dispatch } = useStateValue();
+
+	const handleSetUser = () => {
+		dispatch({
+			type: 'user/setUser',
+			payload: { name: 'Nguyễn Văn A', email: 'a@example.com' }
+		});
+	};
+
+	return (
+		<AppProvider store={store}>
+			<div>
+				<h2>Thông tin người dùng</h2>
+				<p>Tên: {state.user?.name || 'Chưa có'}</p>
+				<p>Email: {state.user?.email || 'Chưa có'}</p>
+				<button onClick={handleSetUser}>Cập nhật thông tin</button>
+			</div>
+		</AppProvider>
+	);
+}
+```
+
 ## 🎯 Tính năng chính
 
 - ✅ **Form Management**: Tích hợp React Hook Form với Yup validation
 - ✅ **Table System**: Bảng dữ liệu mạnh mẽ với TanStack Table
+- ✅ **State Management**: Tích hợp Redux Toolkit cho quản lý state
 - ✅ **Theme System**: Hệ thống theme linh hoạt với dark/light mode
 - ✅ **UI Components**: Bộ component UI đầy đủ và tùy chỉnh được
 - ✅ **Utilities**: Các utility functions hữu ích
