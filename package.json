@@ -1,9 +1,8 @@
 {
-	"name": "@libeyondea/base-cms-monorepo",
+	"name": "@libeyondea/base-cms",
 	"version": "1.0.8",
-	"private": true,
 	"type": "module",
-	"description": "Base CMS library for React - Monorepo",
+	"description": "Base CMS library for React",
 	"author": "Nguyen Thuc",
 	"license": "MIT",
 	"repository": {

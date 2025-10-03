@@ -1,6 +1,6 @@
 {
 	"name": "@libeyondea/base-cms-dev",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"type": "module",
 	"description": "Development dependencies for Base CMS library",
 	"author": "Nguyen Thuc",
