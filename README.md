@@ -1,6 +1,6 @@
-# Base CMS
+# Base CMS - Monorepo
 
-Base CMS library for React
+Base CMS library for React - Monorepo structure
 
 ## Packages
 
