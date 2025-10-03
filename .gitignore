@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Build output
+packages/*/dist
+packages/*/dist-ssr
+
+# Backup files
+*.backup

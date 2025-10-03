@@ -20,7 +20,7 @@ const Profile = () => {
 
 	const handleLogout = () => {
 		try {
-			removeCookie('AuthToken');
+			removeCookie('service_token');
 			dispatch(signout());
 		} catch (err) {
 			console.error(err);
