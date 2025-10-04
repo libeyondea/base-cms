@@ -7,7 +7,7 @@ import { useDispatch } from '~/store';
 import { signout } from '~/store/slices/auth';
 import { removeCookie } from '~/utils/cookie';
 
-const Profile = () => {
+export const Profile = () => {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 	const dispatch = useDispatch();
 
@@ -66,5 +66,3 @@ const Profile = () => {
 		</Box>
 	);
 };
-
-export default Profile;

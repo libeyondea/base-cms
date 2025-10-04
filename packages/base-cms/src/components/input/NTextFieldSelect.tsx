@@ -12,7 +12,7 @@ type NTextFieldSelectProps = TextFieldProps & {
 	sx?: SxProps<Theme>;
 };
 
-const NTextFieldSelect = ({
+export const NTextFieldSelect = ({
 	valueKey = 'id',
 	labelKey = 'name',
 	colorKey = 'color',
@@ -70,5 +70,3 @@ const NTextFieldSelect = ({
 		</TextField>
 	);
 };
-
-export default NTextFieldSelect;

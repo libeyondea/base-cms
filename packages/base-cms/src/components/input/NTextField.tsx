@@ -5,7 +5,7 @@ type NTextFieldProps = TextFieldProps & {
 	sx?: SxProps<Theme>;
 };
 
-const NTextField = ({ value, fullWidth = true, size = 'medium', sx, ...props }: NTextFieldProps) => {
+export const NTextField = ({ value, fullWidth = true, size = 'medium', sx, ...props }: NTextFieldProps) => {
 	return (
 		<TextField
 			{...props}
@@ -18,5 +18,3 @@ const NTextField = ({ value, fullWidth = true, size = 'medium', sx, ...props }: 
 		/>
 	);
 };
-
-export default NTextField;

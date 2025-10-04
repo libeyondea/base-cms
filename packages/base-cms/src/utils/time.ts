@@ -1,35 +1,35 @@
-import moment, { MomentInput } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 
 export const fTimeNow = () => {
-	return moment().format('HH:mm');
+	return dayjs().format('HH:mm');
 };
 
 export const fDateNow = () => {
-	return moment().format('YYYY-MM-DD');
+	return dayjs().format('YYYY-MM-DD');
 };
 
 export const fDateTimeNow = () => {
-	return moment().format('YYYY-MM-DD HH:mm');
+	return dayjs().format('YYYY-MM-DD HH:mm');
 };
 
-export const fTime = (date: MomentInput, newFormat?: string) => {
+export const fTime = (date: string | number | Date | Dayjs | null | undefined, newFormat?: string) => {
 	const fm = newFormat || 'HH:mm';
 
-	return date ? moment(date).format(fm) : '';
+	return date ? dayjs(date).format(fm) : '';
 };
 
-export const fDate = (date: MomentInput, newFormat?: string) => {
+export const fDate = (date: string | number | Date | Dayjs | null | undefined, newFormat?: string) => {
 	const fm = newFormat || 'DD/MM/YYYY';
 
-	return date ? moment(date).format(fm) : '';
+	return date ? dayjs(date).format(fm) : '';
 };
 
-export const fDateTime = (date: MomentInput, newFormat?: string) => {
+export const fDateTime = (date: string | number | Date | Dayjs | null | undefined, newFormat?: string) => {
 	const fm = newFormat || 'DD/MM/YYYY HH:mm';
 
-	return date ? moment(date).format(fm) : '';
+	return date ? dayjs(date).format(fm) : '';
 };
 
-export const fTimestamp = (date: MomentInput) => {
-	return date ? moment(date).valueOf() : '';
+export const fTimestamp = (date: string | number | Date | Dayjs | null | undefined) => {
+	return date ? dayjs(date).valueOf() : '';
 };

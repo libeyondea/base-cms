@@ -6,9 +6,9 @@ import { Box, Button, Card, CardContent, Container, Grid, IconButton, InputAdorn
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import PageContainer from '~/components/container/PageContainer';
-import FormProvider from '~/components/forms/FormProvider';
-import RHFTextField from '~/components/forms/RHFTextField';
+import { FormProvider } from '~/components/Form/FormProvider';
+import { RHFTextField } from '~/components/Form/RHFTextField';
+import { PageContainer } from '~/components/PageContainer';
 import useAuthApi from '~/hooks/api/useAuthApi';
 import { useDispatch } from '~/store';
 import { signin } from '~/store/slices/auth';

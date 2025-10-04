@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { showToast } from '~/components/ui/CustomToast';
-import AuthService from '~/service/authService';
+import { showToast } from '~/components/Toastify';
+import { AuthService } from '~/service/authService';
 
 const authService = new AuthService();
 

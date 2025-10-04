@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { showToast } from '~/components/ui/CustomToast';
-import UserService from '~/service/userService';
+import { showToast } from '~/components/Toastify';
+import { UserService } from '~/service/userService';
 import { FilterObject, IApi } from '~/types/hook';
 
 const userService = new UserService();

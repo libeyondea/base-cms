@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 import { Navigate, useLocation } from 'react-router-dom';
 
-import LoadingScreen from '~/components/loading/LoadingScreen';
-import AuthService from '~/service/authService';
+import { LoadingScreen } from '~/components/LoadingScreen';
+import { AuthService } from '~/service/authService';
 import { useDispatch, useSelector } from '~/store';
 import { signin, signout } from '~/store/slices/auth';
 import { getCookie, removeCookie } from '~/utils/cookie';

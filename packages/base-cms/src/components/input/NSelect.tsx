@@ -15,7 +15,7 @@ type NSelectProps = SelectProps & {
 	error?: boolean;
 };
 
-const NSelect = ({
+export const NSelect = ({
 	valueKey = 'id',
 	labelKey = 'name',
 	colorKey = 'color',
@@ -79,5 +79,3 @@ const NSelect = ({
 		</FormControl>
 	);
 };
-
-export default NSelect;

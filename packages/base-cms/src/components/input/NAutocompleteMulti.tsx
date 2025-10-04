@@ -30,7 +30,7 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	errorMessage?: string;
 };
 
-const NAutocompleteMulti = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
+export const NAutocompleteMulti = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
 	valueKey = 'id',
 	labelKey = 'name',
 	isObject = false,
@@ -188,5 +188,3 @@ const NAutocompleteMulti = <T extends DataProp, ChipComponent extends React.Elem
 		/>
 	);
 };
-
-export default NAutocompleteMulti;

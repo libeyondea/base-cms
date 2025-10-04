@@ -1,4 +1,4 @@
-import PageContainer from '~/components/container/PageContainer';
+import { PageContainer } from '~/components/PageContainer';
 
 const Dashboard = () => {
 	return (

@@ -1,13 +1,21 @@
-export const REQUIRED_MESSAGE = 'Trường này là bắt buộc';
+export const REQUIRED_MESSAGE = 'Trường này là bắt buộc.';
 
 export const USER_CONSTANT = [
 	{
 		id: 0,
-		name: 'Quản trị viên'
+		name: 'Owner'
 	},
 	{
 		id: 1,
-		name: 'Nhân viên'
+		name: 'Manager'
+	},
+	{
+		id: 2,
+		name: 'Admin'
+	},
+	{
+		id: 3,
+		name: 'Staff'
 	}
 ];
 
@@ -22,7 +30,7 @@ export const STATUS_CONSTANT = [
 	}
 ];
 
-export const WEEK_DAYS = [
+export const WEEK_DAYS_CONSTANT = [
 	{
 		id: '0',
 		name: 'CN'

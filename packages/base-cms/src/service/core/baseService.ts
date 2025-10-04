@@ -2,7 +2,7 @@ import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import qs from 'qs';
 
 import { FilterObject, IUniqueId } from '~/types/hook';
-import axiosServices from '~/utils/axios';
+import { axiosServices } from '~/utils/axios';
 
 // Interface cho response API
 export interface ApiResponse<T = any> {

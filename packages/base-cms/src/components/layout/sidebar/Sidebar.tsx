@@ -1,18 +1,20 @@
 import { Divider, Drawer, useMediaQuery, useTheme } from '@mui/material';
 
-import { Logo } from '~/components/layout/sidebar/components/Logo';
-import { Sidebar } from '~/components/layout/sidebar/components/Sidebar';
 import { useSidebar } from '~/contexts/AppProvider';
 
-import { SidebarItem } from '../../../layouts/private/MenuItems';
-import SidebarItems from './SidebarItems';
+import { SidebarItem } from './Sidebar.types';
+import { SidebarItems } from './SidebarItems';
+import { Logo } from './components/Logo';
+import { Sidebar as SidebarComponent } from './components/Sidebar';
 
 interface MSidebarProps {
 	items: SidebarItem[];
 	logoUrl: string;
+	logoWidth?: string | number;
+	logoHeight?: string | number;
 }
 
-const MSidebar = ({ items, logoUrl }: MSidebarProps) => {
+export const Sidebar = ({ items, logoUrl, logoWidth, logoHeight }: MSidebarProps) => {
 	const theme = useTheme();
 	const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up('lg'));
 	const { drawerOpen, toggleDrawer } = useSidebar();
@@ -26,23 +28,21 @@ const MSidebar = ({ items, logoUrl }: MSidebarProps) => {
 					flexShrink: 0
 				}}
 			>
-				<Sidebar width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
-					<Logo href="/" img={logoUrl} />
+				<SidebarComponent width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
+					<Logo href="/" img={logoUrl} width={logoWidth} height={logoHeight} />
 					<Divider />
 					<SidebarItems items={items} />
-				</Sidebar>
+				</SidebarComponent>
 			</Drawer>
 		);
 	}
 
 	return (
 		<Drawer open={drawerOpen} onClose={toggleDrawer} sx={{ flexShrink: 0 }}>
-			<Sidebar width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
-				<Logo href="/" img={logoUrl} />
+			<SidebarComponent width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
+				<Logo href="/" img={logoUrl} width={logoWidth} height={logoHeight} />
 				<SidebarItems items={items} />
-			</Sidebar>
+			</SidebarComponent>
 		</Drawer>
 	);
 };
-
-export default MSidebar;

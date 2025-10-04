@@ -1,4 +1,4 @@
-export { createCustomTheme } from './theme';
+export * from './theme';
 
 // Theme utilities
 export const getThemeSpacing = (factor: number) => `${8 * factor}px`;

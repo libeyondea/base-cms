@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 
-import { ToastContainer } from './components/ui/CustomToast';
+import { Toastify } from './components/Toastify';
 import { AppProvider } from './contexts/AppProvider';
 import Routes from './routes';
 import { store } from './store';
@@ -21,7 +21,7 @@ const App = () => {
 			<QueryClientProvider client={queryClient}>
 				<AppProvider>
 					<Routes />
-					<ToastContainer />
+					<Toastify />
 				</AppProvider>
 			</QueryClientProvider>
 		</Provider>

@@ -1,11 +1,9 @@
-import { isArray, isEmpty, isObject } from 'lodash-es';
-
 export const isNonEmptyArray = (arr: any): arr is any[] => {
-	return isArray(arr) && !isEmpty(arr);
+	return Array.isArray(arr) && arr.length > 0;
 };
 
 export const isNonEmptyObject = (obj: any): obj is object => {
-	return isObject(obj) && !isEmpty(obj);
+	return obj !== null && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length > 0;
 };
 
 export const formatArray = <T = any>(arr: any): T[] => {

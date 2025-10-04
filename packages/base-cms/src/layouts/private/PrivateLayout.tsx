@@ -1,8 +1,8 @@
 import { Box, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 
-import Header from '~/components/layout/header/Header';
-import { Sidebar } from '~/components/layout/sidebar';
+import { Header } from '~/components/Layout/Header/Header';
+import { Sidebar } from '~/components/Layout/SideBar/Sidebar';
 
 import Menuitems from './MenuItems';
 

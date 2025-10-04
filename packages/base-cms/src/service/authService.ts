@@ -1,6 +1,6 @@
 import { BaseService } from '~/service/core/baseService';
 
-export default class AuthService extends BaseService {
+export class AuthService extends BaseService {
 	constructor() {
 		super('');
 	}

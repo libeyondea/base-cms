@@ -11,14 +11,7 @@ import VideocamIcon from '@mui/icons-material/VideocamOutlined';
 import WidgetsIcon from '@mui/icons-material/WidgetsOutlined';
 import { uniqueId } from 'lodash-es';
 
-export interface SidebarItem {
-	id: string;
-	navlabel?: boolean;
-	title: string;
-	icon?: any;
-	href?: string;
-	subMenu?: SidebarItem[];
-}
+import { SidebarItem } from '~/components/Layout';
 
 const Menuitems: SidebarItem[] = [
 	{
@@ -99,12 +92,12 @@ const Menuitems: SidebarItem[] = [
 				icon: GroupIcon,
 				href: '/group'
 			},
-			// {
-			// 	id: uniqueId(),
-			// 	title: 'Cài đặt',
-			// 	icon: SettingsIcon,
-			// 	href: '/setting'
-			// },
+			{
+				id: uniqueId(),
+				title: 'Cài đặt',
+				icon: SettingsIcon,
+				href: '/setting'
+			},
 			{
 				id: uniqueId(),
 				title: 'Nhật ký hoạt động',

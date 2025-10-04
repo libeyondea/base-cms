@@ -1,13 +1,12 @@
 import { Link } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
-import { Menu } from '~/components/layout/sidebar/components/Menu';
-import { MenuItem } from '~/components/layout/sidebar/components/MenuItem';
-import { Submenu } from '~/components/layout/sidebar/components/Submenu';
+import { SidebarItem } from './Sidebar.types';
+import { Menu } from './components/Menu';
+import { MenuItem } from './components/MenuItem';
+import { Submenu } from './components/Submenu';
 
-import { SidebarItem } from '../../../layouts/private/MenuItems';
-
-const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
+export const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 	const location = useLocation();
 	const pathDirect = location.pathname;
 
@@ -55,5 +54,3 @@ const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 
 	return renderMenuItems(items);
 };
-
-export default SidebarItems;

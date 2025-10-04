@@ -13,7 +13,7 @@ export type DeleteConfirmOptions = ConfirmOptions & {
 	itemType?: string;
 };
 
-const useSweetAlert = () => {
+export const useSweetAlert = () => {
 	// Success alert
 	const showSuccess = useCallback((options: SweetAlertOptions | string) => {
 		const config: SweetAlertOptions =
@@ -210,5 +210,3 @@ const useSweetAlert = () => {
 		Swal
 	};
 };
-
-export default useSweetAlert;

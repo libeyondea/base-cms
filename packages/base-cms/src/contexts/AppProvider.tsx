@@ -1,14 +1,15 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
 
 import { CssBaseline } from '@mui/material';
-import { PaletteMode, ThemeProvider, createTheme } from '@mui/material/styles';
+import { PaletteMode, Theme, ThemeProvider, createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { createCustomTheme } from '~/theme';
 
 // Theme Context Types
 interface ThemeContextType {
+	theme: Theme;
 	mode: PaletteMode;
 	toggleTheme: () => void;
 	setThemeMode: (mode: PaletteMode) => void;
@@ -151,6 +152,7 @@ export const AppProvider = ({ children, customTheme }: AppProviderProps) => {
 
 	// Context values
 	const themeContextValue: ThemeContextType = {
+		theme,
 		mode,
 		toggleTheme,
 		setThemeMode
@@ -177,7 +179,7 @@ export const AppProvider = ({ children, customTheme }: AppProviderProps) => {
 		<AppContext.Provider value={appContextValue}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<LocalizationProvider dateAdapter={AdapterMoment}>{children}</LocalizationProvider>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
 			</ThemeProvider>
 		</AppContext.Provider>
 	);

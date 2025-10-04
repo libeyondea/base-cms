@@ -1,7 +1,7 @@
 import terser from '@rollup/plugin-terser';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 
@@ -10,7 +10,7 @@ export default defineConfig({
 	plugins: [
 		react(),
 		terser(),
-		visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: true }),
+		// visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: true }),
 		dts({
 			include: ['src'],
 			outDir: 'dist',
@@ -32,15 +32,13 @@ export default defineConfig({
 			formats: ['es']
 		},
 		rollupOptions: {
-			external: ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime', 'react-redux', '@reduxjs/toolkit'],
+			external: ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime'],
 			output: {
 				globals: {
 					react: 'React',
 					'react-dom': 'ReactDOM',
 					'react-router-dom': 'ReactRouterDOM',
-					'react/jsx-runtime': 'ReactJSXRuntime',
-					'react-redux': 'ReactRedux',
-					'@reduxjs/toolkit': 'ReduxToolkit'
+					'react/jsx-runtime': 'ReactJSXRuntime'
 				}
 			}
 		}

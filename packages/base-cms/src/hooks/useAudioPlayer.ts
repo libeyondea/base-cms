@@ -13,7 +13,7 @@ interface UseAudioPlayerReturn {
  * @param defaultSrc - Default audio source
  * @returns Object with audio control functions and state
  */
-const useAudioPlayer = (defaultSrc?: string): UseAudioPlayerReturn => {
+export const useAudioPlayer = (defaultSrc?: string): UseAudioPlayerReturn => {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const playPromiseRef = useRef<Promise<void> | null>(null);
@@ -114,5 +114,3 @@ const useAudioPlayer = (defaultSrc?: string): UseAudioPlayerReturn => {
 		setVolume
 	};
 };
-
-export default useAudioPlayer;

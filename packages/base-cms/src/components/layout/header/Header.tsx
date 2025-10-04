@@ -1,15 +1,13 @@
 import CloseIcon from '@mui/icons-material/Close';
-import MapIcon from '@mui/icons-material/Map';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import ReorderIcon from '@mui/icons-material/Reorder';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import { Badge, Box, Button, IconButton, Stack, Tooltip, useTheme } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Badge, Box, IconButton, Stack, Tooltip, useTheme } from '@mui/material';
 
-import ThemeToggle from '~/components/ui/ThemeToggle';
 import { useSidebar } from '~/contexts/AppProvider';
 
-import Profile from './Profile';
+import { Logo } from '../SideBar/components/Logo';
+import { Profile } from './Profile';
+import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
 	navigationItems?: Array<{
@@ -18,7 +16,7 @@ interface HeaderProps {
 	logoUrl: string;
 }
 
-const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
+export const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 	const { drawerOpen, toggleDrawer } = useSidebar();
 	const theme = useTheme();
 
@@ -47,15 +45,10 @@ const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 						{!drawerOpen ? <ReorderIcon /> : <CloseIcon />}
 					</IconButton>
 				</Tooltip>
-				<Box sx={{ display: { xs: 'none', lg: 'flex' } }}>
-					<Link to="/">
-						<img src={logoUrl} alt="logo" height={40} />
-					</Link>
-				</Box>
+				<Logo img={logoUrl} />
 			</Box>
 
 			<Stack spacing={1} direction="row" alignItems="center">
-				{/* Render navigation buttons từ custom array */}
 				{navigationItems.length > 0 &&
 					navigationItems.map((item, index) => (
 						<Box key={index} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -73,5 +66,3 @@ const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 		</Box>
 	);
 };
-
-export default Header;

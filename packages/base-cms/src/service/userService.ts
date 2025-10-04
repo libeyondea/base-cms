@@ -1,7 +1,7 @@
 import { BaseService } from '~/service/core/baseService';
 import { FilterObject } from '~/types/hook';
 
-export default class UserService extends BaseService {
+export class UserService extends BaseService {
 	constructor() {
 		super('/user');
 	}
