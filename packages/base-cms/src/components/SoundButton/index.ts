@@ -1,2 +1,2 @@
 export * from './SoundButton';
-export * from './SoundButton.types';
+export type * from './SoundButton.types';

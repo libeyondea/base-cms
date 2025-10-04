@@ -1,2 +1,2 @@
 export * from './StatusChip';
-export * from './StatusChip.types';
+export type * from './StatusChip.types';

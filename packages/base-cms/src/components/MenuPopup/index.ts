@@ -1,2 +1,2 @@
 export * from './MenuPopup';
-export * from './MenuPopup.types';
+export type * from './MenuPopup.types';

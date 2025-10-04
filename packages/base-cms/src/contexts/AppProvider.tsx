@@ -4,8 +4,19 @@ import { CssBaseline } from '@mui/material';
 import { PaletteMode, Theme, ThemeProvider, createTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createCustomTheme } from '~/theme';
+
+// Default QueryClient instance
+const defaultQueryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+			refetchOnWindowFocus: false
+		}
+	}
+});
 
 // Theme Context Types
 interface ThemeContextType {
@@ -49,9 +60,13 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 interface AppProviderProps {
 	children: ReactNode;
 	customTheme?: (mode: PaletteMode) => any;
+	queryClient?: QueryClient;
 }
 
-export const AppProvider = ({ children, customTheme }: AppProviderProps) => {
+export const AppProvider = ({ children, customTheme, queryClient }: AppProviderProps) => {
+	// Use custom queryClient if provided, otherwise use default
+	const client = queryClient || defaultQueryClient;
+
 	// Theme state
 	const [mode, setMode] = useState<PaletteMode>('light');
 	const [isInitialized, setIsInitialized] = useState(false);
@@ -176,12 +191,14 @@ export const AppProvider = ({ children, customTheme }: AppProviderProps) => {
 	};
 
 	return (
-		<AppContext.Provider value={appContextValue}>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
-			</ThemeProvider>
-		</AppContext.Provider>
+		<QueryClientProvider client={client}>
+			<AppContext.Provider value={appContextValue}>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
+				</ThemeProvider>
+			</AppContext.Provider>
+		</QueryClientProvider>
 	);
 };
 

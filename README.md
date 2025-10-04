@@ -1,77 +1,403 @@
-# Base CMS - Monorepo
+# 📦 Base CMS - Monorepo
 
-Base CMS library for React - Monorepo structure
+> Thư viện React CMS hiện đại và mạnh mẽ với kiến trúc monorepo, cung cấp bộ công cụ hoàn chỉnh để xây dựng hệ thống quản trị nội dung chuyên nghiệp.
 
-## Packages
+[![npm version](https://img.shields.io/npm/v/@libeyondea/base-cms.svg)](https://www.npmjs.com/package/@libeyondea/base-cms)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-This monorepo contains two packages:
+## 📋 Mục lục
 
-### [@libeyondea/base-cms](./packages/base-cms)
+- [Tổng quan](#-tổng-quan)
+- [Packages](#-packages)
+- [Cài đặt nhanh](#-cài-đặt-nhanh)
+- [Development](#-development)
+- [Scripts](#-scripts)
+- [Cấu trúc Workspace](#-cấu-trúc-workspace)
+- [Lợi ích của Kiến trúc Monorepo](#-lợi-ích-của-kiến-trúc-monorepo)
+- [Publishing](#-publishing)
+- [License](#-license)
 
-Main library package containing all React components, hooks, layouts, and utilities for building CMS applications.
+## 🎯 Tổng quan
 
-### [@libeyondea/base-cms-dev](./packages/base-cms-dev)
+**Base CMS** là một thư viện React được xây dựng theo kiến trúc monorepo, cung cấp các component, hooks, layouts và utilities được tối ưu hóa để phát triển ứng dụng CMS một cách nhanh chóng và hiệu quả. Dự án được tổ chức thành 2 packages độc lập nhưng hoạt động cùng nhau một cách liền mạch.
 
-Development dependencies package that bundles all the dev tools needed for working with `@libeyondea/base-cms`.
+### ✨ Tính năng nổi bật
 
-## Quick Start
+- 🎨 **UI Components phong phú**: Hơn 40+ components được tùy chỉnh dựa trên Material-UI v7
+- 📝 **Form Management hoàn chỉnh**: Tích hợp React Hook Form + Yup validation
+- 📊 **Table System mạnh mẽ**: Powered by TanStack Table v8
+- 🎨 **Theme System linh hoạt**: Hỗ trợ Dark/Light mode với customization đầy đủ
+- 🔧 **Developer Experience tốt**: TypeScript support, ESLint, Prettier
+- 📦 **Package Management đơn giản**: Chỉ cần 2 packages thay vì 20+ dependencies
+- 🚀 **Production-ready**: Build với Vite, optimized và tree-shakeable
 
-### For Users
+## 📦 Packages
 
-Install both packages:
+Monorepo này bao gồm 2 packages chính:
+
+### 1. [@libeyondea/base-cms](./packages/base-cms)
+
+**Package chính** - Thư viện React CMS với đầy đủ components, hooks và utilities.
+
+- 📍 **Path**: `packages/base-cms`
+- 📊 **Version**: v1.0.19
+- 📦 **Bundle**: ES Module (tree-shakeable)
+- 📝 **TypeScript**: Full type definitions included
+
+**Bao gồm:**
+
+- ✅ 40+ UI Components (Form, Table, Layout, Navigation, etc.)
+- ✅ Custom Hooks (useStateValue, useAudioPlayer, useSweetAlert)
+- ✅ Theme System với Material-UI v7
+- ✅ Utilities (axios, time, format, cookie, color)
+- ✅ Base Service class cho API integration
+- ✅ Layouts (Auth, Private, Public)
+- ✅ TypeScript declarations
+
+**Dependencies chính:**
+
+- React 19.2.0 + React Router DOM 7.9.3
+- Material-UI v7 ecosystem
+- Redux Toolkit 2.9.0 + React Redux 9.2.0
+- React Hook Form 7.63.0 + Yup 1.7.1
+- TanStack React Query 5.90.2 + TanStack React Table 8.21.3
+
+### 2. [@libeyondea/base-cms-dev](./packages/base-cms-dev)
+
+**Dev Dependencies Package** - Bundle tất cả development tools cần thiết.
+
+- 📍 **Path**: `packages/base-cms-dev`
+- 📊 **Version**: v1.0.12
+- 🎯 **Mục đích**: Đơn giản hóa việc cài đặt dev dependencies
+
+**Bao gồm:**
+
+- ✅ Build Tools: TypeScript 5.9.3, Vite 7.1.9, Rollup plugins
+- ✅ Linting & Formatting: ESLint 9.36.0, Prettier 3.6.2
+- ✅ Type Definitions: @types/\* cho tất cả dependencies
+- ✅ Development Utilities: Vite plugins, visualizer
+
+## 🚀 Cài đặt nhanh
+
+### Cho người dùng cuối (End Users)
+
+Cài đặt cả 2 packages trong project của bạn:
 
 ```bash
-# Install the main library
+# Cài đặt library chính
 npm install @libeyondea/base-cms
 
-# Install dev dependencies (instead of installing each one individually)
+# Cài đặt dev dependencies (thay vì cài từng package riêng lẻ)
+npm install --save-dev @libeyondea/base-cms-dev
+
+# Cài đặt peer dependencies bắt buộc
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3
+```
+
+### Cho Contributors & Maintainers
+
+Clone và setup môi trường development:
+
+```bash
+# Clone repository
+git clone https://github.com/libeyondea/base-cms.git
+cd base-cms
+
+# Cài đặt tất cả dependencies cho workspace
+npm install
+
+# Build package
+npm run build
+
+# Start development server
+npm run dev
+```
+
+## 🛠️ Development
+
+### Yêu cầu hệ thống
+
+- **Node.js**: >= 18.0.0
+- **npm**: >= 9.0.0
+- **Git**: Latest stable version
+
+### Development Workflow
+
+```bash
+# 1. Cài đặt dependencies
+npm install
+
+# 2. Start development server (port 1000)
+npm run dev
+
+# 3. Build packages
+npm run build
+
+# 4. Lint code
+npm run lint
+
+# 5. Preview build
+npm run preview
+```
+
+### Thư mục làm việc
+
+- **Source code**: `packages/base-cms/src/`
+- **Build output**: `packages/base-cms/dist/`
+- **Dev package**: `packages/base-cms-dev/`
+
+## 📜 Scripts
+
+### Root Level Scripts
+
+| Script            | Mô tả                                    | Command                                            |
+| ----------------- | ---------------------------------------- | -------------------------------------------------- |
+| `npm run dev`     | Chạy dev server cho base-cms (port 1000) | `npm run dev --workspace=@libeyondea/base-cms`     |
+| `npm run build`   | Build package base-cms                   | `npm run build --workspace=@libeyondea/base-cms`   |
+| `npm run lint`    | Lint code của base-cms                   | `npm run lint --workspace=@libeyondea/base-cms`    |
+| `npm run preview` | Preview build của base-cms (port 1000)   | `npm run preview --workspace=@libeyondea/base-cms` |
+
+### Package Level Scripts (base-cms)
+
+```bash
+cd packages/base-cms
+
+npm run dev      # Vite dev server
+npm run build    # TypeScript build + Vite build
+npm run lint     # ESLint check
+npm run preview  # Preview production build
+```
+
+## 📁 Cấu trúc Workspace
+
+```
+base-cms/                           # Root directory (monorepo)
+├── packages/
+│   ├── base-cms/                   # Main library package
+│   │   ├── src/                    # Source code
+│   │   │   ├── components/         # React components (40+)
+│   │   │   │   ├── Avatar/
+│   │   │   │   ├── Breadcrumbs/
+│   │   │   │   ├── Form/           # Form components (15 files)
+│   │   │   │   ├── Input/
+│   │   │   │   ├── Layout/
+│   │   │   │   ├── MainCard/
+│   │   │   │   ├── StanstackTable/ # Table system
+│   │   │   │   └── ...
+│   │   │   ├── contexts/           # React contexts
+│   │   │   │   └── AppProvider.tsx # Main context provider
+│   │   │   ├── hooks/              # Custom hooks
+│   │   │   │   ├── api/            # API hooks
+│   │   │   │   ├── useStateValue.ts
+│   │   │   │   ├── useAudioPlayer.ts
+│   │   │   │   └── useSweetAlert.ts
+│   │   │   ├── layouts/            # Layout components
+│   │   │   │   ├── auth/
+│   │   │   │   ├── private/
+│   │   │   │   └── public/
+│   │   │   ├── routes/             # Routing system
+│   │   │   ├── service/            # API services
+│   │   │   │   ├── core/
+│   │   │   │   │   └── baseService.ts
+│   │   │   │   ├── authService.ts
+│   │   │   │   └── userService.ts
+│   │   │   ├── store/              # Redux store
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── reducer.ts
+│   │   │   │   └── slices/
+│   │   │   ├── theme/              # Theme configuration
+│   │   │   │   ├── index.ts
+│   │   │   │   └── theme.ts
+│   │   │   ├── utils/              # Utility functions
+│   │   │   │   ├── axios.ts
+│   │   │   │   ├── color.ts
+│   │   │   │   ├── constant.ts
+│   │   │   │   ├── cookie.ts
+│   │   │   │   ├── formatArray.ts
+│   │   │   │   ├── formatChacter.ts
+│   │   │   │   ├── formData.ts
+│   │   │   │   └── time.ts
+│   │   │   ├── views/              # Example views
+│   │   │   ├── config.ts           # Configuration
+│   │   │   ├── index.ts            # Main export file
+│   │   │   └── main.tsx            # Dev entry point
+│   │   ├── dist/                   # Build output
+│   │   │   ├── base-cms.es.js      # ES module build
+│   │   │   ├── base-cms.css        # Styles
+│   │   │   └── *.d.ts              # Type definitions
+│   │   ├── public/                 # Static assets
+│   │   ├── package.json
+│   │   ├── vite.config.ts          # Vite configuration
+│   │   ├── tsconfig.json           # TypeScript config
+│   │   └── README.md               # Package documentation
+│   │
+│   └── base-cms-dev/               # Dev dependencies package
+│       ├── package.json            # Dev tools manifest
+│       └── README.md               # Dev package docs
+│
+├── scripts/
+│   └── publish.ps1                 # PowerShell publish script
+├── package.json                    # Root workspace config
+├── LICENSE                         # MIT License
+└── README.md                       # This file
+```
+
+### Giải thích cấu trúc
+
+#### `packages/base-cms/`
+
+- **`src/components/`**: Tất cả React components được chia theo chức năng
+- **`src/contexts/`**: React Context providers (theme, sidebar, table)
+- **`src/hooks/`**: Custom hooks tái sử dụng
+- **`src/service/`**: Base service class và API services
+- **`src/theme/`**: Theme configuration cho Material-UI
+- **`src/utils/`**: Utility functions (format, time, axios, etc.)
+- **`dist/`**: Output sau khi build (ES module + type definitions)
+
+#### `packages/base-cms-dev/`
+
+- Package chỉ chứa `package.json` với dev dependencies
+- Không có source code, chỉ là dependency bundler
+
+## 💡 Lợi ích của Kiến trúc Monorepo
+
+### 1. **Đơn giản hóa việc cài đặt**
+
+❌ **Trước đây** (20+ dependencies):
+
+```bash
+npm install typescript vite eslint prettier @types/react @types/node ...
+# và 15+ packages khác
+```
+
+✅ **Bây giờ** (chỉ 2 packages):
+
+```bash
+npm install @libeyondea/base-cms
 npm install --save-dev @libeyondea/base-cms-dev
 ```
 
-### For Development
+### 2. **Version Consistency**
 
-Clone and install:
+- Tất cả dev tools được versioned cùng nhau
+- Không lo xung đột phiên bản giữa các tools
+- Đảm bảo compatibility 100%
 
-```bash
-git clone https://github.com/libeyondea/base-cms.git
-cd base-cms
-npm install
+### 3. **Easier Maintenance**
+
+- Update dev dependencies ở một nơi duy nhất
+- Publish một lần, áp dụng cho tất cả projects
+- Giảm thiểu breaking changes
+
+### 4. **Better Developer Experience**
+
+- `package.json` của user projects gọn gàng hơn
+- Không cần quan tâm đến từng dev dependency
+- Focus vào business logic thay vì configuration
+
+### 5. **Reusability**
+
+- Tất cả components, hooks, utilities có thể tái sử dụng
+- Type-safe với TypeScript
+- Tree-shakeable build (chỉ import những gì cần)
+
+### 6. **Collaborative Development**
+
+- Dễ dàng đóng góp code
+- Consistent coding standards (ESLint + Prettier)
+- Clear project structure
+
+## 📤 Publishing
+
+Sử dụng PowerShell script để publish packages:
+
+```powershell
+# Di chuyển vào thư mục scripts
+cd scripts
+
+# Publish cả hai packages (recommended)
+.\publish.ps1 -target all
+
+# Hoặc publish từng package riêng lẻ
+.\publish.ps1 -target base-cms-dev
+.\publish.ps1 -target base-cms
+
+# Xem hướng dẫn
+.\publish.ps1 -help
 ```
 
-## Scripts
+### Quy trình Publishing
 
-- `npm run dev` - Start development server for base-cms package
-- `npm run build` - Build all packages
-- `npm run build:cms` - Build only the base-cms package
-- `npm run lint` - Lint all packages
-- `npm run preview` - Preview the built base-cms package
+1. **Script tự động build** tất cả packages
+2. **Tự động tăng version** (patch version)
+3. **Publish lên npm** với public access
+4. **base-cms-dev** được publish trước (vì base-cms phụ thuộc vào nó)
+5. **Đợi 5 giây** để package sync trên npm registry
+6. **base-cms** được publish sau
 
-## Workspace Structure
+### Lưu ý khi Publishing
 
-```
-base-cms/
-├── packages/
-│   ├── base-cms/          # Main library package
-│   │   ├── src/           # Source code
-│   │   ├── dist/          # Build output
-│   │   └── package.json
-│   └── base-cms-dev/      # Dev dependencies package
-│       └── package.json
-├── package.json           # Root package.json with workspaces
-└── README.md
-```
+- ⚠️ Cần quyền publish lên `@libeyondea` scope trên npm
+- ⚠️ Phải chạy từ thư mục `scripts/`
+- ✅ Script tự động kiểm tra errors và rollback nếu có lỗi
+- ✅ Version sẽ tự động tăng patch (x.x.**X**)
 
-## Benefits of This Structure
+## 📖 Tài liệu sử dụng
 
-1. **Simplified Installation**: Users only need to install 2 packages instead of 20+ dev dependencies
-2. **Version Consistency**: All dev tools are versioned together
-3. **Easier Maintenance**: Update dev dependencies in one place
-4. **Better Developer Experience**: Cleaner package.json in user projects
+Xem tài liệu chi tiết cho từng package:
 
-## License
+- **[@libeyondea/base-cms](./packages/base-cms/README.md)** - Hướng dẫn sử dụng library đầy đủ
+- **[@libeyondea/base-cms-dev](./packages/base-cms-dev/README.md)** - Thông tin về dev dependencies
 
-MIT
+## 🤝 Đóng góp
 
-## Author
+Chúng tôi rất hoan nghênh mọi đóng góp! Để contribute:
 
-Nguyen Thuc
+1. Fork repository
+2. Tạo feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Tạo Pull Request
+
+### Coding Standards
+
+- ✅ Follow ESLint rules
+- ✅ Format code với Prettier
+- ✅ Write TypeScript với proper types
+- ✅ Add JSDoc comments cho public APIs
+- ✅ Update README khi thêm features mới
+
+## 📄 License
+
+MIT License - xem file [LICENSE](./LICENSE) để biết thêm chi tiết.
+
+Copyright (c) 2025 Nguyen Thuc
+
+## 👨‍💻 Tác giả
+
+**Nguyen Thuc**
+
+- GitHub: [@libeyondea](https://github.com/libeyondea)
+- Twitter: [@libeyondea](https://twitter.com/libeyondea)
+
+## 🔗 Liên kết hữu ích
+
+- 📦 [NPM Package - @libeyondea/base-cms](https://www.npmjs.com/package/@libeyondea/base-cms)
+- 📦 [NPM Package - @libeyondea/base-cms-dev](https://www.npmjs.com/package/@libeyondea/base-cms-dev)
+- 🐙 [GitHub Repository](https://github.com/libeyondea/base-cms)
+- 📝 [Changelog](https://github.com/libeyondea/base-cms/releases)
+- 🐛 [Issue Tracker](https://github.com/libeyondea/base-cms/issues)
+
+## 📞 Hỗ trợ
+
+Nếu bạn gặp vấn đề hoặc có câu hỏi:
+
+- 🐛 [Tạo Issue](https://github.com/libeyondea/base-cms/issues/new) trên GitHub
+- 💬 [Discussions](https://github.com/libeyondea/base-cms/discussions) cho Q&A
+- 📧 Email: [your-email@example.com]
+
+---
+
+<div align="center">
+  <sub>Built with ❤️ by <a href="https://github.com/libeyondea">Nguyen Thuc</a></sub>
+</div>

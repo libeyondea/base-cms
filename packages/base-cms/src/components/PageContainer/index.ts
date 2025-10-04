@@ -1,2 +1,2 @@
 export * from './PageContainer';
-export * from './PageContainer.types';
+export type * from './PageContainer.types';

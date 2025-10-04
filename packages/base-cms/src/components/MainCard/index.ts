@@ -1,3 +1,3 @@
 export * from './MainCard';
 export * from './MainCardSearch';
-export * from './MainCard.types';
+export type * from './MainCard.types';

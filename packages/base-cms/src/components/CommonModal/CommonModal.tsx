@@ -6,6 +6,17 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, D
 import { TransitionProps } from '@mui/material/transitions';
 import { Breakpoint, SxProps } from '@mui/system';
 
+export const STATE_MODAL = {
+	DETAIL_MODE: 'DETAIL_MODE',
+	UPDATE_MODE: 'UPDATE_MODE',
+	CREATE_MODE: 'CREATE_MODE',
+	DELETE_MODE: 'DELETE_MODE',
+	EXPORT_MODE: 'EXPORT_MODE',
+	EXTRA_MODE: 'EXTRA_MODE'
+} as const;
+
+export type MODE_MODAL = (typeof STATE_MODAL)[keyof typeof STATE_MODAL];
+
 interface CommonModalProps {
 	open: boolean;
 	handleClose: () => void;

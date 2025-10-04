@@ -1,2 +1,2 @@
 export * from './Toastify';
-export * from './Toastify.types';
+export type * from './Toastify.types';

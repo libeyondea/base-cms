@@ -1,2 +1,2 @@
 export * from './TruncatedText';
-export * from './TruncatedText.types';
+export type * from './TruncatedText.types';
