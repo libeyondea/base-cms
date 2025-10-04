@@ -7,7 +7,7 @@ import { AccessControl } from './guards';
 import { privateRoutes } from './private';
 import { publicRoutes } from './public';
 
-const NotFound = lazy(() => import('../views/NotFound'));
+const NotFound = lazy(() => import('~/views/NotFound'));
 
 const Routes = () => {
 	const router = createBrowserRouter([

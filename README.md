@@ -29,7 +29,7 @@
 - 🎨 **Theme System linh hoạt**: Hỗ trợ Dark/Light mode với customization đầy đủ
 - 🔧 **Developer Experience tốt**: TypeScript support, ESLint, Prettier
 - 📦 **Package Management đơn giản**: Chỉ cần 2 packages thay vì 20+ dependencies
-- 🚀 **Production-ready**: Build với Vite, optimized và tree-shakeable
+- 🚀 **Production-ready**: Build với Vite, optimized, tree-shakeable và lightweight
 
 ## 📦 Packages
 
@@ -40,7 +40,7 @@ Monorepo này bao gồm 2 packages chính:
 **Package chính** - Thư viện React CMS với đầy đủ components, hooks và utilities.
 
 - 📍 **Path**: `packages/base-cms`
-- 📊 **Version**: v1.0.19
+- 📊 **Version**: v1.0.21
 - 📦 **Bundle**: ES Module (tree-shakeable)
 - 📝 **TypeScript**: Full type definitions included
 
@@ -54,13 +54,16 @@ Monorepo này bao gồm 2 packages chính:
 - ✅ Layouts (Auth, Private, Public)
 - ✅ TypeScript declarations
 
-**Dependencies chính:**
+**Peer Dependencies (Cần cài đặt):**
 
-- React 19.2.0 + React Router DOM 7.9.3
-- Material-UI v7 ecosystem
+- React 19.2.0 + React DOM 19.2.0 + React Router DOM 7.9.3
+- Material-UI v7 ecosystem (@mui/material, @mui/icons-material, @mui/system, @mui/x-date-pickers)
 - Redux Toolkit 2.9.0 + React Redux 9.2.0
-- React Hook Form 7.63.0 + Yup 1.7.1
+- React Hook Form 7.63.0 + Yup 1.7.1 + @hookform/resolvers 5.2.2
 - TanStack React Query 5.90.2 + TanStack React Table 8.21.3
+- Emotion (@emotion/react, @emotion/styled)
+- Utilities (axios, dayjs, js-cookie, lodash-es, qs)
+- UI Libraries (react-big-calendar, react-icons, react-number-format, react-toastify, sweetalert2)
 
 ### 2. [@libeyondea/base-cms-dev](./packages/base-cms-dev)
 
@@ -90,8 +93,8 @@ npm install @libeyondea/base-cms
 # Cài đặt dev dependencies (thay vì cài từng package riêng lẻ)
 npm install --save-dev @libeyondea/base-cms-dev
 
-# Cài đặt peer dependencies bắt buộc
-npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3
+# Cài đặt peer dependencies bắt buộc (tất cả dependencies cần thiết)
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3 @reduxjs/toolkit@2.9.0 react-redux@9.2.0 @emotion/react@11.14.0 @emotion/styled@11.14.1 @mui/icons-material@7.3.4 @mui/material@7.3.4 @mui/system@7.3.3 @mui/x-date-pickers@8.12.0 @tanstack/react-query@5.90.2 @tanstack/react-table@8.21.3 @hookform/resolvers@5.2.2 axios@1.12.2 dayjs@1.11.18 js-cookie@3.0.5 lodash-es@4.17.21 qs@6.14.0 react-big-calendar@1.19.4 react-hook-form@7.63.0 react-icons@5.5.0 react-number-format@5.4.4 react-toastify@11.0.5 sweetalert2@11.23.0 yup@1.7.1
 ```
 
 ### Cho Contributors & Maintainers
@@ -270,42 +273,51 @@ npm install typescript vite eslint prettier @types/react @types/node ...
 # và 15+ packages khác
 ```
 
-✅ **Bây giờ** (chỉ 2 packages):
+✅ **Bây giờ** (2 packages chính + peer dependencies):
 
 ```bash
+# Cài đặt library chính
 npm install @libeyondea/base-cms
+
+# Cài đặt dev dependencies
 npm install --save-dev @libeyondea/base-cms-dev
+
+# Cài đặt peer dependencies (một lần duy nhất)
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3 @reduxjs/toolkit@2.9.0 react-redux@9.2.0 @emotion/react@11.14.0 @emotion/styled@11.14.1 @mui/icons-material@7.3.4 @mui/material@7.3.4 @mui/system@7.3.3 @mui/x-date-pickers@8.12.0 @tanstack/react-query@5.90.2 @tanstack/react-table@8.21.3 @hookform/resolvers@5.2.2 axios@1.12.2 dayjs@1.11.18 js-cookie@3.0.5 lodash-es@4.17.21 qs@6.14.0 react-big-calendar@1.19.4 react-hook-form@7.63.0 react-icons@5.5.0 react-number-format@5.4.4 react-toastify@11.0.5 sweetalert2@11.23.0 yup@1.7.1
 ```
 
 ### 2. **Version Consistency**
 
 - Tất cả dev tools được versioned cùng nhau
-- Không lo xung đột phiên bản giữa các tools
-- Đảm bảo compatibility 100%
+- Peer dependencies cho phép kiểm soát phiên bản dependencies
+- Đảm bảo compatibility 100% với project hiện có
 
 ### 3. **Easier Maintenance**
 
 - Update dev dependencies ở một nơi duy nhất
 - Publish một lần, áp dụng cho tất cả projects
-- Giảm thiểu breaking changes
+- Giảm thiểu breaking changes với peer dependencies
 
 ### 4. **Better Developer Experience**
 
 - `package.json` của user projects gọn gàng hơn
 - Không cần quan tâm đến từng dev dependency
 - Focus vào business logic thay vì configuration
+- Kiểm soát hoàn toàn phiên bản dependencies
 
-### 5. **Reusability**
+### 5. **Reusability & Flexibility**
 
 - Tất cả components, hooks, utilities có thể tái sử dụng
 - Type-safe với TypeScript
 - Tree-shakeable build (chỉ import những gì cần)
+- Tương thích với project hiện có mà không gây xung đột
 
 ### 6. **Collaborative Development**
 
 - Dễ dàng đóng góp code
 - Consistent coding standards (ESLint + Prettier)
 - Clear project structure
+- Peer dependencies giúp tránh xung đột trong team
 
 ## 📤 Publishing
 

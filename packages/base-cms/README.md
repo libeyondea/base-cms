@@ -75,15 +75,16 @@ Package `@libeyondea/base-cms-dev` bao gồm:
 ### Bước 3: Cài đặt peer dependencies (Bắt buộc)
 
 ```bash
-npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3
+# Cài đặt tất cả peer dependencies cần thiết
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3 @reduxjs/toolkit@2.9.0 react-redux@9.2.0 @emotion/react@11.14.0 @emotion/styled@11.14.1 @mui/icons-material@7.3.4 @mui/material@7.3.4 @mui/system@7.3.3 @mui/x-date-pickers@8.12.0 @tanstack/react-query@5.90.2 @tanstack/react-table@8.21.3 @hookform/resolvers@5.2.2 axios@1.12.2 dayjs@1.11.18 js-cookie@3.0.5 lodash-es@4.17.21 qs@6.14.0 react-big-calendar@1.19.4 react-hook-form@7.63.0 react-icons@5.5.0 react-number-format@5.4.4 react-toastify@11.0.5 sweetalert2@11.23.0 yup@1.7.1
 ```
 
-### ⚠️ Dependencies đã có sẵn (KHÔNG cần cài thêm)
+### ⚠️ Peer Dependencies (BẮT BUỘC phải cài đặt)
 
-Library này **đã bao gồm** các dependencies sau, tránh cài thêm để không xung đột phiên bản:
+Library này **yêu cầu** các dependencies sau phải được cài đặt trong project của bạn:
 
 <details>
-<summary><b>Xem danh sách dependencies đã có sẵn</b></summary>
+<summary><b>Xem danh sách peer dependencies cần cài đặt</b></summary>
 
 #### UI & Styling
 
@@ -127,6 +128,18 @@ Library này **đã bao gồm** các dependencies sau, tránh cài thêm để k
 - `sweetalert2` (11.23.0)
 
 </details>
+
+> ⚠️ **Lưu ý quan trọng**: Tất cả các dependencies trên đều là **peer dependencies** và **BẮT BUỘC** phải cài đặt trong project của bạn.
+
+### Tại sao sử dụng Peer Dependencies?
+
+Library sử dụng peer dependencies thay vì bundle dependencies vì:
+
+- ✅ **Tránh xung đột phiên bản**: Người dùng có thể kiểm soát phiên bản dependencies
+- ✅ **Giảm kích thước bundle**: Library nhẹ hơn, chỉ chứa code thực tế
+- ✅ **Tương thích tốt hơn**: Hoạt động với project hiện có mà không gây xung đột
+- ✅ **Flexibility**: Người dùng có thể chọn phiên bản dependencies phù hợp
+- ✅ **Tree-shaking tốt hơn**: Chỉ import những gì thực sự cần thiết
 
 ## 🚀 Bắt đầu nhanh
 
@@ -1428,20 +1441,43 @@ function App() {
 </FormProvider>
 ```
 
-### Lỗi: Xung đột phiên bản Material-UI
+### Lỗi: Missing peer dependencies
 
-**Nguyên nhân**: Cài thêm @mui/material trong project.
+**Nguyên nhân**: Chưa cài đặt đầy đủ peer dependencies.
 
-**Giải pháp**: Xóa @mui/material khỏi package.json của bạn, library đã bao gồm sẵn.
+**Giải pháp**: Cài đặt tất cả peer dependencies theo hướng dẫn ở phần [Cài đặt](#-cài-đặt).
+
+### Lỗi: Xung đột phiên bản dependencies
+
+**Nguyên nhân**: Phiên bản dependencies không tương thích với yêu cầu của library.
+
+**Giải pháp**: Sử dụng đúng phiên bản dependencies như đã liệt kê trong peer dependencies.
 
 ## 🔄 Migration Guide
 
-### Từ v1.0.x lên v1.0.19
+### Từ v1.0.x lên v1.0.21
 
-Không có breaking changes, chỉ cần update:
+**⚠️ BREAKING CHANGES**: Từ v1.0.21, tất cả dependencies đã được chuyển thành peer dependencies.
+
+**Migration steps:**
+
+1. **Update library:**
 
 ```bash
 npm update @libeyondea/base-cms
+```
+
+2. **Cài đặt peer dependencies:**
+
+```bash
+npm install react@19.2.0 react-dom@19.2.0 react-router-dom@7.9.3 @reduxjs/toolkit@2.9.0 react-redux@9.2.0 @emotion/react@11.14.0 @emotion/styled@11.14.1 @mui/icons-material@7.3.4 @mui/material@7.3.4 @mui/system@7.3.3 @mui/x-date-pickers@8.12.0 @tanstack/react-query@5.90.2 @tanstack/react-table@8.21.3 @hookform/resolvers@5.2.2 axios@1.12.2 dayjs@1.11.18 js-cookie@3.0.5 lodash-es@4.17.21 qs@6.14.0 react-big-calendar@1.19.4 react-hook-form@7.63.0 react-icons@5.5.0 react-number-format@5.4.4 react-toastify@11.0.5 sweetalert2@11.23.0 yup@1.7.1
+```
+
+3. **Xóa dependencies cũ (nếu có):**
+
+```bash
+# Xóa các dependencies đã được chuyển thành peer dependencies
+npm uninstall @emotion/react @emotion/styled @mui/material @mui/icons-material @mui/system @mui/x-date-pickers @tanstack/react-query @tanstack/react-table react-redux @hookform/resolvers axios dayjs js-cookie lodash-es qs react-big-calendar react-hook-form react-icons react-number-format react-toastify sweetalert2 yup
 ```
 
 ## 📄 License
