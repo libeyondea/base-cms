@@ -1,5 +1,6 @@
 import terser from '@rollup/plugin-terser';
 import react from '@vitejs/plugin-react-swc';
+import fs from 'fs';
 import path from 'path';
 // import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
@@ -32,15 +33,22 @@ export default defineConfig({
 			formats: ['es']
 		},
 		rollupOptions: {
-			external: ['react', 'react-dom', 'react-router-dom', 'react/jsx-runtime'],
-			output: {
-				globals: {
-					react: 'React',
-					'react-dom': 'ReactDOM',
-					'react-router-dom': 'ReactRouterDOM',
-					'react/jsx-runtime': 'ReactJSXRuntime'
+			external: (() => {
+				try {
+					const pkgPath = path.resolve(__dirname, 'package.json');
+					const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8')) as {
+						dependencies?: Record<string, string>;
+						peerDependencies?: Record<string, string>;
+					};
+					const deps = Object.keys(pkg.dependencies || {});
+					const peerDeps = Object.keys(pkg.peerDependencies || {});
+					const addOns = deps.includes('react') || peerDeps.includes('react') ? ['react/jsx-runtime'] : [];
+					return Array.from(new Set([...deps, ...peerDeps, ...addOns]));
+				} catch (_) {
+					// Fallback: no externals if package.json cannot be read
+					return [];
 				}
-			}
+			})()
 		}
 	}
 });

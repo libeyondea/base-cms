@@ -10,12 +10,14 @@
 		"url": "git+https://github.com/libeyondea/base-cms.git"
 	},
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"examples/*"
 	],
 	"scripts": {
-		"dev": "npm run dev --workspace=@libeyondea/base-cms",
 		"build": "npm run build --workspace=@libeyondea/base-cms",
 		"lint": "npm run lint --workspace=@libeyondea/base-cms",
-		"preview": "npm run preview --workspace=@libeyondea/base-cms"
+		"dev:example": "npm run dev --workspace=base-cms-react",
+		"build:example": "npm run build --workspace=base-cms-react",
+		"preview:example": "npm run preview --workspace=base-cms-react"
 	}
 }

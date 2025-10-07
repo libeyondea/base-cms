@@ -1,6 +1,6 @@
+import { showToast } from '@libeyondea/base-cms';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { showToast } from '~/components/Toastify';
 import { UserService } from '~/service/userService';
 import { FilterObject, IApi } from '~/types/hook';
 

@@ -1,6 +1,5 @@
 import { BaseService } from '@libeyondea/base-cms';
-
-import { FilterObject } from '~/types/hook';
+import { FilterObject } from '@libeyondea/base-cms';
 
 export class UserService extends BaseService {
 	constructor() {

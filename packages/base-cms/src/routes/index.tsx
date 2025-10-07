@@ -15,16 +15,20 @@ interface RoutesProps {
 	 * Router basename
 	 */
 	basename?: string;
+	/**
+	 * Profile URL
+	 */
+	profileUrl?: string;
 }
 
-export const Routes = ({ config, basename }: RoutesProps) => {
+export const Routes = ({ config, basename, profileUrl }: RoutesProps) => {
 	const router = useMemo(() => {
 		const routes = generateRoutes(config);
 		return createBrowserRouter(routes, { basename });
 	}, [config, basename]);
 
 	return (
-		<AccessControl>
+		<AccessControl profileUrl={profileUrl}>
 			<RouterProvider router={router} />
 		</AccessControl>
 	);

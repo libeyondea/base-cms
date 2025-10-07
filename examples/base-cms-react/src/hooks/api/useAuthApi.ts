@@ -1,6 +1,6 @@
+import { showToast } from '@libeyondea/base-cms';
 import { useMutation } from '@tanstack/react-query';
 
-import { showToast } from '~/components/Toastify';
 import { AuthService } from '~/service/authService';
 
 const authService = new AuthService();
