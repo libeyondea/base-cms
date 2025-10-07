@@ -38,7 +38,4 @@ export * from './theme';
 export * from './types/hook';
 
 // Routes
-export { default as Routes } from './routes';
-export * from './routes/types';
-export * from './routes/utils';
-export * from './routes/guards';
+export * from './routes';

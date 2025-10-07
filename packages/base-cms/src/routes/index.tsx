@@ -1,4 +1,4 @@
-import { lazy, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 

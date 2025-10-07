@@ -1,14 +1,25 @@
 import { Link } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
+import { useAuth } from '~/contexts/AppProvider';
+
 import { SidebarItem } from './Sidebar.types';
 import { Menu } from './components/Menu';
 import { MenuItem } from './components/MenuItem';
 import { Submenu } from './components/Submenu';
+import { filterSidebarByRole } from './utils';
 
 export const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 	const location = useLocation();
 	const pathDirect = location.pathname;
+	const { user } = useAuth();
+
+	// Lấy role từ user profile
+	// Có thể là user.role (string) hoặc user.roles (array) tùy vào cấu trúc API
+	const userRole = user?.role || user?.roles;
+
+	// Lọc sidebar items dựa trên role của user
+	const filteredItems = filterSidebarByRole(items, userRole);
 
 	// Hàm render menu items từ mảng Menuitems
 	const renderMenuItems = (items: SidebarItem[]) => {
@@ -52,5 +63,5 @@ export const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
 		});
 	};
 
-	return renderMenuItems(items);
+	return renderMenuItems(filteredItems);
 };
