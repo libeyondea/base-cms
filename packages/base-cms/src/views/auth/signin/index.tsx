@@ -9,15 +9,14 @@ import * as yup from 'yup';
 import { FormProvider } from '~/components/Form/FormProvider';
 import { RHFTextField } from '~/components/Form/RHFTextField';
 import { PageContainer } from '~/components/PageContainer';
+import { useAuth } from '~/contexts/AppProvider';
 import useAuthApi from '~/hooks/api/useAuthApi';
-import { useDispatch } from '~/store';
-import { signin } from '~/store/slices/auth';
 import { REQUIRED_MESSAGE } from '~/utils/constant';
 import { setCookie } from '~/utils/cookie';
 
 const SignIn = () => {
 	const [showPassword, setShowPassword] = useState(false);
-	const dispatch = useDispatch();
+	const { signin } = useAuth();
 
 	const { mSignin } = useAuthApi();
 
@@ -49,12 +48,10 @@ const SignIn = () => {
 
 			if (response?.data?.success) {
 				setCookie('service_token', response?.data?.access_token, { expires: 365 });
-				dispatch(
-					signin({
-						user: response?.data?.data,
-						token: response?.data?.access_token
-					})
-				);
+				signin({
+					user: response?.data?.data,
+					token: response?.data?.access_token
+				});
 			}
 		} catch (error: any) {
 			console.log('error', error);

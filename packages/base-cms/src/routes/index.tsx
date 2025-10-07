@@ -1,24 +1,27 @@
-import { lazy } from 'react';
+import { lazy, useMemo } from 'react';
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import { authRoutes } from './auth';
 import { AccessControl } from './guards';
-import { privateRoutes } from './private';
-import { publicRoutes } from './public';
+import { RoutesConfig } from './types';
+import { generateRoutes } from './utils';
 
-const NotFound = lazy(() => import('~/views/NotFound'));
+interface RoutesProps {
+	/**
+	 * Custom routes configuration
+	 */
+	config: RoutesConfig;
+	/**
+	 * Router basename
+	 */
+	basename?: string;
+}
 
-const Routes = () => {
-	const router = createBrowserRouter([
-		...authRoutes,
-		...privateRoutes,
-		...publicRoutes,
-		{
-			path: '*',
-			element: <NotFound />
-		}
-	]);
+export const Routes = ({ config, basename }: RoutesProps) => {
+	const router = useMemo(() => {
+		const routes = generateRoutes(config);
+		return createBrowserRouter(routes, { basename });
+	}, [config, basename]);
 
 	return (
 		<AccessControl>
@@ -27,4 +30,6 @@ const Routes = () => {
 	);
 };
 
-export default Routes;
+export * from './types';
+export * from './utils';
+export * from './guards';

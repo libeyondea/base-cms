@@ -6,7 +6,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Box, Button, Container, Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-export default function NotFound() {
+export const NotFound = () => {
 	const navigate = useNavigate();
 	const [mounted, setMounted] = useState(false);
 
@@ -240,4 +240,4 @@ export default function NotFound() {
 			</Paper>
 		</Container>
 	);
-}
+};

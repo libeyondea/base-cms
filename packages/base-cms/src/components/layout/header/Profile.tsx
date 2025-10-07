@@ -3,13 +3,12 @@ import { useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import { Avatar, Box, Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 
-import { useDispatch } from '~/store';
-import { signout } from '~/store/slices/auth';
+import { useAuth } from '~/contexts/AppProvider';
 import { removeCookie } from '~/utils/cookie';
 
 export const Profile = () => {
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-	const dispatch = useDispatch();
+	const { signout } = useAuth();
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -21,7 +20,7 @@ export const Profile = () => {
 	const handleLogout = () => {
 		try {
 			removeCookie('service_token');
-			dispatch(signout());
+			signout();
 		} catch (err) {
 			console.error(err);
 		}

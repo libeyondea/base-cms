@@ -28,6 +28,7 @@
 - 📊 **Table System mạnh mẽ**: Powered by TanStack Table v8
 - 🎨 **Theme System linh hoạt**: Hỗ trợ Dark/Light mode với customization đầy đủ
 - 🔧 **Developer Experience tốt**: TypeScript support, ESLint, Prettier
+- 🛣️ **Custom Routes System**: Cấu hình routes dễ dàng chỉ với object/array
 - 📦 **Package Management đơn giản**: Chỉ cần 2 packages thay vì 20+ dependencies
 - 🚀 **Production-ready**: Build với Vite, optimized, tree-shakeable và lightweight
 
@@ -48,6 +49,7 @@ Monorepo này bao gồm 2 packages chính:
 
 - ✅ 40+ UI Components (Form, Table, Layout, Navigation, etc.)
 - ✅ Custom Hooks (useStateValue, useAudioPlayer, useSweetAlert)
+- ✅ **Custom Routes System** - Cấu hình routes chỉ bằng object/array
 - ✅ Theme System với Material-UI v7
 - ✅ Utilities (axios, time, format, cookie, color)
 - ✅ Base Service class cho API integration
@@ -360,6 +362,62 @@ Xem tài liệu chi tiết cho từng package:
 
 - **[@libeyondea/base-cms](./packages/base-cms/README.md)** - Hướng dẫn sử dụng library đầy đủ
 - **[@libeyondea/base-cms-dev](./packages/base-cms-dev/README.md)** - Thông tin về dev dependencies
+
+### 🛣️ Custom Routes System
+
+**base-cms** cung cấp hệ thống routes linh hoạt cho phép bạn cấu hình routes chỉ bằng cách truyền vào một object:
+
+```tsx
+import { lazy } from 'react';
+
+import { Routes, RoutesConfig } from 'base-cms';
+
+const myRoutes: RoutesConfig = {
+	// Auth routes - tự động có AuthGuard
+	auth: [
+		{
+			path: 'login',
+			element: lazy(() => import('./pages/Login'))
+		}
+	],
+
+	// Private routes - tự động có PrivateGuard
+	private: [
+		{
+			index: true,
+			element: lazy(() => import('./pages/Dashboard'))
+		},
+		{
+			path: 'users',
+			element: lazy(() => import('./pages/Users'))
+		}
+	],
+
+	// Public routes - không có guard
+	public: [
+		{
+			path: 'about',
+			element: lazy(() => import('./pages/About'))
+		}
+	]
+	// NotFound page tự động được thêm (có thể override bằng notFound: YourComponent)
+};
+
+function App() {
+	return <Routes config={myRoutes} />;
+}
+```
+
+**Tính năng:**
+
+- ✅ Tự động apply guards (Private, Auth, Public)
+- ✅ Hỗ trợ nested routes
+- ✅ Layout wrappers
+- ✅ Route groups với prefix
+- ✅ Metadata cho routes
+- ✅ Type-safe với TypeScript
+
+📚 **Xem hướng dẫn chi tiết:** [ROUTES_GUIDE.md](./packages/base-cms/ROUTES_GUIDE.md)
 
 ## 🤝 Đóng góp
 

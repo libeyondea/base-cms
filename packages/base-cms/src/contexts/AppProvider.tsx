@@ -45,6 +45,17 @@ interface TableContextType {
 	setFilterTable: (payload: { type: string; value: Record<string, string | number> }) => void;
 }
 
+// Auth Context Types
+interface AuthContextType {
+	isAuthenticated: boolean;
+	isInitialized: boolean;
+	user: any;
+	token: string | null;
+	signin: (payload: { user: any; token: string }) => void;
+	signout: () => void;
+	signup: (payload: { user: any }) => void;
+}
+
 // Combined App Context Type
 interface AppContextType {
 	// Theme
@@ -53,6 +64,8 @@ interface AppContextType {
 	sidebar: SidebarContextType;
 	// Table
 	table: TableContextType;
+	// Auth
+	auth: AuthContextType;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -69,7 +82,7 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 
 	// Theme state
 	const [mode, setMode] = useState<PaletteMode>('light');
-	const [isInitialized, setIsInitialized] = useState(false);
+	const [isInitializedTheme, setIsInitializedTheme] = useState(false);
 
 	// Use custom theme if provided, otherwise use default theme
 	const themeConfig = customTheme ? customTheme(mode) : createCustomTheme(mode);
@@ -86,6 +99,12 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 			};
 		};
 	}>({});
+
+	// Auth state
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isInitialized, setIsInitialized] = useState(false);
+	const [user, setUser] = useState<any>(null);
+	const [token, setToken] = useState<string | null>(null);
 
 	// Theme effects
 	useEffect(() => {
@@ -109,7 +128,7 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 				// Fallback to light theme
 				setMode('light');
 			} finally {
-				setIsInitialized(true);
+				setIsInitializedTheme(true);
 			}
 		};
 
@@ -118,14 +137,14 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 
 	// Save theme changes to localStorage
 	useEffect(() => {
-		if (isInitialized) {
+		if (isInitializedTheme) {
 			try {
 				localStorage.setItem('themeMode', mode);
 			} catch (error) {
 				console.warn('Failed to save theme:', error);
 			}
 		}
-	}, [mode, isInitialized]);
+	}, [mode, isInitializedTheme]);
 
 	// Theme functions
 	const toggleTheme = () => {
@@ -165,6 +184,25 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 		});
 	};
 
+	// Auth functions
+	const signin = (payload: { user: any; token: string }) => {
+		setIsAuthenticated(true);
+		setIsInitialized(true);
+		setUser(payload.user);
+		setToken(payload.token);
+	};
+
+	const signout = () => {
+		setIsInitialized(true);
+		setIsAuthenticated(false);
+		setUser(null);
+		setToken(null);
+	};
+
+	const signup = (payload: { user: any }) => {
+		setUser(payload.user);
+	};
+
 	// Context values
 	const themeContextValue: ThemeContextType = {
 		theme,
@@ -184,10 +222,21 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 		setFilterTable
 	};
 
+	const authContextValue: AuthContextType = {
+		isAuthenticated,
+		isInitialized,
+		user,
+		token,
+		signin,
+		signout,
+		signup
+	};
+
 	const appContextValue: AppContextType = {
 		theme: themeContextValue,
 		sidebar: sidebarContextValue,
-		table: tableContextValue
+		table: tableContextValue,
+		auth: authContextValue
 	};
 
 	return (
@@ -227,4 +276,13 @@ export const useTableContext = (): TableContextType => {
 		throw new Error('useTable must be used within an AppProvider');
 	}
 	return context.table;
+};
+
+// Auth hook
+export const useAuth = (): AuthContextType => {
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error('useAuth must be used within an AppProvider');
+	}
+	return context.auth;
 };

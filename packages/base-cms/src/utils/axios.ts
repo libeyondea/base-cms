@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { HOST_API } from '~/config';
-import { store } from '~/store';
+import { getCookie } from '~/utils/cookie';
 
 const axiosServices = axios.create({
 	baseURL: HOST_API
@@ -9,7 +9,8 @@ const axiosServices = axios.create({
 
 axiosServices.interceptors.request.use(
 	(config) => {
-		const token = store.getState().auth?.token;
+		// Get token from cookie instead of Redux store
+		const token = getCookie('service_token');
 		if (config.headers && !config.headers.Authorization && token) {
 			config.headers.Authorization = `Bearer ${token}`;
 		}
