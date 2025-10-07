@@ -1,15 +1,14 @@
+import { AppProvider, Toastify } from '@libeyondea/base-cms';
 import { Provider } from 'react-redux';
 
-import Router from './Router';
-import { Toastify } from './components/Toastify';
-import { AppProvider } from './contexts/AppProvider';
+import Routes from './routes';
 import { store } from './store';
 
 const App = () => {
 	return (
 		// <Provider store={store}>
 		<AppProvider>
-			<Router />
+			<Routes />
 			<Toastify />
 		</AppProvider>
 		// </Provider>

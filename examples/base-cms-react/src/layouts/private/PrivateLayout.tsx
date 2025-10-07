@@ -1,13 +1,11 @@
-import { Box, useTheme } from '@mui/material';
+import { Header, Sidebar, useTheme } from '@libeyondea/base-cms';
+import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-
-import { Header } from '~/components/Layout/Header/Header';
-import { Sidebar } from '~/components/Layout/SideBar/Sidebar';
 
 import Menuitems from './MenuItems';
 
 const PrivateLayout = () => {
-	const theme = useTheme();
+	const { theme } = useTheme();
 
 	return (
 		<Box sx={{ backgroundColor: theme.palette.background.paper, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

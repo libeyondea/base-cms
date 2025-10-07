@@ -1,13 +1,14 @@
-import { BaseService } from '~/service/core/baseService';
+import { BaseService } from '@libeyondea/base-cms';
+
 import { FilterObject } from '~/types/hook';
 
 export class UserService extends BaseService {
 	constructor() {
-		super('/user');
+		super('/kiosks');
 	}
 
 	getAllUser = (params?: FilterObject) => {
-		return this.getAll(params, '/users', {}, { isOtherUrl: true });
+		return this.getAll(params);
 	};
 
 	getDetailUser = (id?: number) => {

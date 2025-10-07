@@ -1,4 +1,4 @@
-import { BaseService } from '~/service/core/baseService';
+import { BaseService } from '@libeyondea/base-cms';
 
 export class AuthService extends BaseService {
 	constructor() {

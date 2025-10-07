@@ -1,6 +1,6 @@
 import { lazy } from 'react';
 
-import { Routes, RoutesConfig } from '~/routes';
+import { Routes, RoutesConfig } from '@libeyondea/base-cms';
 
 const PrivateLayout = lazy(() => import('~/layouts/private/PrivateLayout'));
 const AuthLayout = lazy(() => import('~/layouts/auth/AuthLayout'));

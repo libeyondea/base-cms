@@ -1,3 +1,4 @@
+import { SidebarItem } from '@libeyondea/base-cms';
 import ArticleIcon from '@mui/icons-material/ArticleOutlined';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DashboardIcon from '@mui/icons-material/DashboardOutlined';
@@ -10,8 +11,6 @@ import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import VideocamIcon from '@mui/icons-material/VideocamOutlined';
 import WidgetsIcon from '@mui/icons-material/WidgetsOutlined';
 import { uniqueId } from 'lodash-es';
-
-import { SidebarItem } from '~/components/Layout';
 
 const Menuitems: SidebarItem[] = [
 	{

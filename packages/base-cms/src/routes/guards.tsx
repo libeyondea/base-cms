@@ -4,10 +4,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { useAuth } from '~/contexts/AppProvider';
-import { AuthService } from '~/service/authService';
+import { axiosServices } from '~/utils/axios';
 import { getCookie, removeCookie } from '~/utils/cookie';
-
-const authService = new AuthService();
 
 // Guard component để bảo vệ private routes
 export const PrivateGuard = ({ children }: { children: React.ReactNode }) => {
@@ -41,14 +39,18 @@ export const withGuard = (Component: React.ComponentType<any>, Guard: React.FC<{
 	);
 };
 
-export const AccessControl = ({ children }: { children: React.ReactNode }) => {
+export const AccessControl = ({ children, profileUrl = '/profile' }: { children: React.ReactNode; profileUrl?: string }) => {
 	const { isInitialized, signin, signout } = useAuth();
 
 	const initialize = async () => {
 		try {
 			const serviceToken = getCookie('service_token');
 			if (serviceToken) {
-				const res = await authService.profile(serviceToken);
+				const res = await axiosServices.get(profileUrl, {
+					headers: {
+						Authorization: `Bearer ${serviceToken}`
+					}
+				});
 				signin({
 					user: res?.data?.data,
 					token: serviceToken

@@ -37,5 +37,4 @@ export * from './theme';
 
 export * from './types/hook';
 
-// Routes
 export * from './routes';
