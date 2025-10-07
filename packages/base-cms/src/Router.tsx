@@ -51,7 +51,7 @@ const Router = () => {
 		public: [
 			{
 				path: '',
-				element: PublicLayout,
+				layout: PublicLayout,
 				children: [
 					{
 						path: 'about',

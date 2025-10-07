@@ -50,10 +50,12 @@ export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType,
 
 	if (element) {
 		// Nếu element là component, render nó
+		// Luôn render dưới dạng JSX element vì có thể là lazy component hoặc normal component
 		const Component = element as any;
-		routeElement = typeof Component === 'function' ? <Component /> : Component;
+		routeElement = <Component />;
 
-		// Wrap với layout nếu có
+		// Wrap với layout CHỈ KHI KHÔNG CÓ CHILDREN
+		// Nếu có children, layout sẽ được render ở parent route
 		if (effectiveLayout && !children) {
 			const Layout = effectiveLayout;
 			routeElement = <Layout>{routeElement}</Layout>;
@@ -64,14 +66,18 @@ export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType,
 
 		// Wrap với Suspense
 		routeElement = wrapWithSuspense(routeElement);
-	} else if (effectiveLayout) {
-		// Nếu không có element nhưng có layout, chỉ render layout với guard
-		const Layout = effectiveLayout;
+	} else if (layout && children) {
+		// Nếu KHÔNG CÓ element nhưng CÓ layout và children
+		// => Đây là parent route, render layout với guard
+		// Layout phải có <Outlet /> để render children
+		const Layout = layout;
 		routeElement = wrapWithGuard(wrapWithSuspense(<Layout />), effectiveGuard);
 	}
 
 	// Convert children routes
-	const childRoutes = children?.map((child) => convertRouteConfig(child, effectiveGuard, effectiveLayout));
+	// QUAN TRỌNG: Children KHÔNG inherit layout từ parent
+	// Vì layout đã được render ở parent route rồi
+	const childRoutes = children?.map((child) => convertRouteConfig(child, effectiveGuard, undefined));
 
 	// Build route object - React Router không cho phép index route có children
 	if (index) {
