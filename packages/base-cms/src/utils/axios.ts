@@ -30,4 +30,13 @@ axiosServices.interceptors.response.use(
 	}
 );
 
+// Allow consumers to customize the axios baseURL at runtime
+export const setAxiosBaseURL = (baseURL: string): void => {
+	axiosServices.defaults.baseURL = baseURL;
+};
+
+export const getAxiosBaseURL = (): string | undefined => {
+	return axiosServices.defaults.baseURL;
+};
+
 export { axiosServices };

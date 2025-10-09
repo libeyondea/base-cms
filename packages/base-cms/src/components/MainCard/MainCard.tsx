@@ -152,7 +152,7 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 
 		// Render toolbar section
 		const renderToolbar = () => {
-			const hasToolbarItems = componentToolbar || isShowSearch || isShowDateFilter || isShowSubmitButton || componentAction;
+			const hasToolbarItems = componentToolbar || isShowSearch || isShowDateFilter || isShowSubmitButton || componentAction || componentActionLeft;
 
 			if (!hasToolbarItems) return null;
 
@@ -242,6 +242,7 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 								flex: 1,
 								display: 'flex',
 								flexDirection: 'column',
+								padding: '16px !important',
 								...contentSX
 							}}
 						>

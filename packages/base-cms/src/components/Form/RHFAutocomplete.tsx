@@ -5,7 +5,7 @@ import { debounce, get } from 'lodash-es';
 import { Controller, useFormContext } from 'react-hook-form';
 
 type DataProp = {
-	id: string | number;
+	id?: string | number;
 	[key: string]: any;
 };
 

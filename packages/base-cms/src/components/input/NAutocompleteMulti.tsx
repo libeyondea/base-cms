@@ -4,7 +4,7 @@ import { Autocomplete, AutocompleteProps, AutocompleteValue, Checkbox, Chip, Chi
 import { debounce, get } from 'lodash-es';
 
 type DataProp = {
-	id: string | number;
+	id?: string | number;
 	[key: string]: any;
 };
 
@@ -161,7 +161,7 @@ export const NAutocompleteMulti = <T extends DataProp, ChipComponent extends Rea
 				return value?.map((optionSelect: any, index: number) => (
 					<Chip
 						{...getTagProps({ index })}
-						key={optionSelect?.id}
+						key={optionSelect?.[valueKey]}
 						variant="outlined"
 						label={optionSelect?.[labelKey]}
 						sx={(theme) => ({

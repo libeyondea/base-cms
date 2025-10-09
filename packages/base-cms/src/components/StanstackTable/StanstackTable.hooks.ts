@@ -34,7 +34,7 @@ export const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {
 
 	// Data fetching
 	const { data, isLoading, isFetching, error, refetch } = useQuery({
-		queryKey: [queryKey, pagination, sorting, columnFilters, multiQueryParam, filterCurrentTable],
+		queryKey: [queryKey, pagination, sorting, columnFilters, multiQueryParam, filterCurrentTable, apiUrl],
 		enabled,
 		queryFn: async () => {
 			// Convert to order_by and sorted_by format
