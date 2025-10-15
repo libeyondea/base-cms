@@ -17,7 +17,7 @@ export const STATE_MODAL = {
 
 export type MODE_MODAL = (typeof STATE_MODAL)[keyof typeof STATE_MODAL];
 
-interface CommonModalProps {
+interface ModalProps {
 	open: boolean;
 	handleClose: () => void;
 	title?: string;
@@ -54,7 +54,7 @@ const SlideTransition = forwardRef<unknown, TransitionProps & { children: React.
 	<Slide direction="down" ref={ref} {...props} />
 ));
 
-export const CommonModal = ({
+export const Modal = ({
 	open,
 	handleClose,
 	title,
@@ -80,7 +80,7 @@ export const CommonModal = ({
 
 	// Styling
 	customStyle = {}
-}: CommonModalProps) => {
+}: ModalProps) => {
 	const theme = useTheme();
 
 	// Tối ưu callback functions

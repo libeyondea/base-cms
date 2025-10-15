@@ -1,6 +1,6 @@
 export * from './components/Avatar';
 export * from './components/Breadcrumbs';
-export * from './components/CommonModal';
+export * from './components/Modal';
 export * from './components/DateRangePicker';
 export * from './components/Form';
 export * from './components/Input';
@@ -17,6 +17,7 @@ export * from './components/Toastify';
 export * from './components/TruncatedText';
 export * from './components/ScheduleDisplay';
 export * from './components/ItemList';
+export * from './components/Drawer';
 
 export * from './contexts/AppProvider';
 

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { MODE_MODAL } from '~/components/CommonModal';
+import { MODE_MODAL } from '~/components/Modal';
 
 export type IValue = boolean | string | number | MODE_MODAL;
 
