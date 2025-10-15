@@ -3,7 +3,7 @@ import { SyntheticEvent, memo, useCallback, useEffect, useMemo, useState } from 
 import { Badge, Box, Fade, Tab as MuiTab, Tabs as MuiTabs, Typography, alpha, styled } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
 
-interface TabItem {
+export interface TabItem {
 	id: string | number;
 	label: string;
 	icon?: React.ReactElement;
