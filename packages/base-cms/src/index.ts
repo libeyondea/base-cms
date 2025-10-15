@@ -15,6 +15,8 @@ export * from './components/StatusChip';
 export * from './components/Tab';
 export * from './components/Toastify';
 export * from './components/TruncatedText';
+export * from './components/ScheduleDisplay';
+export * from './components/ItemList';
 
 export * from './contexts/AppProvider';
 
