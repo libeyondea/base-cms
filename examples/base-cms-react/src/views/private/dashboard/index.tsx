@@ -1,12 +1,24 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FormProvider, MainCard, PageContainer, REQUIRED_MESSAGE, RHFAutocompleteMulti, RHFSelect, RHFSwitch, RHFTextField } from '@libeyondea/base-cms';
+import {
+	FormProvider,
+	MainCard,
+	NAutocomplete,
+	PageContainer,
+	REQUIRED_MESSAGE,
+	RHFAutocomplete,
+	RHFAutocompleteMulti,
+	RHFSelect,
+	RHFSwitch,
+	RHFTextField
+} from '@libeyondea/base-cms';
 import { Button, Container, Grid } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
 const Dashboard = () => {
+	const [service, setService] = useState<any>(null);
 	const defaultValues = useMemo(() => {
 		return {
 			service_ids: []
@@ -46,6 +58,21 @@ const Dashboard = () => {
 										{ id: 2, name: 'Service 2' },
 										{ id: 3, name: 'Service 3' }
 									]}
+								/>
+							</Grid>
+							<Grid size={12}>
+								<NAutocomplete
+									label="Services"
+									valueKey="id"
+									labelKey="name"
+									options={[
+										{ id: 1, name: 'Service 1' },
+										{ id: 2, name: 'Service 2' },
+										{ id: 3, name: 'Service 3' }
+									]}
+									value={service}
+									onChange={(e, value) => setService(value)}
+									isObject={true}
 								/>
 							</Grid>
 							<Grid size={12}>

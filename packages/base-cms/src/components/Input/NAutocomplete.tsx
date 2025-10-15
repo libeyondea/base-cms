@@ -118,7 +118,7 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 	}, []);
 
 	// For non-object mode, we need to convert the numeric/string ID to actual option object
-	const value = getSelectedOption();
+	const value = isObject ? (internalValue as T) : getSelectedOption();
 
 	return (
 		<Autocomplete
@@ -143,7 +143,7 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 			}
 			loading={loading}
 			getOptionLabel={(option) => get(option, [labelKey], '')}
-			disableCloseOnSelect={disableCloseOnSelect}
+			disableCloseOnSelect={false}
 			renderOption={(props, option) => {
 				const { key, ...otherProps } = props;
 				return (
