@@ -25,14 +25,12 @@ export interface CustomListItemProps {
 	path?: string;
 	path2?: string;
 	path3?: string;
-	tripleImage?: boolean;
 	action?: React.ReactNode;
 	statusLabel?: string;
 	status?: number;
 	statusData?: any[];
 	customFields?: CustomFieldProps[];
 	baseUrl?: string;
-	dualImage?: boolean;
 	dataInitial?: any;
 }
 
@@ -45,6 +43,8 @@ export interface ItemListProps {
 	emptyMessage?: string;
 	baseUrl?: string;
 	maxHeight?: string;
+	dualImage?: boolean;
+	tripleImage?: boolean;
 }
 
 // Default color when statusData is not available
@@ -99,7 +99,9 @@ export const ItemList = ({
 	emptyMessage,
 	baseUrl,
 	maxHeight = 'calc(100vh - 300px)',
-	titleSX
+	titleSX,
+	dualImage,
+	tripleImage
 }: ItemListProps) => {
 	const theme = useTheme();
 
@@ -209,7 +211,7 @@ export const ItemList = ({
 												title: item.title || ''
 											}}
 										/>
-										{item.dualImage && (
+										{dualImage && (
 											<Avatar
 												currentImage={{
 													path: item.path2 ? (baseUrl ? `${baseUrl}${item.path2}` : item.path2) : '',
@@ -217,7 +219,7 @@ export const ItemList = ({
 												}}
 											/>
 										)}
-										{item.tripleImage && (
+										{tripleImage && (
 											<Avatar
 												currentImage={{
 													path: item.path3 ? (baseUrl ? `${baseUrl}${item.path3}` : item.path3) : '',
