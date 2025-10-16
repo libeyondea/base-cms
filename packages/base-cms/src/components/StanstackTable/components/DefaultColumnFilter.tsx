@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { FilterList as FilterListIcon } from '@mui/icons-material';
 import { IconButton, InputAdornment, MenuItem, Select, TextField, useTheme } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Column } from '@tanstack/react-table';
 import dayjs, { Dayjs } from 'dayjs';
 import { debounce } from 'lodash-es';

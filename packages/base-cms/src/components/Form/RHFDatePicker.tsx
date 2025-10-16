@@ -1,5 +1,5 @@
 import { InputAdornment, InputAdornmentProps } from '@mui/material';
-import { DatePicker, DatePickerProps } from '@mui/x-date-pickers';
+import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { Controller, useFormContext } from 'react-hook-form';
 

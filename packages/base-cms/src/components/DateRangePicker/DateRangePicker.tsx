@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Box, Button, IconButton, InputAdornment, Popover, Stack, TextField, Typography, useTheme } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Dayjs } from 'dayjs';
 
 import { DateRangeFilter } from './DateRangePicker.types';
 

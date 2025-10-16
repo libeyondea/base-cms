@@ -1,7 +1,5 @@
 import { Suspense, lazy } from 'react';
 
-import { RouteObject } from 'react-router-dom';
-
 import { LoadingScreen } from '~/components/LoadingScreen';
 
 import { AuthGuard, PrivateGuard } from './guards';
@@ -11,14 +9,22 @@ import { GuardType, ProcessedRoute, RouteConfig, RouteGroupConfig, RoutesConfig 
 const DefaultNotFound = lazy(() => import('~/components/NotFound').then((module) => ({ default: module.NotFound })));
 
 /**
+ * Redirect options cho guards
+ */
+interface RedirectOptions {
+	redirectPrivateTo?: string;
+	redirectAuthTo?: string;
+}
+
+/**
  * Wrap component với guard tương ứng
  */
-const wrapWithGuard = (element: React.ReactNode, guard?: GuardType): React.ReactNode => {
+const wrapWithGuard = (element: React.ReactNode, guard?: GuardType, redirectOptions?: RedirectOptions): React.ReactNode => {
 	switch (guard) {
 		case 'private':
-			return <PrivateGuard>{element}</PrivateGuard>;
+			return <PrivateGuard redirectPrivateTo={redirectOptions?.redirectPrivateTo}>{element}</PrivateGuard>;
 		case 'auth':
-			return <AuthGuard>{element}</AuthGuard>;
+			return <AuthGuard redirectAuthTo={redirectOptions?.redirectAuthTo}>{element}</AuthGuard>;
 		case 'public':
 		case 'none':
 		default:
@@ -36,7 +42,7 @@ const wrapWithSuspense = (element: React.ReactNode): React.ReactNode => {
 /**
  * Convert RouteConfig thành RouteObject
  */
-export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType, parentLayout?: any): ProcessedRoute => {
+export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType, parentLayout?: any, redirectOptions?: RedirectOptions): ProcessedRoute => {
 	const { path, element, guard, layout, children, index, meta, ...rest } = config;
 
 	// Xác định guard type (ưu tiên của route, sau đó là của parent)
@@ -62,7 +68,7 @@ export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType,
 		}
 
 		// Wrap với guard
-		routeElement = wrapWithGuard(routeElement, effectiveGuard);
+		routeElement = wrapWithGuard(routeElement, effectiveGuard, redirectOptions);
 
 		// Wrap với Suspense
 		routeElement = wrapWithSuspense(routeElement);
@@ -71,13 +77,13 @@ export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType,
 		// => Đây là parent route, render layout với guard
 		// Layout phải có <Outlet /> để render children
 		const Layout = layout;
-		routeElement = wrapWithGuard(wrapWithSuspense(<Layout />), effectiveGuard);
+		routeElement = wrapWithGuard(wrapWithSuspense(<Layout />), effectiveGuard, redirectOptions);
 	}
 
 	// Convert children routes
 	// QUAN TRỌNG: Children KHÔNG inherit layout từ parent
 	// Vì layout đã được render ở parent route rồi
-	const childRoutes = children?.map((child) => convertRouteConfig(child, effectiveGuard, undefined));
+	const childRoutes = children?.map((child) => convertRouteConfig(child, effectiveGuard, undefined, redirectOptions));
 
 	// Build route object - React Router không cho phép index route có children
 	if (index) {
@@ -99,7 +105,7 @@ export const convertRouteConfig = (config: RouteConfig, parentGuard?: GuardType,
 /**
  * Convert RouteGroupConfig thành array RouteObject
  */
-export const convertRouteGroupConfig = (groupConfig: RouteGroupConfig): ProcessedRoute[] => {
+export const convertRouteGroupConfig = (groupConfig: RouteGroupConfig, redirectOptions?: RedirectOptions): ProcessedRoute[] => {
 	const { layout, guard, prefix, routes } = groupConfig;
 
 	// Nếu có prefix, wrap tất cả routes trong một parent route
@@ -107,19 +113,19 @@ export const convertRouteGroupConfig = (groupConfig: RouteGroupConfig): Processe
 		return [
 			{
 				path: prefix,
-				children: routes.map((route) => convertRouteConfig(route, guard, layout))
+				children: routes.map((route) => convertRouteConfig(route, guard, layout, redirectOptions))
 			}
 		];
 	}
 
 	// Nếu không có prefix, convert từng route
-	return routes.map((route) => convertRouteConfig(route, guard, layout));
+	return routes.map((route) => convertRouteConfig(route, guard, layout, redirectOptions));
 };
 
 /**
  * Generate routes từ RoutesConfig
  */
-export const generateRoutes = (config: RoutesConfig): ProcessedRoute[] => {
+export const generateRoutes = (config: RoutesConfig, redirectOptions?: RedirectOptions): ProcessedRoute[] => {
 	const routes: ProcessedRoute[] = [];
 
 	// Auth routes
@@ -129,7 +135,8 @@ export const generateRoutes = (config: RoutesConfig): ProcessedRoute[] => {
 				convertRouteConfig(
 					route,
 					route.guard || 'auth', // Default guard cho auth routes là 'auth'
-					route.layout
+					route.layout,
+					redirectOptions
 				)
 			)
 		);
@@ -142,7 +149,8 @@ export const generateRoutes = (config: RoutesConfig): ProcessedRoute[] => {
 				convertRouteConfig(
 					route,
 					route.guard || 'private', // Default guard cho private routes là 'private'
-					route.layout
+					route.layout,
+					redirectOptions
 				)
 			)
 		);
@@ -155,7 +163,8 @@ export const generateRoutes = (config: RoutesConfig): ProcessedRoute[] => {
 				convertRouteConfig(
 					route,
 					route.guard || 'public', // Default guard cho public routes là 'public'
-					route.layout
+					route.layout,
+					redirectOptions
 				)
 			)
 		);
@@ -164,7 +173,7 @@ export const generateRoutes = (config: RoutesConfig): ProcessedRoute[] => {
 	// Custom route groups
 	if (config.groups && config.groups.length > 0) {
 		config.groups.forEach((group) => {
-			routes.push(...convertRouteGroupConfig(group));
+			routes.push(...convertRouteGroupConfig(group, redirectOptions));
 		});
 	}
 

@@ -6,7 +6,7 @@ import { AccessControl } from './guards';
 import { RoutesConfig } from './types';
 import { generateRoutes } from './utils';
 
-interface RoutesProps {
+export interface RoutesProps {
 	/**
 	 * Custom routes configuration
 	 */
@@ -16,19 +16,29 @@ interface RoutesProps {
 	 */
 	basename?: string;
 	/**
-	 * Profile URL
+	 * Profile API
 	 */
-	profileUrl?: string;
+	profileAPI?: string;
+	/**
+	 * Custom redirect path for private routes when user is not authenticated
+	 * Default: '/signin'
+	 */
+	redirectPrivateTo?: string;
+	/**
+	 * Custom redirect path for auth routes when user is already authenticated
+	 * Default: '/'
+	 */
+	redirectAuthTo?: string;
 }
 
-export const Routes = ({ config, basename, profileUrl }: RoutesProps) => {
+export const Routes = ({ config, basename, profileAPI, redirectPrivateTo, redirectAuthTo }: RoutesProps) => {
 	const router = useMemo(() => {
-		const routes = generateRoutes(config);
+		const routes = generateRoutes(config, { redirectPrivateTo, redirectAuthTo });
 		return createBrowserRouter(routes, { basename });
-	}, [config, basename]);
+	}, [config, basename, redirectPrivateTo, redirectAuthTo]);
 
 	return (
-		<AccessControl profileUrl={profileUrl}>
+		<AccessControl profileAPI={profileAPI}>
 			<RouterProvider router={router} />
 		</AccessControl>
 	);

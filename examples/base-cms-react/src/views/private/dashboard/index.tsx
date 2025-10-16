@@ -9,6 +9,7 @@ import {
 	REQUIRED_MESSAGE,
 	RHFAutocomplete,
 	RHFAutocompleteMulti,
+	RHFScheduleTimePicker,
 	RHFSelect,
 	RHFSwitch,
 	RHFTextField
@@ -21,7 +22,8 @@ const Dashboard = () => {
 	const [service, setService] = useState<any>(null);
 	const defaultValues = useMemo(() => {
 		return {
-			service_ids: []
+			service_ids: [],
+			schedule_time: ''
 		};
 	}, []);
 
@@ -74,6 +76,9 @@ const Dashboard = () => {
 									onChange={(e, value) => setService(value)}
 									isObject={true}
 								/>
+							</Grid>
+							<Grid size={12}>
+								<RHFScheduleTimePicker name="schedule_time" label="Schedule Time" type="all" />
 							</Grid>
 							<Grid size={12}>
 								<Button type="submit" variant="contained" color="primary">

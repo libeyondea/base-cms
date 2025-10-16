@@ -8,23 +8,23 @@ import { axiosServices } from '~/utils/axios';
 import { getCookie, removeCookie } from '~/utils/cookie';
 
 // Guard component để bảo vệ private routes
-export const PrivateGuard = ({ children }: { children: React.ReactNode }) => {
+export const PrivateGuard = ({ children, redirectPrivateTo = '/signin' }: { children: React.ReactNode; redirectPrivateTo?: string }) => {
 	const location = useLocation();
 	const { isAuthenticated } = useAuth();
 
 	if (!isAuthenticated) {
-		return <Navigate to="/signin" state={{ from: location }} replace />;
+		return <Navigate to={redirectPrivateTo} state={{ from: location }} replace />;
 	}
 
 	return children;
 };
 
 // Guard component để bảo vệ auth routes (không cho phép vào nếu đã đăng nhập)
-export const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+export const AuthGuard = ({ children, redirectAuthTo = '/' }: { children: React.ReactNode; redirectAuthTo?: string }) => {
 	const { isAuthenticated } = useAuth();
 
 	if (isAuthenticated) {
-		return <Navigate to="/" replace />;
+		return <Navigate to={redirectAuthTo} replace />;
 	}
 
 	return children;
@@ -39,14 +39,14 @@ export const withGuard = (Component: React.ComponentType<any>, Guard: React.FC<{
 	);
 };
 
-export const AccessControl = ({ children, profileUrl = '/profile' }: { children: React.ReactNode; profileUrl?: string }) => {
+export const AccessControl = ({ children, profileAPI = '/profile' }: { children: React.ReactNode; profileAPI?: string }) => {
 	const { isInitialized, signin, signout } = useAuth();
 
 	const initialize = async () => {
 		try {
 			const serviceToken = getCookie('service_token');
 			if (serviceToken) {
-				const res = await axiosServices.get(profileUrl, {
+				const res = await axiosServices.get(profileAPI, {
 					headers: {
 						Authorization: `Bearer ${serviceToken}`
 					}
