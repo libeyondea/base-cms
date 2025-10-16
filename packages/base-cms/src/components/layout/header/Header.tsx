@@ -6,17 +6,18 @@ import { Badge, Box, IconButton, Stack, Tooltip, useTheme } from '@mui/material'
 import { useSidebar } from '~/contexts/AppProvider';
 
 import { Logo } from '../SideBar/components/Logo';
-import { Profile } from './Profile';
+import { AdditionalMenuItem, Profile } from './Profile';
 import { ThemeToggle } from './ThemeToggle';
 
 interface HeaderProps {
 	navigationItems?: Array<{
 		node: React.ReactNode;
 	}>;
+	additionalMenuItems?: AdditionalMenuItem[];
 	logoUrl: string;
 }
 
-export const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
+export const Header = ({ navigationItems = [], additionalMenuItems = [], logoUrl }: HeaderProps) => {
 	const { drawerOpen, toggleDrawer } = useSidebar();
 	const theme = useTheme();
 
@@ -61,7 +62,7 @@ export const Header = ({ navigationItems = [], logoUrl }: HeaderProps) => {
 						<NotificationsActiveIcon sx={{ fontSize: 21 }} />
 					</Badge>
 				</IconButton>
-				<Profile />
+				<Profile additionalMenuItems={additionalMenuItems} />
 			</Stack>
 		</Box>
 	);

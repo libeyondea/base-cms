@@ -13,7 +13,7 @@ export interface TabItem {
 	content?: React.ReactNode;
 }
 
-interface TabProps {
+export interface TabProps {
 	tabs: TabItem[];
 	defaultValue?: string | number;
 	value?: string | number;
@@ -27,6 +27,7 @@ interface TabProps {
 	size?: 'small' | 'medium' | 'large';
 	persistState?: string; // Key for session storage
 	animate?: boolean;
+	keepMounted?: boolean; // Keep all tab content mounted to avoid re-rendering
 	sx?: SxProps<Theme>;
 	tabSx?: SxProps<Theme>;
 	contentSx?: SxProps<Theme>;
@@ -147,6 +148,7 @@ export const Tab = ({
 	size = 'medium',
 	persistState,
 	animate = true,
+	keepMounted = false,
 	sx,
 	tabSx,
 	contentSx,
@@ -232,6 +234,57 @@ export const Tab = ({
 	// Current tab content
 	const currentTab = useMemo(() => tabs.find((tab: TabItem) => tab.id === currentValue), [tabs, currentValue]);
 
+	// Render tab content based on keepMounted prop
+	const renderTabContent = useCallback(() => {
+		if (keepMounted) {
+			// Render all tab contents but only show the active one
+			return tabs.map((tab) => (
+				<TabContent
+					key={tab.id}
+					sx={{
+						flex: 1,
+						display: tab.id === currentValue ? 'block' : 'none',
+						...(orientation === 'vertical' && {
+							marginLeft: 0,
+							minHeight: 'auto'
+						}),
+						...contentSx
+					}}
+				>
+					{animate ? (
+						<Fade in={tab.id === currentValue} timeout={300}>
+							<div>{tab.content}</div>
+						</Fade>
+					) : (
+						tab.content
+					)}
+				</TabContent>
+			));
+		} else {
+			// Original behavior: only render current tab content
+			return currentTab?.content ? (
+				<TabContent
+					sx={{
+						flex: 1,
+						...(orientation === 'vertical' && {
+							marginLeft: 0,
+							minHeight: 'auto'
+						}),
+						...contentSx
+					}}
+				>
+					{animate ? (
+						<Fade in timeout={300}>
+							<div>{currentTab.content}</div>
+						</Fade>
+					) : (
+						currentTab.content
+					)}
+				</TabContent>
+			) : null;
+		}
+	}, [keepMounted, tabs, currentValue, currentTab, animate, orientation, contentSx]);
+
 	return (
 		<Box
 			sx={{
@@ -271,26 +324,7 @@ export const Tab = ({
 			</StyledTabs>
 
 			{/* Tab Content */}
-			{currentTab?.content && (
-				<TabContent
-					sx={{
-						flex: 1,
-						...(orientation === 'vertical' && {
-							marginLeft: 0,
-							minHeight: 'auto'
-						}),
-						...contentSx
-					}}
-				>
-					{animate ? (
-						<Fade in timeout={300}>
-							<div>{currentTab.content}</div>
-						</Fade>
-					) : (
-						currentTab.content
-					)}
-				</TabContent>
-			)}
+			{renderTabContent()}
 		</Box>
 	);
 };

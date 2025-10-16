@@ -52,7 +52,7 @@ export const AccessControl = ({ children, profileAPI = '/profile' }: { children:
 					}
 				});
 				signin({
-					user: res?.data?.data,
+					user: res?.data?.user,
 					token: serviceToken
 				});
 			} else {
