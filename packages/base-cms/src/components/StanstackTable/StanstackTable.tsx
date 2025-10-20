@@ -175,6 +175,7 @@ export const StanstackTable = <T extends Record<string, any>>({
 		pageSize: customPageSize
 	});
 	const [expanded, setExpanded] = useState<ExpandedState>({});
+	const [clickedRowId, setClickedRowId] = useState<string | null>(null);
 
 	// Build dynamic columns: selection and expand
 	const tableColumns = useMemo(() => {
@@ -326,6 +327,13 @@ export const StanstackTable = <T extends Record<string, any>>({
 		}
 	}, [rowSelection, onSelectedRows, table]);
 
+	// Handle row click
+	const handleRowClick = (row: TanStackRow<T>) => {
+		const rowId = row.id;
+		setClickedRowId(clickedRowId === rowId ? null : rowId);
+		onRowClick?.(row);
+	};
+
 	// Get visible columns
 	const visibleColumns = table.getAllColumns().filter((column) => column.getIsVisible());
 
@@ -467,7 +475,7 @@ export const StanstackTable = <T extends Record<string, any>>({
 						{!isFetching &&
 							table.getRowModel().rows.map((row, index) => (
 								<Fragment key={row.id || index}>
-									<Row<T> row={row} onRowClick={onRowClick} isRowAction={isRowAction} {...menuActions} />
+									<Row<T> row={row} onRowClick={handleRowClick} isRowAction={isRowAction} clickedRowId={clickedRowId} {...menuActions} />
 								</Fragment>
 							))}
 					</TableBody>

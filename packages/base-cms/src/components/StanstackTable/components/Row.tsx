@@ -49,14 +49,26 @@ export interface RowProps<T> extends MenuActionProps<T> {
 	isRowAction?: boolean;
 	rowSelected?: { key: string; value: any };
 	toolipTitle?: string;
+	clickedRowId?: string | null;
 }
 
-export const Row = <T extends Record<string, any>>({ row, onRowClick, isRowAction = true, rowSelected, toolipTitle = '', ...menuProps }: RowProps<T>) => {
+export const Row = <T extends Record<string, any>>({
+	row,
+	onRowClick,
+	isRowAction = true,
+	rowSelected,
+	toolipTitle = '',
+	clickedRowId,
+	...menuProps
+}: RowProps<T>) => {
 	const theme = useTheme();
 	const rowRef = useRef<HTMLTableRowElement>(null);
 
 	// Check if row is selected based on external criteria
 	const isSelected = rowSelected && row.original ? row.original[rowSelected.key] === rowSelected.value : false;
+
+	// Check if this row is currently clicked
+	const isClicked = clickedRowId === row.id;
 
 	return (
 		<Tooltip title={toolipTitle || ''} placement="bottom">
@@ -84,8 +96,9 @@ export const Row = <T extends Record<string, any>>({ row, onRowClick, isRowActio
 								? alpha(theme.palette.success.main, 0.08)
 								: alpha(theme.palette.warning.main, 0.08)
 					},
-					backgroundColor:
-						row.getIsSelected() || isSelected
+					backgroundColor: isClicked
+						? alpha(theme.palette.info.main, 0.15)
+						: row.getIsSelected() || isSelected
 							? alpha(theme.palette.primary.main, 0.2)
 							: row.original?.errorCode === '0' || row.original.errorCode === undefined
 								? theme.palette.background.paper
