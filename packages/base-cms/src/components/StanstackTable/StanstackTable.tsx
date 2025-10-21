@@ -330,7 +330,7 @@ export const StanstackTable = <T extends Record<string, any>>({
 	// Handle row click
 	const handleRowClick = (row: TanStackRow<T>) => {
 		const rowId = row.id;
-		setClickedRowId(clickedRowId === rowId ? null : rowId);
+		setClickedRowId(rowId);
 		onRowClick?.(row);
 	};
 
