@@ -12,3 +12,4 @@ export * from './RHFSelect';
 export * from './RHFSwitch';
 export * from './RHFTextFieldAdvanced';
 export * from './RHFScheduleTimePicker';
+export * from './RHFMoney';
