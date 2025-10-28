@@ -29,19 +29,19 @@
 - 🎨 **Theme System linh hoạt**: Hỗ trợ Dark/Light mode với customization đầy đủ
 - 🔧 **Developer Experience tốt**: TypeScript support, ESLint, Prettier
 - 🛣️ **Custom Routes System**: Cấu hình routes dễ dàng chỉ với object/array
-- 📦 **Package Management đơn giản**: Chỉ cần 2 packages thay vì 20+ dependencies
+- 📦 **Package Management đơn giản**: Chỉ cần 2 packages chính thay vì 20+ dependencies
 - 🚀 **Production-ready**: Build với Vite, optimized, tree-shakeable và lightweight
 
 ## 📦 Packages
 
-Monorepo này bao gồm 2 packages chính:
+Monorepo này bao gồm 3 packages chính:
 
 ### 1. [@libeyondea/base-cms](./packages/base-cms)
 
 **Package chính** - Thư viện React CMS với đầy đủ components, hooks và utilities.
 
 - 📍 **Path**: `packages/base-cms`
-- 📊 **Version**: v1.0.21
+- 📊 **Version**: v1.0.55
 - 📦 **Bundle**: ES Module (tree-shakeable)
 - 📝 **TypeScript**: Full type definitions included
 
@@ -72,7 +72,7 @@ Monorepo này bao gồm 2 packages chính:
 **Dev Dependencies Package** - Bundle tất cả development tools cần thiết.
 
 - 📍 **Path**: `packages/base-cms-dev`
-- 📊 **Version**: v1.0.12
+- 📊 **Version**: v1.0.17
 - 🎯 **Mục đích**: Đơn giản hóa việc cài đặt dev dependencies
 
 **Bao gồm:**
@@ -82,11 +82,31 @@ Monorepo này bao gồm 2 packages chính:
 - ✅ Type Definitions: @types/\* cho tất cả dependencies
 - ✅ Development Utilities: Vite plugins, visualizer
 
+### 3. [base-cms-react](./examples/base-cms-react)
+
+**Example Project** - Ví dụ implementation hoàn chỉnh sử dụng base-cms library.
+
+- 📍 **Path**: `examples/base-cms-react`
+- 📊 **Version**: v1.0.0
+- 🎯 **Mục đích**: Demo và reference implementation
+- 📝 **TypeScript**: Full TypeScript support
+
+**Bao gồm:**
+
+- ✅ Complete CMS application example
+- ✅ Authentication flow (Sign in/Sign up)
+- ✅ Dashboard với user management
+- ✅ Public pages (About, Contact)
+- ✅ Layouts implementation (Auth, Private, Public)
+- ✅ Redux store setup
+- ✅ API services integration
+- ✅ Routing configuration
+
 ## 🚀 Cài đặt nhanh
 
 ### Cho người dùng cuối (End Users)
 
-Cài đặt cả 2 packages trong project của bạn:
+Cài đặt cả 2 packages chính trong project của bạn:
 
 ```bash
 # Cài đặt library chính
@@ -114,9 +134,37 @@ npm install
 # Build package
 npm run build
 
-# Start development server
-npm run dev
+# Chạy example application
+npm run dev:example
 ```
+
+### Chạy Example Application
+
+Để xem cách sử dụng library trong thực tế:
+
+```bash
+# Clone repository
+git clone https://github.com/libeyondea/base-cms.git
+cd base-cms
+
+# Cài đặt dependencies
+npm install
+
+# Chạy example application
+npm run dev:example
+
+# Mở browser tại http://localhost:1000
+```
+
+Example application bao gồm:
+
+- ✅ **Authentication flow** (Sign in/Sign up pages)
+- ✅ **Dashboard** với user management
+- ✅ **Public pages** (About, Contact)
+- ✅ **Layout implementations** (Auth, Private, Public)
+- ✅ **Redux store** setup và usage
+- ✅ **API services** integration
+- ✅ **Routing** configuration với guards
 
 ## 🛠️ Development
 
@@ -132,17 +180,17 @@ npm run dev
 # 1. Cài đặt dependencies
 npm install
 
-# 2. Start development server (port 1000)
-npm run dev
-
-# 3. Build packages
+# 2. Build packages
 npm run build
 
-# 4. Lint code
+# 3. Lint code
 npm run lint
 
-# 5. Preview build
-npm run preview
+# 4. Chạy example application (port 1000)
+npm run dev:example
+
+# 5. Preview example build
+npm run preview:example
 ```
 
 ### Thư mục làm việc
@@ -150,17 +198,19 @@ npm run preview
 - **Source code**: `packages/base-cms/src/`
 - **Build output**: `packages/base-cms/dist/`
 - **Dev package**: `packages/base-cms-dev/`
+- **Example app**: `examples/base-cms-react/`
 
 ## 📜 Scripts
 
 ### Root Level Scripts
 
-| Script            | Mô tả                                    | Command                                            |
-| ----------------- | ---------------------------------------- | -------------------------------------------------- |
-| `npm run dev`     | Chạy dev server cho base-cms (port 1000) | `npm run dev --workspace=@libeyondea/base-cms`     |
-| `npm run build`   | Build package base-cms                   | `npm run build --workspace=@libeyondea/base-cms`   |
-| `npm run lint`    | Lint code của base-cms                   | `npm run lint --workspace=@libeyondea/base-cms`    |
-| `npm run preview` | Preview build của base-cms (port 1000)   | `npm run preview --workspace=@libeyondea/base-cms` |
+| Script                    | Mô tả                                   | Command                                          |
+| ------------------------- | --------------------------------------- | ------------------------------------------------ |
+| `npm run build`           | Build package base-cms                  | `npm run build --workspace=@libeyondea/base-cms` |
+| `npm run lint`            | Lint code của base-cms                  | `npm run lint --workspace=@libeyondea/base-cms`  |
+| `npm run dev:example`     | Chạy dev server cho example (port 1000) | `npm run dev --workspace=base-cms-react`         |
+| `npm run build:example`   | Build example project                   | `npm run build --workspace=base-cms-react`       |
+| `npm run preview:example` | Preview example build (port 1000)       | `npm run preview --workspace=base-cms-react`     |
 
 ### Package Level Scripts (base-cms)
 
@@ -192,24 +242,13 @@ base-cms/                           # Root directory (monorepo)
 │   │   │   ├── contexts/           # React contexts
 │   │   │   │   └── AppProvider.tsx # Main context provider
 │   │   │   ├── hooks/              # Custom hooks
-│   │   │   │   ├── api/            # API hooks
 │   │   │   │   ├── useStateValue.ts
 │   │   │   │   ├── useAudioPlayer.ts
 │   │   │   │   └── useSweetAlert.ts
-│   │   │   ├── layouts/            # Layout components
-│   │   │   │   ├── auth/
-│   │   │   │   ├── private/
-│   │   │   │   └── public/
 │   │   │   ├── routes/             # Routing system
 │   │   │   ├── service/            # API services
-│   │   │   │   ├── core/
-│   │   │   │   │   └── baseService.ts
-│   │   │   │   ├── authService.ts
-│   │   │   │   └── userService.ts
-│   │   │   ├── store/              # Redux store
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── reducer.ts
-│   │   │   │   └── slices/
+│   │   │   │   └── core/
+│   │   │   │       └── baseService.ts
 │   │   │   ├── theme/              # Theme configuration
 │   │   │   │   ├── index.ts
 │   │   │   │   └── theme.ts
@@ -222,7 +261,6 @@ base-cms/                           # Root directory (monorepo)
 │   │   │   │   ├── formatChacter.ts
 │   │   │   │   ├── formData.ts
 │   │   │   │   └── time.ts
-│   │   │   ├── views/              # Example views
 │   │   │   ├── config.ts           # Configuration
 │   │   │   ├── index.ts            # Main export file
 │   │   │   └── main.tsx            # Dev entry point
@@ -239,6 +277,29 @@ base-cms/                           # Root directory (monorepo)
 │   └── base-cms-dev/               # Dev dependencies package
 │       ├── package.json            # Dev tools manifest
 │       └── README.md               # Dev package docs
+│
+├── examples/
+│   └── base-cms-react/             # Example implementation
+│       ├── src/                    # Example source code
+│       │   ├── hooks/              # API hooks example
+│       │   ├── layouts/            # Layout implementations
+│       │   ├── service/            # API services example
+│       │   ├── store/              # Redux store setup
+│       │   ├── theme/              # Theme configuration
+│       │   ├── types/              # TypeScript types
+│       │   ├── utils/              # Utility functions
+│       │   ├── views/              # Page components
+│       │   │   ├── auth/           # Authentication pages
+│       │   │   ├── private/        # Protected pages
+│       │   │   └── public/         # Public pages
+│       │   ├── App.tsx             # Main app component
+│       │   ├── config.ts           # App configuration
+│       │   ├── main.tsx            # Entry point
+│       │   └── routes.tsx          # Routing setup
+│       ├── public/                 # Static assets
+│       ├── package.json
+│       ├── vite.config.ts
+│       └── README.md
 │
 ├── scripts/
 │   └── publish.ps1                 # PowerShell publish script
@@ -264,6 +325,13 @@ base-cms/                           # Root directory (monorepo)
 - Package chỉ chứa `package.json` với dev dependencies
 - Không có source code, chỉ là dependency bundler
 
+#### `examples/base-cms-react/`
+
+- **Complete example application** sử dụng base-cms library
+- **Reference implementation** cho cách tích hợp và sử dụng library
+- **Full-stack demo** với authentication, dashboard, và public pages
+- **Best practices** cho project structure và code organization
+
 ## 💡 Lợi ích của Kiến trúc Monorepo
 
 ### 1. **Đơn giản hóa việc cài đặt**
@@ -275,7 +343,7 @@ npm install typescript vite eslint prettier @types/react @types/node ...
 # và 15+ packages khác
 ```
 
-✅ **Bây giờ** (2 packages chính + peer dependencies):
+✅ **Bây giờ** (2 packages chính + peer dependencies + example):
 
 ```bash
 # Cài đặt library chính

@@ -27,11 +27,11 @@
 
 ### ✨ Tính năng chính
 
-- 🎨 **40+ UI Components** - Dựa trên Material-UI v7, tùy chỉnh sâu cho use-case CMS
+- 🎨 **20+ UI Components** - Dựa trên Material-UI v7, tùy chỉnh sâu cho use-case CMS
 - 📝 **Form System hoàn chỉnh** - React Hook Form 7.63 + Yup validation
 - 📊 **Advanced Table** - TanStack Table v8 với filtering, sorting, pagination
 - 🎭 **Theme System linh hoạt** - Dark/Light mode, customizable colors
-- 🔐 **Auth & Routing** - Guards, layouts cho auth/private/public routes
+- 🛣️ **Advanced Routing System** - Custom routes với guards, layouts và nested routes
 - 📡 **API Integration** - BaseService class với full CRUD operations
 - 🎯 **TypeScript First** - 100% type-safe với full type definitions
 - 🚀 **Production Ready** - Optimized build, tree-shakeable, < 200KB gzipped
@@ -233,57 +233,171 @@ function LoginForm() {
 
 > **Lưu ý quan trọng**: Tất cả component có prefix `RHF` (React Hook Form) **phải** được wrap trong `FormProvider` để hoạt động.
 
-| Component                | Mô tả                                  | Props chính                            |
-| ------------------------ | -------------------------------------- | -------------------------------------- |
-| **FormProvider**         | Provider cho React Hook Form context   | `methods`, `onSubmit`, `children`      |
-| **FormLabel**            | Label component với styling nhất quán  | `label`, `required`, `tooltip`         |
-| **RHFTextField**         | Text input với validation              | `name`, `label`, `type`, `placeholder` |
-| **RHFPhone**             | Input số điện thoại (format VN)        | `name`, `label`, `placeholder`         |
-| **RHFDatePicker**        | Date picker với validation             | `name`, `label`, `minDate`, `maxDate`  |
-| **RHFTimePicker**        | Time picker                            | `name`, `label`                        |
-| **RHFAutocomplete**      | Autocomplete single selection          | `name`, `label`, `options`             |
-| **RHFAutocompleteMulti** | Autocomplete multiple selection        | `name`, `label`, `options`             |
-| **RHFNationalID**        | Input CMND/CCCD với validation         | `name`, `label`                        |
-| **RHFTextFieldSelect**   | Text field kết hợp dropdown            | `name`, `label`, `options`             |
-| **RHFSelect**            | Select dropdown                        | `name`, `label`, `options`             |
-| **RHFSwitch**            | Toggle switch                          | `name`, `label`                        |
-| **RHFTextFieldAdvanced** | Text field nâng cao với nhiều tùy chọn | `name`, `label`, `multiline`, `rows`   |
+| Component                 | Mô tả                                  | Props chính                            |
+| ------------------------- | -------------------------------------- | -------------------------------------- |
+| **FormProvider**          | Provider cho React Hook Form context   | `methods`, `onSubmit`, `children`      |
+| **FormLabel**             | Label component với styling nhất quán  | `label`, `required`, `tooltip`         |
+| **RHFTextField**          | Text input với validation              | `name`, `label`, `type`, `placeholder` |
+| **RHFPhone**              | Input số điện thoại (format VN)        | `name`, `label`, `placeholder`         |
+| **RHFDatePicker**         | Date picker với validation             | `name`, `label`, `minDate`, `maxDate`  |
+| **RHFTimePicker**         | Time picker                            | `name`, `label`                        |
+| **RHFAutocomplete**       | Autocomplete single selection          | `name`, `label`, `options`             |
+| **RHFAutocompleteMulti**  | Autocomplete multiple selection        | `name`, `label`, `options`             |
+| **RHFNationalID**         | Input CMND/CCCD với validation         | `name`, `label`                        |
+| **RHFTextFieldSelect**    | Text field kết hợp dropdown            | `name`, `label`, `options`             |
+| **RHFSelect**             | Select dropdown                        | `name`, `label`, `options`             |
+| **RHFSwitch**             | Toggle switch                          | `name`, `label`                        |
+| **RHFTextFieldAdvanced**  | Text field nâng cao với nhiều tùy chọn | `name`, `label`, `multiline`, `rows`   |
+| **RHFMoney**              | Input tiền tệ với format VN            | `name`, `label`, `currency`            |
+| **RHFScheduleTimePicker** | Time picker cho lịch trình             | `name`, `label`, `timeSlots`           |
 
 #### Ví dụ sử dụng Form Components
 
 ```tsx
-import { FormProvider, RHFAutocomplete, RHFDatePicker, RHFSelect, RHFTextField } from '@libeyondea/base-cms';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+	FormLabel,
+	FormProvider,
+	RHFAutocomplete,
+	RHFAutocompleteMulti,
+	RHFDatePicker,
+	RHFMoney,
+	RHFNationalID,
+	RHFPhone,
+	RHFSelect,
+	RHFSwitch,
+	RHFTextField,
+	RHFTextFieldAdvanced
+} from '@libeyondea/base-cms';
+import { Box, Button, Grid } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+
+// Validation schema
+const schema = yup.object({
+	fullName: yup.string().required('Họ tên là bắt buộc'),
+	email: yup.string().email('Email không hợp lệ').required('Email là bắt buộc'),
+	phone: yup.string().required('Số điện thoại là bắt buộc'),
+	nationalId: yup.string().required('CMND/CCCD là bắt buộc'),
+	salary: yup.number().required('Lương là bắt buộc'),
+	birthDate: yup.date().required('Ngày sinh là bắt buộc').nullable(),
+	role: yup.number().required('Vai trò là bắt buộc'),
+	department: yup.object().required('Phòng ban là bắt buộc').nullable(),
+	skills: yup.array().min(1, 'Chọn ít nhất 1 kỹ năng'),
+	isActive: yup.boolean(),
+	description: yup.string().max(500, 'Mô tả không quá 500 ký tự')
+});
 
 const roleOptions = [
 	{ id: 1, name: 'Admin' },
-	{ id: 2, name: 'User' }
+	{ id: 2, name: 'Manager' },
+	{ id: 3, name: 'User' }
+];
+
+const departmentOptions = [
+	{ id: 1, name: 'IT' },
+	{ id: 2, name: 'HR' },
+	{ id: 3, name: 'Marketing' }
+];
+
+const skillOptions = [
+	{ id: 1, name: 'React' },
+	{ id: 2, name: 'TypeScript' },
+	{ id: 3, name: 'Node.js' },
+	{ id: 4, name: 'Python' }
 ];
 
 function UserForm() {
 	const methods = useForm({
+		resolver: yupResolver(schema),
 		defaultValues: {
-			name: '',
-			role: 1,
+			fullName: '',
+			email: '',
+			phone: '',
+			nationalId: '',
+			salary: 0,
 			birthDate: null,
-			department: null
+			role: 1,
+			department: null,
+			skills: [],
+			isActive: true,
+			description: ''
 		}
 	});
 
+	const onSubmit = (data: any) => {
+		console.log('Form data:', data);
+		// Handle form submission
+	};
+
 	return (
-		<FormProvider methods={methods} onSubmit={methods.handleSubmit(console.log)}>
-			<RHFTextField name="name" label="Họ và tên" />
-			<RHFSelect name="role" label="Vai trò" options={roleOptions} />
-			<RHFDatePicker name="birthDate" label="Ngày sinh" />
-			<RHFAutocomplete
-				name="department"
-				label="Phòng ban"
-				options={[
-					{ id: 1, name: 'IT' },
-					{ id: 2, name: 'HR' }
-				]}
-			/>
-			<button type="submit">Lưu</button>
+		<FormProvider methods={methods} onSubmit={onSubmit}>
+			<Grid container spacing={3}>
+				{/* Basic Text Fields */}
+				<Grid item xs={12} md={6}>
+					<RHFTextField name="fullName" label="Họ và tên" placeholder="Nhập họ và tên" fullWidth />
+				</Grid>
+
+				<Grid item xs={12} md={6}>
+					<RHFTextField name="email" label="Email" type="email" placeholder="example@email.com" fullWidth />
+				</Grid>
+
+				{/* Phone & National ID */}
+				<Grid item xs={12} md={6}>
+					<RHFPhone name="phone" label="Số điện thoại" placeholder="0123456789" fullWidth />
+				</Grid>
+
+				<Grid item xs={12} md={6}>
+					<RHFNationalID name="nationalId" label="CMND/CCCD" fullWidth />
+				</Grid>
+
+				{/* Money Input */}
+				<Grid item xs={12} md={6}>
+					<RHFMoney name="salary" label="Lương" currency="VND" fullWidth />
+				</Grid>
+
+				{/* Date Picker */}
+				<Grid item xs={12} md={6}>
+					<RHFDatePicker name="birthDate" label="Ngày sinh" maxDate={new Date()} fullWidth />
+				</Grid>
+
+				{/* Select Dropdown */}
+				<Grid item xs={12} md={6}>
+					<RHFSelect name="role" label="Vai trò" options={roleOptions} fullWidth />
+				</Grid>
+
+				{/* Autocomplete Single */}
+				<Grid item xs={12} md={6}>
+					<RHFAutocomplete name="department" label="Phòng ban" options={departmentOptions} fullWidth />
+				</Grid>
+
+				{/* Autocomplete Multiple */}
+				<Grid item xs={12}>
+					<RHFAutocompleteMulti name="skills" label="Kỹ năng" options={skillOptions} fullWidth />
+				</Grid>
+
+				{/* Switch */}
+				<Grid item xs={12}>
+					<RHFSwitch name="isActive" label="Trạng thái hoạt động" />
+				</Grid>
+
+				{/* Advanced Text Field */}
+				<Grid item xs={12}>
+					<RHFTextFieldAdvanced name="description" label="Mô tả" multiline rows={4} placeholder="Nhập mô tả về người dùng..." fullWidth />
+				</Grid>
+
+				{/* Form Actions */}
+				<Grid item xs={12}>
+					<Box display="flex" gap={2} justifyContent="flex-end">
+						<Button variant="outlined" onClick={() => methods.reset()}>
+							Hủy
+						</Button>
+						<Button variant="contained" type="submit">
+							Lưu
+						</Button>
+					</Box>
+				</Grid>
+			</Grid>
 		</FormProvider>
 	);
 }
@@ -297,8 +411,153 @@ Components có prefix `N` là các input component độc lập, **không** cầ
 | ---------------------- | ---------------------- | --------------------------------- |
 | **NTextField**         | Text input cơ bản      | Khi không cần validation phức tạp |
 | **NSelect**            | Select dropdown cơ bản | Simple dropdown                   |
+| **NAutocomplete**      | Autocomplete single    | Simple autocomplete               |
 | **NAutocompleteMulti** | Autocomplete multiple  | Tag selection                     |
 | **NTextFieldSelect**   | Text field + dropdown  | Combined input                    |
+| **NDatePicker**        | Date picker cơ bản     | Simple date selection             |
+
+#### Ví dụ sử dụng Input Components
+
+```tsx
+import { useState } from 'react';
+
+import { NAutocomplete, NAutocompleteMulti, NDatePicker, NSelect, NTextField, NTextFieldSelect } from '@libeyondea/base-cms';
+import { Box, Button, Grid, Typography } from '@mui/material';
+
+const countryOptions = [
+	{ id: 1, name: 'Việt Nam' },
+	{ id: 2, name: 'Thái Lan' },
+	{ id: 3, name: 'Singapore' }
+];
+
+const tagOptions = [
+	{ id: 1, name: 'Frontend' },
+	{ id: 2, name: 'Backend' },
+	{ id: 3, name: 'Mobile' },
+	{ id: 4, name: 'DevOps' }
+];
+
+function SearchForm() {
+	const [searchData, setSearchData] = useState({
+		keyword: '',
+		country: null,
+		tags: [],
+		category: '',
+		dateRange: null
+	});
+
+	const handleSearch = () => {
+		console.log('Search data:', searchData);
+		// Handle search logic
+	};
+
+	return (
+		<Box sx={{ p: 3 }}>
+			<Typography variant="h6" gutterBottom>
+				Tìm kiếm nâng cao
+			</Typography>
+
+			<Grid container spacing={3}>
+				{/* Basic Text Field */}
+				<Grid item xs={12} md={6}>
+					<NTextField
+						label="Từ khóa"
+						placeholder="Nhập từ khóa tìm kiếm..."
+						value={searchData.keyword}
+						onChange={(e) => setSearchData((prev) => ({ ...prev, keyword: e.target.value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Select Dropdown */}
+				<Grid item xs={12} md={6}>
+					<NSelect
+						label="Quốc gia"
+						options={countryOptions}
+						value={searchData.country}
+						onChange={(value) => setSearchData((prev) => ({ ...prev, country: value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Autocomplete Single */}
+				<Grid item xs={12} md={6}>
+					<NAutocomplete
+						label="Danh mục"
+						options={[
+							{ id: 1, name: 'Công nghệ' },
+							{ id: 2, name: 'Kinh doanh' },
+							{ id: 3, name: 'Giáo dục' }
+						]}
+						value={searchData.category}
+						onChange={(value) => setSearchData((prev) => ({ ...prev, category: value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Autocomplete Multiple */}
+				<Grid item xs={12} md={6}>
+					<NAutocompleteMulti
+						label="Tags"
+						options={tagOptions}
+						value={searchData.tags}
+						onChange={(value) => setSearchData((prev) => ({ ...prev, tags: value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Date Picker */}
+				<Grid item xs={12} md={6}>
+					<NDatePicker
+						label="Ngày tạo"
+						value={searchData.dateRange}
+						onChange={(value) => setSearchData((prev) => ({ ...prev, dateRange: value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Text Field Select */}
+				<Grid item xs={12} md={6}>
+					<NTextFieldSelect
+						label="Loại tài liệu"
+						options={[
+							{ id: 1, name: 'PDF' },
+							{ id: 2, name: 'Word' },
+							{ id: 3, name: 'Excel' }
+						]}
+						value={searchData.category}
+						onChange={(value) => setSearchData((prev) => ({ ...prev, category: value }))}
+						fullWidth
+					/>
+				</Grid>
+
+				{/* Search Button */}
+				<Grid item xs={12}>
+					<Box display="flex" gap={2} justifyContent="flex-end">
+						<Button
+							variant="outlined"
+							onClick={() =>
+								setSearchData({
+									keyword: '',
+									country: null,
+									tags: [],
+									category: '',
+									dateRange: null
+								})
+							}
+						>
+							Xóa bộ lọc
+						</Button>
+						<Button variant="contained" onClick={handleSearch}>
+							Tìm kiếm
+						</Button>
+					</Box>
+				</Grid>
+			</Grid>
+		</Box>
+	);
+}
+```
 
 ### Table Components
 
@@ -376,29 +635,419 @@ function UserTable() {
 
 ### UI Components
 
-| Component             | Mô tả                   | Use Case               |
-| --------------------- | ----------------------- | ---------------------- |
-| **MainCard**          | Card container chính    | Wrap content sections  |
-| **PageContainer**     | Page layout container   | Main page wrapper      |
-| **CommonModal**       | Modal component         | Dialogs, confirmations |
-| **CustomBreadcrumbs** | Breadcrumb navigation   | Page hierarchy         |
-| **CustomTabs**        | Tab component           | Tabbed interfaces      |
-| **DateRangePicker**   | Date range selector     | Filter by date range   |
-| **LoadingScreen**     | Full-screen loader      | Loading states         |
-| **MenuPopup**         | Popup menu              | Actions menu           |
-| **SoundButton**       | Button với sound effect | Interactive buttons    |
-| **StatusChip**        | Status badge            | Display status         |
-| **TruncatedText**     | Text với tooltip        | Long text handling     |
+| Component           | Mô tả                      | Use Case               |
+| ------------------- | -------------------------- | ---------------------- |
+| **Avatar**          | Avatar component với modal | User profile display   |
+| **Breadcrumbs**     | Breadcrumb navigation      | Page hierarchy         |
+| **DateRangePicker** | Date range selector        | Filter by date range   |
+| **LoadingScreen**   | Full-screen loader         | Loading states         |
+| **MenuPopup**       | Popup menu                 | Actions menu           |
+| **Modal**           | Modal component            | Dialogs, confirmations |
+| **SoundButton**     | Button với sound effect    | Interactive buttons    |
+| **StatusChip**      | Status badge               | Display status         |
+| **Tab**             | Tab component              | Tabbed interfaces      |
+| **Toastify**        | Toast notifications        | Success/error messages |
+| **TruncatedText**   | Text với tooltip           | Long text handling     |
+| **ScheduleDisplay** | Schedule display           | Calendar/time display  |
+| **ItemList**        | List component             | Display item lists     |
+
+#### Ví dụ sử dụng UI Components
+
+````tsx
+import { Avatar, Breadcrumbs, DateRangePicker, LoadingScreen, MenuPopup, Modal, SoundButton, StatusChip, Tab, Toastify, TruncatedText } from '@libeyondea/base-cms';
+import { Box, Button, Chip, Grid, Typography } from '@mui/material';
+import { useState } from 'react';
+
+function UIComponentsDemo() {
+	const [modalOpen, setModalOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [dateRange, setDateRange] = useState(null);
+	const [activeTab, setActiveTab] = useState(0);
+
+	const handleAction = (action: string) => {
+		console.log('Action:', action);
+	};
+
+	const showToast = () => {
+		Toastify.success('Thành công!');
+	};
+
+	const tabItems = [
+		{ label: 'Thông tin', value: 0 },
+		{ label: 'Cài đặt', value: 1 },
+		{ label: 'Lịch sử', value: 2 }
+	];
+
+	return (
+		<Box sx={{ p: 3 }}>
+			<Typography variant="h4" gutterBottom>
+				UI Components Demo
+			</Typography>
+
+			<Grid container spacing={3}>
+				{/* Avatar */}
+				<Grid item xs={12} md={4}>
+					<Typography variant="h6" gutterBottom>Avatar</Typography>
+					<Avatar
+						src="/avatar.jpg"
+						alt="User Avatar"
+						size={80}
+						onClick={() => console.log('Avatar clicked')}
+					/>
+				</Grid>
+
+				{/* Status Chip */}
+				<Grid item xs={12} md={4}>
+					<Typography variant="h6" gutterBottom>Status Chips</Typography>
+					<Box display="flex" gap={1} flexWrap="wrap">
+						<StatusChip status="active" label="Hoạt động" />
+						<StatusChip status="inactive" label="Không hoạt động" />
+						<StatusChip status="pending" label="Chờ duyệt" />
+					</Box>
+				</Grid>
+
+				{/* Sound Button */}
+				<Grid item xs={12} md={4}>
+					<Typography variant="h6" gutterBottom>Sound Button</Typography>
+					<SoundButton
+						variant="contained"
+						soundUrl="/sounds/click.mp3"
+						onClick={() => console.log('Button clicked')}
+					>
+						Click me!
+					</SoundButton>
+				</Grid>
+
+				{/* Date Range Picker */}
+				<Grid item xs={12} md={6}>
+					<Typography variant="h6" gutterBottom>Date Range Picker</Typography>
+					<DateRangePicker
+						value={dateRange}
+						onChange={setDateRange}
+						placeholder="Chọn khoảng thời gian"
+					/>
+				</Grid>
+
+				{/* Menu Popup */}
+				<Grid item xs={12} md={6}>
+					<Typography variant="h6" gutterBottom>Menu Popup</Typography>
+					<MenuPopup
+						options={[
+							{
+								label: 'Xem',
+								icon: '👁️',
+								onClick: () => handleAction('view')
+							},
+							{
+								label: 'Sửa',
+								icon: '✏️',
+								onClick: () => handleAction('edit')
+							},
+							{
+								label: 'Xóa',
+								icon: '🗑️',
+								onClick: () => handleAction('delete'),
+								color: 'error'
+							}
+						]}
+					>
+						<Button variant="outlined">Actions</Button>
+					</MenuPopup>
+				</Grid>
+
+				{/* Truncated Text */}
+				<Grid item xs={12} md={6}>
+					<Typography variant="h6" gutterBottom>Truncated Text</Typography>
+					<TruncatedText
+						text="Đây là một đoạn text rất dài sẽ được cắt ngắn và hiển thị tooltip khi hover"
+						maxLength={50}
+					/>
+				</Grid>
+
+				{/* Tab Component */}
+				<Grid item xs={12} md={6}>
+					<Typography variant="h6" gutterBottom>Tabs</Typography>
+					<Tab
+						items={tabItems}
+						value={activeTab}
+						onChange={setActiveTab}
+					/>
+					<Box sx={{ mt: 2 }}>
+						{activeTab === 0 && <Typography>Nội dung tab 1</Typography>}
+						{activeTab === 1 && <Typography>Nội dung tab 2</Typography>}
+						{activeTab === 2 && <Typography>Nội dung tab 3</Typography>}
+					</Box>
+				</Grid>
+
+				{/* Modal */}
+				<Grid item xs={12}>
+					<Typography variant="h6" gutterBottom>Modal</Typography>
+					<Button variant="contained" onClick={() => setModalOpen(true)}>
+						Mở Modal
+					</Button>
+					<Modal
+						open={modalOpen}
+						onClose={() => setModalOpen(false)}
+						title="Modal Demo"
+						content="Đây là nội dung của modal"
+						actions={[
+							{
+								label: 'Hủy',
+								variant: 'outlined',
+								onClick: () => setModalOpen(false)
+							},
+							{
+								label: 'Xác nhận',
+								variant: 'contained',
+								onClick: () => {
+									setModalOpen(false);
+									showToast();
+								}
+							}
+						]}
+					/>
+				</Grid>
+
+				{/* Loading Screen */}
+				<Grid item xs={12}>
+					<Typography variant="h6" gutterBottom>Loading Screen</Typography>
+					<Button
+						variant="contained"
+						onClick={() => {
+							setLoading(true);
+							setTimeout(() => setLoading(false), 3000);
+						}}
+					>
+						Show Loading
+					</Button>
+					<LoadingScreen open={loading} />
+				</Grid>
+			</Grid>
+		</Box>
+	);
+}
 
 ### Layout Components
 
-| Component          | Mô tả                              |
-| ------------------ | ---------------------------------- |
-| **Header**         | Top navigation header              |
-| **Sidebar**        | Side navigation menu               |
-| **Layout/Auth**    | Layout cho authentication pages    |
-| **Layout/Private** | Layout cho private/protected pages |
-| **Layout/Public**  | Layout cho public pages            |
+| Component         | Mô tả                                           |
+| ----------------- | ----------------------------------------------- |
+| **Header**        | Top navigation header với profile, theme toggle |
+| **Sidebar**       | Side navigation menu với submenu support        |
+| **PageContainer** | Main page wrapper với breadcrumbs               |
+| **MainCard**      | Card container với search, actions              |
+| **Drawer**        | Drawer component cho mobile menu                |
+
+#### Ví dụ sử dụng Layout Components
+
+```tsx
+import { Drawer, Header, MainCard, PageContainer, Sidebar } from '@libeyondea/base-cms';
+import { Box, CssBaseline, Typography } from '@mui/material';
+import { useState } from 'react';
+
+const sidebarItems = [
+	{
+		id: 'dashboard',
+		title: 'Dashboard',
+		icon: '🏠',
+		path: '/dashboard'
+	},
+	{
+		id: 'users',
+		title: 'Người dùng',
+		icon: '👥',
+		path: '/users',
+		children: [
+			{ id: 'user-list', title: 'Danh sách', path: '/users/list' },
+			{ id: 'user-roles', title: 'Vai trò', path: '/users/roles' }
+		]
+	},
+	{
+		id: 'products',
+		title: 'Sản phẩm',
+		icon: '📦',
+		path: '/products'
+	},
+	{
+		id: 'settings',
+		title: 'Cài đặt',
+		icon: '⚙️',
+		path: '/settings'
+	}
+];
+
+function DashboardLayout() {
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	return (
+		<Box sx={{ display: 'flex' }}>
+			<CssBaseline />
+
+			{/* Header */}
+			<Header
+				title="CMS Dashboard"
+				onMenuClick={() => setDrawerOpen(!drawerOpen)}
+				userProfile={{
+					name: 'Nguyễn Văn A',
+					email: 'admin@example.com',
+					avatar: '/avatar.jpg'
+				}}
+				onLogout={() => console.log('Logout')}
+			/>
+
+			{/* Sidebar */}
+			<Sidebar
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				items={sidebarItems}
+				logo="/logo.png"
+				logoText="Base CMS"
+			/>
+
+			{/* Main Content */}
+			<Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+				<PageContainer
+					title="Dashboard"
+					breadcrumbs={[
+						{ label: 'Trang chủ', href: '/' },
+						{ label: 'Dashboard', href: '/dashboard' }
+					]}
+				>
+					<MainCard
+						title="Thống kê tổng quan"
+						searchProps={{
+							placeholder: 'Tìm kiếm...',
+							onSearch: (value) => console.log('Search:', value)
+						}}
+						actions={[
+							{
+								label: 'Xuất Excel',
+								onClick: () => console.log('Export Excel')
+							},
+							{
+								label: 'Thêm mới',
+								variant: 'contained',
+								onClick: () => console.log('Add new')
+							}
+						]}
+					>
+						<Typography variant="body1">
+							Nội dung dashboard sẽ được hiển thị ở đây...
+						</Typography>
+					</MainCard>
+
+					{/* Mobile Drawer */}
+					<Drawer
+						open={drawerOpen}
+						onClose={() => setDrawerOpen(false)}
+						anchor="left"
+					>
+						<Box sx={{ width: 250, p: 2 }}>
+							<Typography variant="h6" gutterBottom>
+								Menu
+							</Typography>
+							{/* Drawer content */}
+						</Box>
+					</Drawer>
+				</PageContainer>
+			</Box>
+		</Box>
+	);
+}
+````
+
+## 🛣️ Routing System
+
+Library cung cấp hệ thống routing mạnh mẽ với guards và layouts tự động:
+
+### Routes Component
+
+```tsx
+import { lazy } from 'react';
+
+import { Routes, RoutesConfig } from '@libeyondea/base-cms';
+
+const myRoutes: RoutesConfig = {
+	// Auth routes - tự động có AuthGuard
+	auth: [
+		{
+			path: 'login',
+			element: lazy(() => import('./pages/Login'))
+		},
+		{
+			path: 'signup',
+			element: lazy(() => import('./pages/Signup'))
+		}
+	],
+
+	// Private routes - tự động có PrivateGuard
+	private: [
+		{
+			index: true,
+			element: lazy(() => import('./pages/Dashboard'))
+		},
+		{
+			path: 'users',
+			element: lazy(() => import('./pages/Users'))
+		},
+		{
+			path: 'settings',
+			element: lazy(() => import('./pages/Settings'))
+		}
+	],
+
+	// Public routes - không có guard
+	public: [
+		{
+			path: 'about',
+			element: lazy(() => import('./pages/About'))
+		},
+		{
+			path: 'contact',
+			element: lazy(() => import('./pages/Contact'))
+		}
+	],
+
+	// Custom route groups
+	groups: [
+		{
+			prefix: '/admin',
+			guard: 'admin', // Custom guard
+			routes: [
+				{
+					path: 'users',
+					element: lazy(() => import('./pages/admin/Users'))
+				}
+			]
+		}
+	],
+
+	// Custom 404 page
+	notFound: lazy(() => import('./pages/NotFound')),
+
+	// Custom error page
+	error: lazy(() => import('./pages/Error'))
+};
+
+function App() {
+	return <Routes config={myRoutes} basename="/app" profileAPI="/api/profile" redirectPrivateTo="/auth/login" redirectAuthTo="/dashboard" />;
+}
+```
+
+### Routes Props
+
+| Prop                | Type           | Mô tả                                                 |
+| ------------------- | -------------- | ----------------------------------------------------- |
+| `config`            | `RoutesConfig` | Cấu hình routes (bắt buộc)                            |
+| `basename`          | `string`       | Base path cho router                                  |
+| `profileAPI`        | `string`       | API endpoint để check authentication                  |
+| `redirectPrivateTo` | `string`       | Redirect path khi chưa đăng nhập (default: '/signin') |
+| `redirectAuthTo`    | `string`       | Redirect path khi đã đăng nhập (default: '/')         |
+
+### Route Guards
+
+- **AuthGuard**: Redirect về private routes nếu đã đăng nhập
+- **PrivateGuard**: Redirect về auth routes nếu chưa đăng nhập
+- **Custom Guards**: Có thể tạo custom guards cho specific routes
 
 ## 🎣 Hooks
 
@@ -1143,24 +1792,27 @@ function UserManagement() {
 export default UserManagement;
 ```
 
-### Ví dụ 3: Complete CMS Layout
+### Ví dụ 3: Complete CMS với Custom Routes
 
 ```tsx
 import React from 'react';
+import { lazy } from 'react';
 
-import { AppProvider, AuthLayout, LoadingScreen, PrivateLayout, PublicLayout } from '@libeyondea/base-cms';
+import { AppProvider, Routes, RoutesConfig } from '@libeyondea/base-cms';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
-import NotFound from './pages/NotFound';
-// Pages
-import Login from './pages/auth/Login';
-import Dashboard from './pages/private/Dashboard';
-import Settings from './pages/private/Settings';
-import Users from './pages/private/Users';
-import Home from './pages/public/Home';
 import { store } from './store';
+
+// Lazy load pages
+const Login = lazy(() => import('./pages/auth/Login'));
+const Signup = lazy(() => import('./pages/auth/Signup'));
+const Dashboard = lazy(() => import('./pages/private/Dashboard'));
+const Users = lazy(() => import('./pages/private/Users'));
+const Settings = lazy(() => import('./pages/private/Settings'));
+const About = lazy(() => import('./pages/public/About'));
+const Contact = lazy(() => import('./pages/public/Contact'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Query client
 const queryClient = new QueryClient({
@@ -1172,48 +1824,52 @@ const queryClient = new QueryClient({
 	}
 });
 
-// Auth guard
-function PrivateRoute({ children }: { children: React.ReactNode }) {
-	const token = localStorage.getItem('token');
-	return token ? <>{children}</> : <Navigate to="/auth/login" replace />;
-}
+// Routes configuration
+const routesConfig: RoutesConfig = {
+	auth: [
+		{
+			path: 'login',
+			element: Login
+		},
+		{
+			path: 'signup',
+			element: Signup
+		}
+	],
+	private: [
+		{
+			index: true,
+			element: Dashboard
+		},
+		{
+			path: 'users',
+			element: Users
+		},
+		{
+			path: 'settings',
+			element: Settings
+		}
+	],
+	public: [
+		{
+			path: 'about',
+			element: About
+		},
+		{
+			path: 'contact',
+			element: Contact
+		}
+	],
+	notFound: NotFound
+};
 
 function App() {
 	return (
 		<Provider store={store}>
 			<QueryClientProvider client={queryClient}>
-				<BrowserRouter>
-					<AppProvider>
-						<Routes>
-							{/* Public routes */}
-							<Route path="/" element={<PublicLayout />}>
-								<Route index element={<Home />} />
-							</Route>
-
-							{/* Auth routes */}
-							<Route path="/auth" element={<AuthLayout />}>
-								<Route path="login" element={<Login />} />
-							</Route>
-
-							{/* Private routes */}
-							<Route
-								path="/dashboard"
-								element={
-									<PrivateRoute>
-										<PrivateLayout />
-									</PrivateRoute>
-								}
-							>
-								<Route index element={<Dashboard />} />
-								<Route path="users" element={<Users />} />
-								<Route path="settings" element={<Settings />} />
-							</Route>
-
-							{/* 404 */}
-							<Route path="*" element={<NotFound />} />
-						</Routes>
-					</AppProvider>
-				</BrowserRouter>
+				<AppProvider>
+					<Routes config={routesConfig} profileAPI="/api/profile" redirectPrivateTo="/auth/login" redirectAuthTo="/dashboard" />
+				</AppProvider>
 			</QueryClientProvider>
 		</Provider>
 	);
@@ -1260,6 +1916,28 @@ interface StanstackTableProps {
 	onPageChange?: (page: number) => void;
 	onPageSizeChange?: (size: number) => void;
 	onSelectionChange?: (selectedRows: any[]) => void;
+}
+```
+
+### Routes Props
+
+```tsx
+interface RoutesProps {
+	config: RoutesConfig;
+	basename?: string;
+	profileAPI?: string;
+	redirectPrivateTo?: string;
+	redirectAuthTo?: string;
+}
+
+interface RoutesConfig {
+	auth?: RouteConfig[];
+	private?: RouteConfig[];
+	public?: RouteConfig[];
+	groups?: RouteGroupConfig[];
+	notFound?: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
+	error?: ComponentType<any> | LazyExoticComponent<ComponentType<any>>;
+	basePath?: string;
 }
 ```
 
