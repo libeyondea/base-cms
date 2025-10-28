@@ -89,7 +89,8 @@ export const Drawer = ({
 					sx={{
 						flexGrow: 1,
 						overflow: 'auto',
-						p: title || showCloseButton ? 0 : 2
+						// p: title || showCloseButton ? 0 : 2
+						p: 2
 					}}
 				>
 					{children}

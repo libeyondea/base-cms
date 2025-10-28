@@ -3,24 +3,17 @@ import { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Box, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 
-interface MenuItemProps {
-	icon?: React.ReactNode;
-	title: string;
-	onClick: () => void;
-	disabled?: boolean;
-	color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
-}
+import { MenuItemProps, MenuPopupProps } from './MenuPopup.types';
 
-interface MenuPopupProps {
-	menuItems: MenuItemProps[];
-	tooltipTitle?: string;
-}
-
-export const MenuPopup = ({ menuItems, tooltipTitle = 'Action' }: MenuPopupProps) => {
+export const MenuPopup = ({ menuItems, tooltipTitle = 'Action', customIcon }: MenuPopupProps) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
+	const isMenuEmpty = menuItems.length === 0;
+
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
+		if (!isMenuEmpty) {
+			setAnchorEl(event.currentTarget);
+		}
 	};
 	const handleClose = () => {
 		setAnchorEl(null);
@@ -33,11 +26,17 @@ export const MenuPopup = ({ menuItems, tooltipTitle = 'Action' }: MenuPopupProps
 	return (
 		<>
 			<Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-				<Tooltip title={tooltipTitle}>
-					<IconButton id="basic-button" onClick={handleClick}>
-						<MoreVertIcon />
+				{isMenuEmpty ? (
+					<IconButton id="basic-button" disabled>
+						{customIcon || <MoreVertIcon />}
 					</IconButton>
-				</Tooltip>
+				) : (
+					<Tooltip title={tooltipTitle}>
+						<IconButton id="basic-button" onClick={handleClick}>
+							{customIcon || <MoreVertIcon />}
+						</IconButton>
+					</Tooltip>
+				)}
 			</Box>
 			<Menu
 				id="basic-menu"

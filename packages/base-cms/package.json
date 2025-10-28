@@ -1,6 +1,6 @@
 {
 	"name": "@libeyondea/base-cms",
-	"version": "1.0.55",
+	"version": "1.0.59",
 	"type": "module",
 	"description": "Base CMS library for React",
 	"author": "Nguyen Thuc",

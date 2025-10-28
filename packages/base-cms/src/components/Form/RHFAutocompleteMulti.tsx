@@ -21,6 +21,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	isObject?: boolean;
 	hiddenKeys?: string;
 	maxItems?: number;
+	loadChildren?: boolean;
+	childrenKey?: string;
 	onInputChange?: (e: any, value: any) => void;
 	handleOnchange?: (value: any) => void;
 	renderOptionStart?: (option: T) => React.ReactNode;
@@ -41,6 +43,8 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 	handleOnchange,
 	options,
 	maxItems,
+	loadChildren = false,
+	childrenKey = 'children',
 	disableCloseOnSelect = true,
 	renderOptionStart,
 	renderOptionEnd,
@@ -52,6 +56,23 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 
 	// Get current form value for this field
 	const formValue = watch(name);
+
+	// Flatten options including children with level tracking
+	const flattenOptions = useCallback(
+		(opts: readonly T[], level: number = 0): T[] => {
+			if (!loadChildren) return opts.map((item) => ({ ...item, _level: 0 }));
+			return opts.reduce((acc: T[], item: T) => {
+				acc.push({ ...item, _level: level });
+				if (item[childrenKey] && Array.isArray(item[childrenKey]) && item[childrenKey].length > 0) {
+					acc.push(...flattenOptions(item[childrenKey] as T[], level + 1));
+				}
+				return acc;
+			}, []);
+		},
+		[loadChildren, childrenKey]
+	);
+
+	const allOptions = flattenOptions(options || []);
 
 	const handleChange = (newVal: T[]) => {
 		// Apply limit only if maxItems is provided
@@ -74,8 +95,8 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 			}
 
 			debouncedFnRef.current = debounce((e: React.SyntheticEvent, val: any) => {
-				// Kiểm tra xem giá trị có trong options hay chưa
-				const isExist = options.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
+				// Kiểm tra xem giá trị có trong allOptions hay chưa
+				const isExist = allOptions.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
 				// Chỉ gọi API khi giá trị chưa có trong danh sách
 				if (!isExist) {
 					onInputChange?.(e, val);
@@ -84,7 +105,7 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 
 			debouncedFnRef.current(event, value);
 		},
-		[options, labelKey, onInputChange]
+		[allOptions, labelKey, onInputChange]
 	);
 
 	// Map form value IDs to actual option objects
@@ -93,7 +114,7 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 			return [];
 		}
 
-		return options.filter((option: T) => formValue.includes(option[valueKey]));
+		return allOptions.filter((option: T) => formValue.includes(option[valueKey]));
 	};
 
 	useEffect(() => {
@@ -130,7 +151,7 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 						options={
 							loading
 								? []
-								: options?.filter((opt) => {
+								: allOptions?.filter((opt) => {
 										if (!hiddenKeys) return true;
 										return Boolean(opt?.[hiddenKeys]) !== false;
 									})
@@ -140,8 +161,10 @@ export const RHFAutocompleteMulti = <T extends DataProp, ChipComponent extends R
 						disableCloseOnSelect={disableCloseOnSelect}
 						renderOption={(props, option, { selected }) => {
 							const { key, ...otherProps } = props;
+							const level = option?._level || 0;
+							const paddingLeft = loadChildren ? 16 + level * 24 : 16;
 							return (
-								<li key={option?.[valueKey]} {...otherProps}>
+								<li key={option?.[valueKey]} {...otherProps} style={{ paddingLeft: `${paddingLeft}px` }}>
 									<Checkbox style={{ marginRight: 8 }} checked={selected} />
 									{renderOptionStart?.(option)}
 									{option?.[labelKey]}
