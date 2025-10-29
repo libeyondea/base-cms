@@ -70,8 +70,8 @@ const Router = () => {
 		<Routes
 			config={routesConfig}
 			// Custom redirect paths
-			redirectPrivateTo="/auth/signin" // Redirect to signin when accessing private routes without auth
-			redirectAuthTo="/dashboard" // Redirect to dashboard when accessing auth routes while authenticated
+			redirectPrivateTo="/signin" // Redirect to signin when accessing private routes without auth
+			redirectAuthTo="/" // Redirect to dashboard when accessing auth routes while authenticated
 		/>
 	);
 };

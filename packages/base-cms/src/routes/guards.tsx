@@ -39,22 +39,35 @@ export const withGuard = (Component: React.ComponentType<any>, Guard: React.FC<{
 	);
 };
 
-export const AccessControl = ({ children, profileAPI = '/profile' }: { children: React.ReactNode; profileAPI?: string }) => {
+export const AccessControl = ({
+	children,
+	profileAPI = '/profile',
+	keyData = 'data'
+}: {
+	children: React.ReactNode;
+	profileAPI?: string;
+	keyData?: string;
+}) => {
 	const { isInitialized, signin, signout } = useAuth();
 
 	const initialize = async () => {
 		try {
 			const serviceToken = getCookie('service_token');
 			if (serviceToken) {
-				const res = await axiosServices.get(profileAPI, {
+				const response = await axiosServices.get(profileAPI, {
 					headers: {
 						Authorization: `Bearer ${serviceToken}`
 					}
 				});
-				signin({
-					user: res?.data?.user,
-					token: serviceToken
-				});
+
+				if (response?.data?.success) {
+					signin({
+						user: response?.data?.[keyData],
+						token: serviceToken
+					});
+				} else {
+					signout();
+				}
 			} else {
 				signout();
 			}

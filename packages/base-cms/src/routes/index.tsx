@@ -29,16 +29,21 @@ export interface RoutesProps {
 	 * Default: '/'
 	 */
 	redirectAuthTo?: string;
+	/**
+	 * Key data for profile API
+	 * Default: 'data'
+	 */
+	keyData?: string;
 }
 
-export const Routes = ({ config, basename, profileAPI, redirectPrivateTo, redirectAuthTo }: RoutesProps) => {
+export const Routes = ({ config, basename, profileAPI, redirectPrivateTo, redirectAuthTo, keyData }: RoutesProps) => {
 	const router = useMemo(() => {
 		const routes = generateRoutes(config, { redirectPrivateTo, redirectAuthTo });
 		return createBrowserRouter(routes, { basename });
 	}, [config, basename, redirectPrivateTo, redirectAuthTo]);
 
 	return (
-		<AccessControl profileAPI={profileAPI}>
+		<AccessControl profileAPI={profileAPI} keyData={keyData}>
 			<RouterProvider router={router} />
 		</AccessControl>
 	);
