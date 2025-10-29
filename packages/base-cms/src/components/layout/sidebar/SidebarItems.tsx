@@ -1,25 +1,34 @@
 import { Link } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
 import { useAuth } from '~/contexts/AppProvider';
 
 import { SidebarItem } from './Sidebar.types';
 import { Menu } from './components/Menu';
 import { MenuItem } from './components/MenuItem';
 import { Submenu } from './components/Submenu';
-import { filterSidebarByRole } from './utils';
+import { extractUserRoles, filterSidebarByRole } from './utils';
 
-export const SidebarItems = ({ items }: { items: SidebarItem[] }) => {
+export interface SidebarItemsProps {
+	items: SidebarItem[];
+	/**
+	 * Cấu hình để extract role từ user object
+	 * Cho phép tùy chỉnh key và cấu trúc role cho các dự án khác nhau
+	 */
+	roleConfig?: RoleConfig;
+}
+
+export const SidebarItems = ({ items, roleConfig }: SidebarItemsProps) => {
 	const location = useLocation();
 	const pathDirect = location.pathname;
 	const { user } = useAuth();
 
-	// Lấy role từ user profile
-	// Có thể là user.role (string) hoặc user.roles (array) tùy vào cấu trúc API
-	const userRole = user?.role || user?.roles;
+	// Extract roles từ user với cấu hình linh hoạt
+	const userRoles = extractUserRoles(user, roleConfig);
 
 	// Lọc sidebar items dựa trên role của user
-	const filteredItems = filterSidebarByRole(items, userRole);
+	const filteredItems = filterSidebarByRole(items, userRoles);
 
 	// Hàm render menu items từ mảng Menuitems
 	const renderMenuItems = (items: SidebarItem[]) => {

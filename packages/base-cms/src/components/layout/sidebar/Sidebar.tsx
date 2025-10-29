@@ -1,5 +1,6 @@
 import { Divider, Drawer, useMediaQuery, useTheme } from '@mui/material';
 
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
 import { useSidebar } from '~/contexts/AppProvider';
 
 import { SidebarItem } from './Sidebar.types';
@@ -12,9 +13,14 @@ interface MSidebarProps {
 	logoUrl: string;
 	logoWidth?: string | number;
 	logoHeight?: string | number;
+	/**
+	 * Cấu hình để extract role từ user object
+	 * Cho phép tùy chỉnh key và cấu trúc role cho các dự án khác nhau
+	 */
+	roleConfig?: RoleConfig;
 }
 
-export const Sidebar = ({ items, logoUrl, logoWidth, logoHeight }: MSidebarProps) => {
+export const Sidebar = ({ items, logoUrl, logoWidth, logoHeight, roleConfig }: MSidebarProps) => {
 	const theme = useTheme();
 	const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up('lg'));
 	const { drawerOpen, toggleDrawer } = useSidebar();
@@ -31,7 +37,7 @@ export const Sidebar = ({ items, logoUrl, logoWidth, logoHeight }: MSidebarProps
 				<SidebarComponent width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
 					<Logo href="/" img={logoUrl} width={logoWidth} height={logoHeight} />
 					<Divider />
-					<SidebarItems items={items} />
+					<SidebarItems items={items} roleConfig={roleConfig} />
 				</SidebarComponent>
 			</Drawer>
 		);
@@ -41,7 +47,7 @@ export const Sidebar = ({ items, logoUrl, logoWidth, logoHeight }: MSidebarProps
 		<Drawer open={drawerOpen} onClose={toggleDrawer} sx={{ flexShrink: 0 }}>
 			<SidebarComponent width="100%" showProfile={false} isCollapse={false} mode={theme.palette.mode}>
 				<Logo href="/" img={logoUrl} width={logoWidth} height={logoHeight} />
-				<SidebarItems items={items} />
+				<SidebarItems items={items} roleConfig={roleConfig} />
 			</SidebarComponent>
 		</Drawer>
 	);

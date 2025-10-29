@@ -2189,6 +2189,23 @@ Cảm ơn các thư viện open-source tuyệt vời:
 - [TanStack Query](https://tanstack.com/query) - Data Fetching
 - [Redux Toolkit](https://redux-toolkit.js.org/) - State Management
 
+## 📚 Tài liệu bổ sung
+
+### 🆕 Role-Based Access Control
+
+Library giờ đây hỗ trợ linh hoạt nhiều cấu trúc role khác nhau:
+
+- `role: 'admin'` - Single string
+- `roles: ['admin', 'user']` - Array of strings
+- `roles: [{ten_vai_tro: 'admin'}]` - Array of objects
+- Và nhiều cấu trúc khác...
+
+📖 **Xem hướng dẫn chi tiết:** [ROLE_CONFIG_GUIDE.md](../../ROLE_CONFIG_GUIDE.md)
+
+📖 **Xem README trong Sidebar component:** [README_ROLE_CONFIG.md](./src/components/Layout/SideBar/README_ROLE_CONFIG.md)
+
+📖 **Xem ví dụ config:** [roleConfig.example.ts](./src/components/Layout/SideBar/roleConfig.example.ts)
+
 ---
 
 <div align="center">

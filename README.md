@@ -430,6 +430,7 @@ Xem tài liệu chi tiết cho từng package:
 
 - **[@libeyondea/base-cms](./packages/base-cms/README.md)** - Hướng dẫn sử dụng library đầy đủ
 - **[@libeyondea/base-cms-dev](./packages/base-cms-dev/README.md)** - Thông tin về dev dependencies
+- **[ROLE_CONFIG_GUIDE.md](./ROLE_CONFIG_GUIDE.md)** - 🆕 Hướng dẫn cấu hình Role-Based Access Control
 
 ### 🛣️ Custom Routes System
 
