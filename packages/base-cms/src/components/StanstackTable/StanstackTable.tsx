@@ -125,6 +125,7 @@ export interface StanstackTableProps<T extends Record<string, any>> {
 	menuActions?: MenuActionProps<T>;
 	sxTableContainer?: SxProps<Theme>;
 	enableMultiRowSelection?: boolean;
+	enableLoadingUpdate?: boolean;
 }
 
 export const StanstackTable = <T extends Record<string, any>>({
@@ -157,7 +158,8 @@ export const StanstackTable = <T extends Record<string, any>>({
 	manualFilters = true,
 	menuActions = {},
 	sxTableContainer = {},
-	enableMultiRowSelection = true
+	enableMultiRowSelection = true,
+	enableLoadingUpdate = false
 }: StanstackTableProps<T>) => {
 	const theme = useTheme();
 
@@ -462,11 +464,8 @@ export const StanstackTable = <T extends Record<string, any>>({
 					</TableHead>
 
 					<TableBody>
-						{/* Loading state */}
-						{isLoading && <TableSkeletonRow colSpan={visibleColumns.length} />}
-
 						{/* Fetching state */}
-						{isFetching && <TableSkeletonRow colSpan={visibleColumns.length} />}
+						{(isFetching || (enableLoadingUpdate && isLoading)) && <TableSkeletonRow colSpan={visibleColumns.length} />}
 
 						{/* Empty state */}
 						{!isFetching && data.length === 0 && <EmptyView colSpan={visibleColumns.length} />}
