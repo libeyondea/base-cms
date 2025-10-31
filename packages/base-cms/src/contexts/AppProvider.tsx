@@ -6,9 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import '~/assets/styles/globals.css';
 import { createCustomTheme } from '~/theme';
-
-import './assets/styles/globals.css';
 
 // Default QueryClient instance
 const defaultQueryClient = new QueryClient({

@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 
 import { Navigate, useLocation } from 'react-router-dom';
 
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
+import { extractUserRoles } from '~/components/Layout/SideBar/utils';
 import { LoadingScreen } from '~/components/LoadingScreen';
 import { useAuth } from '~/contexts/AppProvider';
 import { axiosServices } from '~/utils/axios';
@@ -25,6 +27,45 @@ export const AuthGuard = ({ children, redirectAuthTo = '/' }: { children: React.
 
 	if (isAuthenticated) {
 		return <Navigate to={redirectAuthTo} replace />;
+	}
+
+	return children;
+};
+
+// Guard component để kiểm tra phân quyền dựa trên roles
+export const RoleGuard = ({
+	children,
+	requiredRoles,
+	roleConfig,
+	redirectTo = '/404',
+	fallback
+}: {
+	children: React.ReactNode;
+	requiredRoles?: string[];
+	roleConfig?: RoleConfig;
+	redirectTo?: string;
+	fallback?: React.ReactNode;
+}) => {
+	const { user } = useAuth();
+
+	// Nếu không có requiredRoles hoặc là mảng rỗng thì cho phép truy cập
+	if (!requiredRoles || requiredRoles.length === 0) {
+		return children;
+	}
+
+	// Extract user roles
+	const userRoles = extractUserRoles(user, roleConfig);
+
+	// Kiểm tra xem user có ít nhất một role được yêu cầu không
+	const hasRequiredRole = requiredRoles.some((role) => userRoles.includes(role));
+
+	if (!hasRequiredRole) {
+		// Nếu có fallback component, hiển thị nó
+		if (fallback) {
+			return fallback;
+		}
+		// Không thì redirect về trang chỉ định
+		return <Navigate to={redirectTo} replace />;
 	}
 
 	return children;

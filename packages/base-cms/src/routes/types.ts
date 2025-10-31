@@ -2,6 +2,8 @@ import { ComponentType, LazyExoticComponent, ReactElement } from 'react';
 
 import { RouteObject } from 'react-router-dom';
 
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
+
 /**
  * Guard types cho route protection
  */
@@ -35,6 +37,13 @@ export interface RouteConfig {
 		icon?: any;
 		[key: string]: any;
 	};
+
+	/**
+	 * Danh sách các roles được phép truy cập route này
+	 * Nếu không có hoặc là mảng rỗng thì tất cả roles đều có thể truy cập
+	 * @example ['admin', 'manager']
+	 */
+	roles?: string[];
 }
 
 /**
@@ -78,6 +87,12 @@ export interface RoutesConfig {
 
 	/** Base path cho toàn bộ routes */
 	basePath?: string;
+
+	/**
+	 * Cấu hình để extract role từ user object
+	 * Cho phép tùy chỉnh key và cấu trúc role cho các dự án khác nhau
+	 */
+	roleConfig?: RoleConfig;
 }
 
 /**

@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
+
 import { AccessControl } from './guards';
 import { RoutesConfig } from './types';
 import { generateRoutes } from './utils';
@@ -34,13 +36,25 @@ export interface RoutesProps {
 	 * Default: 'data'
 	 */
 	keyData?: string;
+	/**
+	 * Cấu hình để extract role từ user object
+	 * Cho phép tùy chỉnh key và cấu trúc role cho các dự án khác nhau
+	 * @deprecated Sử dụng config.roleConfig thay vì prop này
+	 */
+	roleConfig?: RoleConfig;
 }
 
-export const Routes = ({ config, basename, profileAPI, redirectPrivateTo, redirectAuthTo, keyData }: RoutesProps) => {
+export const Routes = ({ config, basename, profileAPI, redirectPrivateTo, redirectAuthTo, keyData, roleConfig }: RoutesProps) => {
 	const router = useMemo(() => {
-		const routes = generateRoutes(config, { redirectPrivateTo, redirectAuthTo });
+		// Merge roleConfig từ prop hoặc từ config (ưu tiên config.roleConfig)
+		const finalConfig = {
+			...config,
+			roleConfig: config.roleConfig || roleConfig
+		};
+
+		const routes = generateRoutes(finalConfig, { redirectPrivateTo, redirectAuthTo });
 		return createBrowserRouter(routes, { basename });
-	}, [config, basename, redirectPrivateTo, redirectAuthTo]);
+	}, [config, basename, redirectPrivateTo, redirectAuthTo, roleConfig]);
 
 	return (
 		<AccessControl profileAPI={profileAPI} keyData={keyData}>
