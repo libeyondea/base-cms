@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { createCustomTheme } from '~/theme';
 
+import './assets/styles/globals.css';
+
 // Default QueryClient instance
 const defaultQueryClient = new QueryClient({
 	defaultOptions: {
