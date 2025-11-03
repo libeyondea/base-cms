@@ -57,7 +57,7 @@ export const Profile = ({ additionalMenuItems = [] }: ProfileProps) => {
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				sx={{
 					'& .MuiMenu-paper': {
-						width: '200px'
+						width: '250px'
 					}
 				}}
 			>

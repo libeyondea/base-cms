@@ -23,7 +23,7 @@ type SidebarProps = {
 };
 
 export const SidebarContext = createContext({
-	width: '270px',
+	width: '300px',
 	collapsewidth: '80px',
 	textColor: '#8D939D',
 	isCollapse: false,
@@ -36,7 +36,7 @@ const handleLogout = () => {
 
 const Sidebar = ({
 	children,
-	width = '260px',
+	width = '300px',
 	collapsewidth = '80px',
 	textColor = '#2b2b2b',
 	isCollapse = false,

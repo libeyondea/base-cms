@@ -57,6 +57,13 @@ interface AuthContextType {
 	signup: (payload: { user: any }) => void;
 }
 
+// Custom Context Types
+interface CustomContextType {
+	state: Record<string, any>;
+	setCustom: (next: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)) => void;
+	resetCustom: () => void;
+}
+
 // Combined App Context Type
 interface AppContextType {
 	// Theme
@@ -67,6 +74,8 @@ interface AppContextType {
 	table: TableContextType;
 	// Auth
 	auth: AuthContextType;
+	// Custom (user-defined extra state)
+	custom: CustomContextType;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -75,9 +84,10 @@ interface AppProviderProps {
 	children: ReactNode;
 	customTheme?: (mode: PaletteMode) => any;
 	queryClient?: QueryClient;
+	initialCustom?: Record<string, any>;
 }
 
-export const AppProvider = ({ children, customTheme, queryClient }: AppProviderProps) => {
+export const AppProvider = ({ children, customTheme, queryClient, initialCustom }: AppProviderProps) => {
 	// Use custom queryClient if provided, otherwise use default
 	const client = queryClient || defaultQueryClient;
 
@@ -106,6 +116,9 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 	const [isInitialized, setIsInitialized] = useState(false);
 	const [user, setUser] = useState<any>(null);
 	const [token, setToken] = useState<string | null>(null);
+
+	// Custom state
+	const [customState, setCustomState] = useState<Record<string, any>>(initialCustom || {});
 
 	// Theme effects
 	useEffect(() => {
@@ -204,6 +217,15 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 		setUser(payload.user);
 	};
 
+	// Custom functions
+	const setCustom: CustomContextType['setCustom'] = (next) => {
+		setCustomState((prev) => (typeof next === 'function' ? (next as (p: Record<string, any>) => Record<string, any>)(prev) : next));
+	};
+
+	const resetCustom = () => {
+		setCustomState(initialCustom || {});
+	};
+
 	// Context values
 	const themeContextValue: ThemeContextType = {
 		theme,
@@ -233,11 +255,18 @@ export const AppProvider = ({ children, customTheme, queryClient }: AppProviderP
 		signup
 	};
 
+	const customContextValue: CustomContextType = {
+		state: customState,
+		setCustom,
+		resetCustom
+	};
+
 	const appContextValue: AppContextType = {
 		theme: themeContextValue,
 		sidebar: sidebarContextValue,
 		table: tableContextValue,
-		auth: authContextValue
+		auth: authContextValue,
+		custom: customContextValue
 	};
 
 	return (
@@ -286,4 +315,13 @@ export const useAuth = (): AuthContextType => {
 		throw new Error('useAuth must be used within an AppProvider');
 	}
 	return context.auth;
+};
+
+// Custom hook
+export const useCustom = (): CustomContextType => {
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error('useCustom must be used within an AppProvider');
+	}
+	return context.custom;
 };
