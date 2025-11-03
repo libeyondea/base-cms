@@ -21,6 +21,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	isObject?: boolean;
 	hiddenKeys?: string;
 	isIconSelect?: boolean;
+	loadChildren?: boolean;
+	childrenKey?: string;
 	onInputChange?: (e: any, value: any) => void;
 	handleOnchange?: (value: any) => void;
 	renderOptionStart?: (option: T) => React.ReactNode;
@@ -42,6 +44,8 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 	onInputChange,
 	handleOnchange,
 	options,
+	loadChildren = false,
+	childrenKey = 'children',
 	disableCloseOnSelect = false,
 	renderOptionStart,
 	renderOptionEnd,
@@ -57,6 +61,23 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 
 	// Get current form value for this field
 	const formValue = watch(name);
+
+	// Flatten options including children with level tracking
+	const flattenOptions = useCallback(
+		(opts: readonly T[], level: number = 0): T[] => {
+			if (!loadChildren) return opts.map((item) => ({ ...item, _level: 0 }));
+			return opts.reduce((acc: T[], item: T) => {
+				acc.push({ ...item, _level: level });
+				if (item[childrenKey] && Array.isArray(item[childrenKey]) && item[childrenKey].length > 0) {
+					acc.push(...flattenOptions(item[childrenKey] as T[], level + 1));
+				}
+				return acc;
+			}, []);
+		},
+		[loadChildren, childrenKey]
+	);
+
+	const allOptions = flattenOptions(options || []);
 
 	const handleChange = (newVal: T | null) => {
 		const newValue = isObject ? newVal : newVal ? newVal[valueKey] : null;
@@ -77,8 +98,8 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 			}
 
 			debouncedFnRef.current = debounce((e: any, val: any) => {
-				// Kiểm tra xem giá trị có trong options hay chưa
-				const isExist = options.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
+				// Kiểm tra xem giá trị có trong allOptions hay chưa
+				const isExist = allOptions.some((option: any) => option?.[labelKey]?.toLowerCase() === val?.toLowerCase());
 				// Chỉ gọi API khi giá trị chưa có trong danh sách
 				if (!isExist) {
 					onInputChange?.(e, val);
@@ -87,7 +108,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 
 			debouncedFnRef.current(event, value);
 		},
-		[options, labelKey, onInputChange]
+		[allOptions, labelKey, onInputChange]
 	);
 
 	// Get selected option from form value
@@ -100,7 +121,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 			return null;
 		}
 
-		return options.find((option: T) => option[valueKey] === formValue) || null;
+		return allOptions.find((option: T) => option[valueKey] === formValue) || null;
 	};
 
 	useEffect(() => {
@@ -142,7 +163,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 						options={
 							loading
 								? []
-								: options?.filter((opt) => {
+								: allOptions?.filter((opt) => {
 										if (!hiddenKeys) return true;
 										return Boolean(opt?.[hiddenKeys]) !== false;
 									})
@@ -152,8 +173,10 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 						disableCloseOnSelect={disableCloseOnSelect}
 						renderOption={(props, option) => {
 							const { key, ...otherProps } = props;
+							const level = (option as any)._level || 0;
+							const paddingLeft = loadChildren ? 16 + level * 24 : 16;
 							return (
-								<li key={option?.[valueKey]} {...otherProps}>
+								<li key={option?.[valueKey]} {...otherProps} style={{ paddingLeft: `${paddingLeft}px` }}>
 									{renderOptionStart?.(option)}
 									{option?.[labelKey]}
 									{renderOptionEnd?.(option)}
