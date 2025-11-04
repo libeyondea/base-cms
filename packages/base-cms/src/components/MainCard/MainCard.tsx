@@ -4,6 +4,7 @@ import { Box, Button, Card, CardActions, CardContent, CardContentProps, CardHead
 
 import { Breadcrumbs } from '../Breadcrumbs';
 import { DateRangeFilter, DateRangePicker } from '../DateRangePicker';
+import { NDatePicker } from '../Input';
 import { MainCardSearch } from './MainCardSearch';
 
 interface MainCardProps {
@@ -36,6 +37,13 @@ interface MainCardProps {
 	isShowDateFilter?: boolean;
 	dateRange?: DateRangeFilter;
 	onDateRangeChange?: (dateRange: DateRangeFilter) => void;
+	dateRangePlaceholder?: string;
+
+	// Single Date Filter Properties
+	isShowSingleDateFilter?: boolean;
+	singleDate?: string | null;
+	onSingleDateChange?: (date: string | null) => void;
+	singleDatePlaceholder?: string;
 
 	// Submit Button Properties
 	isShowSubmitButton?: boolean;
@@ -88,6 +96,13 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 			isShowDateFilter = false,
 			dateRange,
 			onDateRangeChange,
+			dateRangePlaceholder,
+
+			// Single date filter props
+			isShowSingleDateFilter = false,
+			singleDate,
+			onSingleDateChange,
+			singleDatePlaceholder = 'Chọn ngày',
 
 			// Submit button props
 			isShowSubmitButton = false,
@@ -122,12 +137,33 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 		};
 
 		// Render date filter component
-		const renderDateFilter = () => {
+		const renderFromToDateFilter = () => {
 			if (!isShowDateFilter) return null;
 
 			return (
 				<Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
-					<DateRangePicker dateRange={dateRange} onDateRangeChange={onDateRangeChange} />
+					<DateRangePicker dateRange={dateRange} onDateRangeChange={onDateRangeChange} placeholder={dateRangePlaceholder} />
+				</Box>
+			);
+		};
+
+		// Render single date filter component
+		const renderDateFilter = () => {
+			if (!isShowSingleDateFilter) return null;
+
+			return (
+				<Box sx={{ width: { xs: '100%', sm: 'auto' } }}>
+					<NDatePicker
+						value={singleDate}
+						onChange={onSingleDateChange}
+						fullWidth={false}
+						size="small"
+						slotProps={{
+							textField: {
+								placeholder: singleDatePlaceholder
+							}
+						}}
+					/>
 				</Box>
 			);
 		};
@@ -152,7 +188,8 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 
 		// Render toolbar section
 		const renderToolbar = () => {
-			const hasToolbarItems = componentToolbar || isShowSearch || isShowDateFilter || isShowSubmitButton || componentAction || componentActionLeft;
+			const hasToolbarItems =
+				componentToolbar || isShowSearch || isShowDateFilter || isShowSingleDateFilter || isShowSubmitButton || componentAction || componentActionLeft;
 
 			if (!hasToolbarItems) return null;
 
@@ -166,6 +203,7 @@ export const MainCard = forwardRef<HTMLDivElement, MainCardProps>(
 								{componentActionLeft}
 							</Stack>
 						)}
+						{renderFromToDateFilter()}
 						{renderDateFilter()}
 						{renderSearch()}
 						{renderSubmitButton()}
