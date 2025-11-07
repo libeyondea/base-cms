@@ -7,6 +7,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '~/assets/styles/globals.css';
+import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
+import { Routes, RoutesConfig } from '~/routes';
 import { createCustomTheme } from '~/theme';
 
 // Default QueryClient instance
@@ -81,13 +83,36 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 interface AppProviderProps {
-	children: ReactNode;
+	children?: ReactNode;
 	customTheme?: (mode: PaletteMode) => any;
 	queryClient?: QueryClient;
 	initialCustom?: Record<string, any>;
+	// Routes configuration
+	routesConfig?: RoutesConfig;
+	basename?: string;
+	profileAPI?: string;
+	redirectPrivateTo?: string;
+	redirectAuthTo?: string;
+	keyData?: string;
+	/**
+	 * @deprecated Sử dụng routesConfig.roleConfig thay vì prop này
+	 */
+	roleConfig?: RoleConfig;
 }
 
-export const AppProvider = ({ children, customTheme, queryClient, initialCustom }: AppProviderProps) => {
+export const AppProvider = ({
+	children,
+	customTheme,
+	queryClient,
+	initialCustom,
+	routesConfig,
+	basename,
+	profileAPI = '/profile',
+	redirectPrivateTo = '/signin',
+	redirectAuthTo = '/',
+	keyData = 'data',
+	roleConfig
+}: AppProviderProps) => {
 	// Use custom queryClient if provided, otherwise use default
 	const client = queryClient || defaultQueryClient;
 
@@ -274,7 +299,20 @@ export const AppProvider = ({ children, customTheme, queryClient, initialCustom 
 			<AppContext.Provider value={appContextValue}>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					<LocalizationProvider dateAdapter={AdapterDayjs}>{children}</LocalizationProvider>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						{routesConfig && (
+							<Routes
+								config={routesConfig}
+								basename={basename}
+								profileAPI={profileAPI}
+								redirectPrivateTo={redirectPrivateTo}
+								redirectAuthTo={redirectAuthTo}
+								keyData={keyData}
+								roleConfig={roleConfig}
+							/>
+						)}
+						{children}
+					</LocalizationProvider>
 				</ThemeProvider>
 			</AppContext.Provider>
 		</QueryClientProvider>
