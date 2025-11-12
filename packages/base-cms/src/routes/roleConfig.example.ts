@@ -526,7 +526,7 @@ function App() {
       profileAPI="/api/profile"
       redirectPrivateTo="/signin"
       redirectAuthTo="/"
-      keyData="data"
+      keyDataProfile="data"
     />
   );
 }

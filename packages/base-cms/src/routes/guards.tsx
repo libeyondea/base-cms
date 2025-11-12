@@ -83,11 +83,11 @@ export const withGuard = (Component: React.ComponentType<any>, Guard: React.FC<{
 export const AccessControl = ({
 	children,
 	profileAPI = '/profile',
-	keyData = 'data'
+	keyDataProfile = 'data'
 }: {
 	children: React.ReactNode;
 	profileAPI?: string;
-	keyData?: string;
+	keyDataProfile?: string;
 }) => {
 	const { isInitialized, signin, signout } = useAuth();
 
@@ -103,7 +103,7 @@ export const AccessControl = ({
 
 				if (response?.data?.success) {
 					signin({
-						user: response?.data?.[keyData],
+						user: response?.data?.[keyDataProfile],
 						token: serviceToken
 					});
 				} else {

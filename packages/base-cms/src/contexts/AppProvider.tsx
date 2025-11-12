@@ -93,7 +93,7 @@ interface AppProviderProps {
 	profileAPI?: string;
 	redirectPrivateTo?: string;
 	redirectAuthTo?: string;
-	keyData?: string;
+	keyDataProfile?: string;
 	/**
 	 * @deprecated Sử dụng routesConfig.roleConfig thay vì prop này
 	 */
@@ -110,7 +110,7 @@ export const AppProvider = ({
 	profileAPI = '/profile',
 	redirectPrivateTo = '/signin',
 	redirectAuthTo = '/',
-	keyData = 'data',
+	keyDataProfile = 'data',
 	roleConfig
 }: AppProviderProps) => {
 	// Use custom queryClient if provided, otherwise use default
@@ -307,7 +307,7 @@ export const AppProvider = ({
 								profileAPI={profileAPI}
 								redirectPrivateTo={redirectPrivateTo}
 								redirectAuthTo={redirectAuthTo}
-								keyData={keyData}
+								keyDataProfile={keyDataProfile}
 								roleConfig={roleConfig}
 							/>
 						)}
