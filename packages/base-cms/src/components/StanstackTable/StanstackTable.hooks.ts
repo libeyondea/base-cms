@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { ColumnFiltersState, PaginationState, SortingState } from '@tanstack/react-table';
-import qs from 'qs';
+import qs, { BooleanOptional } from 'qs';
 
 import { useTableContext } from '~/contexts/AppProvider';
 import { axiosServices } from '~/utils/axios';
@@ -14,9 +14,18 @@ interface UseTableProps {
 	multiQueryParam?: Record<string, any>;
 	refetchOnWindowFocus?: boolean;
 	defaultPageSize?: number;
+	queryOptions?: qs.IStringifyOptions<BooleanOptional>;
 }
 
-export const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {}, refetchOnWindowFocus = false, defaultPageSize = 10 }: UseTableProps) => {
+export const useTable = ({
+	apiUrl,
+	queryKey,
+	enabled = true,
+	multiQueryParam = {},
+	refetchOnWindowFocus = false,
+	defaultPageSize = 10,
+	queryOptions = {}
+}: UseTableProps) => {
 	// Get filter state from context
 	const { filters: filtersTable } = useTableContext();
 
@@ -52,14 +61,17 @@ export const useTable = ({ apiUrl, queryKey, enabled = true, multiQueryParam = {
 			}, {});
 
 			// Combine all params
-			const queryParams = qs.stringify({
-				...sortParams,
-				...multiQueryParam,
-				...filterParams,
-				...filterCurrentTable.query,
-				page: pagination.pageIndex + 1, // API usually expects 1-based index
-				limit: pagination.pageSize
-			});
+			const queryParams = qs.stringify(
+				{
+					...sortParams,
+					...multiQueryParam,
+					...filterParams,
+					...filterCurrentTable.query,
+					page: pagination.pageIndex + 1, // API usually expects 1-based index
+					limit: pagination.pageSize
+				},
+				{ arrayFormat: 'brackets', ...queryOptions }
+			);
 
 			// Make API request
 			const response = await axiosServices.get(`${apiUrl}?${queryParams}`);

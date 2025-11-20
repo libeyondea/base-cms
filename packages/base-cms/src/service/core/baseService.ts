@@ -157,6 +157,19 @@ export abstract class BaseService {
 	}
 
 	/**
+	 * PUT - Cập nhật dữ liệu với payload
+	 */
+	public async updateWithPayload<T = any>(
+		payload: any,
+		path?: string,
+		config?: AxiosRequestConfig,
+		options?: ServiceOptions
+	): Promise<AxiosResponse<ApiResponse<T>>> {
+		const endpoint = path ? `${path}` : ``;
+		return this.makeRequest<ApiResponse<T>>('PUT', endpoint, payload, config, { ...options });
+	}
+
+	/**
 	 * DELETE - Xóa dữ liệu
 	 */
 	public async delete(id: IUniqueId, path?: string, config?: AxiosRequestConfig, options?: ServiceOptions): Promise<AxiosResponse<ApiResponse<boolean>>> {
