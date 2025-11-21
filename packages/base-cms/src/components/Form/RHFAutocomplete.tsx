@@ -193,7 +193,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 								slotProps={{
 									input: {
 										...params.InputProps,
-										startAdornment: startAdornment?.(value),
+										startAdornment: value && startAdornment?.(value),
 										endAdornment: (
 											<>
 												{isIconSelect && params.InputProps.endAdornment}

@@ -29,6 +29,7 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	onChange?: (event: React.SyntheticEvent, value: T | (string | number) | null) => void;
 	error?: boolean;
 	errorMessage?: string;
+	isIconSelect?: boolean;
 };
 
 export const NAutocomplete = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
@@ -54,6 +55,8 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 	onChange: externalOnChange,
 	error = false,
 	errorMessage,
+	isIconSelect = true,
+	sx,
 	...rest
 }: Omit<Props<T, ChipComponent>, 'renderInput'>) => {
 	const [internalValue, setInternalValue] = useState<T | (string | number) | null>(externalValue || null);
@@ -124,6 +127,12 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 		<Autocomplete
 			{...rest}
 			fullWidth
+			sx={{
+				...sx,
+				'& .MuiInputBase-root': {
+					paddingRight: isIconSelect ? '65px !important' : '14px !important'
+				}
+			}}
 			isOptionEqualToValue={(option, value) => {
 				if (!value) return false;
 				return option?.[valueKey] === value?.[valueKey];
@@ -143,7 +152,7 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 			}
 			loading={loading}
 			getOptionLabel={(option) => get(option, [labelKey], '')}
-			disableCloseOnSelect={false}
+			disableCloseOnSelect={disableCloseOnSelect}
 			renderOption={(props, option) => {
 				const { key, ...otherProps } = props;
 				return (
@@ -164,8 +173,13 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 					slotProps={{
 						input: {
 							...params.InputProps,
-							startAdornment: startAdornment?.(value),
-							endAdornment: endAdornment?.(value)
+							startAdornment: value && startAdornment?.(value),
+							endAdornment: (
+								<>
+									{isIconSelect && params.InputProps.endAdornment}
+									{endAdornment?.(value)}
+								</>
+							)
 						}
 					}}
 				/>
