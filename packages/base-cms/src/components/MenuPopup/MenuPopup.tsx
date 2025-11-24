@@ -5,7 +5,7 @@ import { Box, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 
 import { MenuItemProps, MenuPopupProps } from './MenuPopup.types';
 
-export const MenuPopup = ({ menuItems, tooltipTitle = 'Action', customIcon }: MenuPopupProps) => {
+export const MenuPopup = ({ menuItems, tooltipTitle = 'Action', customIcon, customSize = 'medium', customSx, customTooltipProps }: MenuPopupProps) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const isMenuEmpty = menuItems.length === 0;
@@ -27,13 +27,13 @@ export const MenuPopup = ({ menuItems, tooltipTitle = 'Action', customIcon }: Me
 		<>
 			<Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
 				{isMenuEmpty ? (
-					<IconButton id="basic-button" disabled>
-						{customIcon || <MoreVertIcon />}
+					<IconButton id="basic-button" disabled size={customSize} sx={customSx}>
+						{customIcon || <MoreVertIcon fontSize={customSize} />}
 					</IconButton>
 				) : (
-					<Tooltip title={tooltipTitle}>
-						<IconButton id="basic-button" onClick={handleClick}>
-							{customIcon || <MoreVertIcon />}
+					<Tooltip title={tooltipTitle} {...customTooltipProps}>
+						<IconButton id="basic-button" onClick={handleClick} size={customSize} sx={customSx}>
+							{customIcon || <MoreVertIcon fontSize={customSize} />}
 						</IconButton>
 					</Tooltip>
 				)}
@@ -80,7 +80,8 @@ export const MenuPopup = ({ menuItems, tooltipTitle = 'Action', customIcon }: Me
 						onClick={() => handleMenuItemClick(item.onClick)}
 						disabled={item.disabled}
 						sx={{
-							color: item.color ? `${item.color}.main` : 'inherit'
+							color: item.color ? `${item.color}.main` : 'inherit',
+							...item.sx
 						}}
 					>
 						{item.icon && <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>{item.icon}</Box>}

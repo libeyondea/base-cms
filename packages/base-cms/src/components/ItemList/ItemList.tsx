@@ -45,6 +45,8 @@ export interface ItemListProps {
 	maxHeight?: string;
 	dualImage?: boolean;
 	tripleImage?: boolean;
+	sxList?: SxProps<Theme>;
+	sxContainer?: SxProps<Theme>;
 }
 
 // Default color when statusData is not available
@@ -101,7 +103,9 @@ export const ItemList = ({
 	maxHeight = 'calc(100vh - 300px)',
 	titleSX,
 	dualImage,
-	tripleImage
+	tripleImage,
+	sxList,
+	sxContainer
 }: ItemListProps) => {
 	const theme = useTheme();
 
@@ -131,11 +135,12 @@ export const ItemList = ({
 				},
 				// Firefox scrollbar styling
 				scrollbarWidth: 'thin',
-				scrollbarColor: `${theme.palette.grey[400]} ${theme.palette.grey[100]}`
+				scrollbarColor: `${theme.palette.grey[400]} ${theme.palette.grey[100]}`,
 				// height: maxHeight
+				...sxContainer
 			}}
 		>
-			<List sx={{ width: '100%', height: maxHeight, p: 0 }}>
+			<List sx={{ width: '100%', height: maxHeight, p: 0, ...sxList }}>
 				{items.length === 0 ? (
 					<Box
 						sx={{
@@ -156,7 +161,7 @@ export const ItemList = ({
 								elevation={selectedId === item.id ? 8 : 1}
 								sx={{
 									mb: 1.5,
-									borderRadius: 2,
+									borderRadius: 1,
 									background: getBackgroundByType(item, theme),
 									boxShadow: 3,
 									// borderLeft: getBorderLeftByType(item),
