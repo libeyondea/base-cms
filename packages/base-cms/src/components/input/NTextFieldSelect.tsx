@@ -45,6 +45,7 @@ export const NTextFieldSelect = ({
 		<TextField
 			{...props}
 			select
+			value={value}
 			fullWidth={fullWidth}
 			size={size}
 			slotProps={{
