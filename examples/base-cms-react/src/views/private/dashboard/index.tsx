@@ -275,6 +275,18 @@ const Dashboard = () => {
 								<RHFScheduleTimePicker name="schedule_time" label="Schedule Time" type="all" />
 							</Grid>
 							<Grid size={12}>
+								<RHFScheduleTimePicker
+									name="schedule_time"
+									label="Schedule Time"
+									classes={[
+										{ id: 1, name: 'Class 1', disabled: true, checked: true },
+										{ id: 2, name: 'Class 2', disabled: false, checked: true },
+										{ id: 3, name: 'Class 3', disabled: false, checked: true }
+									]}
+									simpleMode
+								/>
+							</Grid>
+							<Grid size={12}>
 								<Button type="submit" variant="contained" color="primary">
 									Submit
 								</Button>

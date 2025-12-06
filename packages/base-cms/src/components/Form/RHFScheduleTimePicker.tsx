@@ -2,7 +2,23 @@ import { useEffect, useRef, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Button, Card, Divider, FormLabel, Grid, IconButton, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+	Box,
+	Button,
+	Card,
+	Checkbox,
+	Divider,
+	FormControlLabel,
+	FormGroup,
+	FormLabel,
+	Grid,
+	IconButton,
+	Stack,
+	TextField,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography
+} from '@mui/material';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -52,6 +68,14 @@ interface ScheduleItem {
 	exit_end?: string; // Giờ ra kết thúc
 	start?: string; // Giờ bắt đầu (cho định dạng đơn giản)
 	end?: string; // Giờ kết thúc (cho định dạng đơn giản)
+	selectedClasses?: number[]; // Danh sách ID các lớp đã chọn
+}
+
+interface ClassOption {
+	id: number;
+	name: string;
+	disabled?: boolean; // Vô hiệu hóa checkbox
+	checked?: boolean; // Tự động chọn mặc định
 }
 
 interface RHFScheduleTimePickerProps {
@@ -59,9 +83,18 @@ interface RHFScheduleTimePickerProps {
 	label?: string; // Nhãn hiển thị
 	simpleMode?: boolean; // Có sử dụng chế độ đơn giản không
 	type?: 'all' | 'entry' | 'exit'; // Loại hiển thị: all (cả entry và exit), entry (chỉ entry), exit (chỉ exit)
+	classes?: ClassOption[]; // Danh sách các lớp để chọn (checkbox)
+	classesLabel?: string; // Nhãn hiển thị cho phần chọn lớp, mặc định là "Chọn lớp"
 }
 
-export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 'all' }: RHFScheduleTimePickerProps) => {
+export const RHFScheduleTimePicker = ({
+	name,
+	label,
+	simpleMode = false,
+	type = 'all',
+	classes = [],
+	classesLabel = 'Chọn lớp'
+}: RHFScheduleTimePickerProps) => {
 	const { control, setValue, watch } = useFormContext();
 
 	const scheduleValue = watch(name);
@@ -71,6 +104,11 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 
 	const isInitialized = useRef(false);
 	const previousType = useRef(type);
+
+	// Lấy danh sách ID các class có checked === true
+	const getCheckedClassIds = () => {
+		return classes.filter((classItem) => classItem.checked === true).map((classItem) => classItem.id);
+	};
 
 	// Tính toán ngày đã được chọn trong các lịch khác
 	const getUsedDaysExcept = (currentIndex: number) => {
@@ -97,19 +135,35 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 
 	// Khởi tạo thời gian biểu từ giá trị form
 	useEffect(() => {
+		const checkedClassIds = getCheckedClassIds();
+
 		if (scheduleValue) {
 			try {
 				const parsedSchedule = JSON.parse(scheduleValue);
-				setScheduleItems(parsedSchedule);
+				// Đảm bảo các class có checked === true được chọn
+				const updatedSchedule = parsedSchedule.map((item: ScheduleItem) => {
+					const currentClasses = item.selectedClasses || [];
+					const mergedClasses = [...new Set([...currentClasses, ...checkedClassIds])];
+					return { ...item, selectedClasses: mergedClasses };
+				});
+				setScheduleItems(updatedSchedule);
+				setValue(name, JSON.stringify(updatedSchedule));
 			} catch (e) {
 				// Nếu parse lỗi, tạo một mục mặc định theo chế độ hiện tại và type
 				const defaultItem = simpleMode
-					? { days: ['1'], start: '00:00', end: '00:00' }
+					? { days: ['1'], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
 					: type === 'entry'
-						? { days: ['1'], entry_start: '00:00', entry_end: '00:00' }
+						? { days: ['1'], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
 						: type === 'exit'
-							? { days: ['1'], exit_start: '00:00', exit_end: '00:00' }
-							: { days: ['1'], entry_start: '00:00', entry_end: '00:00', exit_start: '00:00', exit_end: '00:00' };
+							? { days: ['1'], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
+							: {
+									days: ['1'],
+									entry_start: '00:00',
+									entry_end: '00:00',
+									exit_start: '00:00',
+									exit_end: '00:00',
+									selectedClasses: checkedClassIds
+								};
 
 				setScheduleItems([defaultItem]);
 				setValue(name, JSON.stringify([defaultItem]));
@@ -117,12 +171,12 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 		} else {
 			// Nếu chưa có giá trị, tạo mục mặc định theo chế độ hiện tại và type
 			const defaultItem = simpleMode
-				? { days: ['1'], start: '00:00', end: '00:00' }
+				? { days: ['1'], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
 				: type === 'entry'
-					? { days: ['1'], entry_start: '00:00', entry_end: '00:00' }
+					? { days: ['1'], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
 					: type === 'exit'
-						? { days: ['1'], exit_start: '00:00', exit_end: '00:00' }
-						: { days: ['1'], entry_start: '00:00', entry_end: '00:00', exit_start: '00:00', exit_end: '00:00' };
+						? { days: ['1'], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
+						: { days: ['1'], entry_start: '00:00', entry_end: '00:00', exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds };
 
 			setScheduleItems([defaultItem]);
 			setValue(name, JSON.stringify([defaultItem]));
@@ -138,10 +192,10 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 			// Chuyển đổi dữ liệu hiện tại để phù hợp với type mới
 			const convertedItems = scheduleItems.map((item) => {
 				if (simpleMode) {
-					return { days: item.days, start: item.start || '00:00', end: item.end || '00:00' };
+					return { days: item.days, start: item.start || '00:00', end: item.end || '00:00', selectedClasses: item.selectedClasses || [] };
 				}
 
-				const newItem: ScheduleItem = { days: item.days };
+				const newItem: ScheduleItem = { days: item.days, selectedClasses: item.selectedClasses || [] };
 
 				if (type === 'entry' || type === 'all') {
 					newItem.entry_start = item.entry_start || '00:00';
@@ -180,13 +234,21 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 		const availableDays = allDays.filter((day) => !usedDays.has(day));
 		const defaultDay = availableDays.length > 0 ? availableDays[0] : '1';
 
+		const checkedClassIds = getCheckedClassIds();
 		const newItem = simpleMode
-			? { days: [defaultDay], start: '00:00', end: '00:00' }
+			? { days: [defaultDay], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
 			: type === 'entry'
-				? { days: [defaultDay], entry_start: '00:00', entry_end: '00:00' }
+				? { days: [defaultDay], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
 				: type === 'exit'
-					? { days: [defaultDay], exit_start: '00:00', exit_end: '00:00' }
-					: { days: [defaultDay], entry_start: '00:00', entry_end: '00:00', exit_start: '00:00', exit_end: '00:00' };
+					? { days: [defaultDay], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
+					: {
+							days: [defaultDay],
+							entry_start: '00:00',
+							entry_end: '00:00',
+							exit_start: '00:00',
+							exit_end: '00:00',
+							selectedClasses: checkedClassIds
+						};
 
 		const newItems = [...scheduleItems, newItem];
 		setScheduleItems(newItems);
@@ -254,6 +316,29 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 		setValue(name, JSON.stringify(newItems));
 	};
 
+	// Cập nhật classes đã chọn
+	const updateScheduleItemClasses = (index: number, classId: number) => {
+		// Kiểm tra xem class có bị disabled không
+		const classItem = classes.find((c) => c.id === classId);
+		if (classItem?.disabled === true) {
+			return; // Không cho phép thay đổi nếu disabled
+		}
+
+		const newItems = [...scheduleItems];
+		const currentClasses = newItems[index].selectedClasses || [];
+
+		if (currentClasses.includes(classId)) {
+			// Bỏ chọn nếu đã được chọn
+			newItems[index].selectedClasses = currentClasses.filter((id) => id !== classId);
+		} else {
+			// Thêm vào nếu chưa được chọn
+			newItems[index].selectedClasses = [...currentClasses, classId];
+		}
+
+		setScheduleItems(newItems);
+		setValue(name, JSON.stringify(newItems));
+	};
+
 	return (
 		<Controller
 			name={name}
@@ -304,6 +389,32 @@ export const RHFScheduleTimePicker = ({ name, label, simpleMode = false, type = 
 											<DeleteIcon />
 										</IconButton>
 									</Stack>
+									{classes.length > 0 && (
+										<Box sx={{ mb: 2 }}>
+											<Typography variant="body2" sx={{ mb: 1 }}>
+												{classesLabel}:
+											</Typography>
+											<FormGroup>
+												<Grid container spacing={1}>
+													{classes.map((classItem) => (
+														<Grid key={classItem.id} size={{ xs: 6, sm: 4, md: 3 }}>
+															<FormControlLabel
+																control={
+																	<Checkbox
+																		checked={(item.selectedClasses || []).includes(classItem.id)}
+																		onChange={() => updateScheduleItemClasses(index, classItem.id)}
+																		size="small"
+																		disabled={classItem.disabled === true}
+																	/>
+																}
+																label={classItem.name}
+															/>
+														</Grid>
+													))}
+												</Grid>
+											</FormGroup>
+										</Box>
+									)}
 									{simpleMode ? (
 										// Chế độ đơn giản với start và end
 										<Grid container spacing={2}>
