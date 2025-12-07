@@ -30,6 +30,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 	error?: boolean;
 	errorMessage?: string;
 	isIconSelect?: boolean;
+	sxListbox?: React.CSSProperties;
+	sxPaper?: React.CSSProperties;
 };
 
 export const NAutocomplete = <T extends DataProp, ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']>({
@@ -57,6 +59,8 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 	errorMessage,
 	isIconSelect = true,
 	sx,
+	sxListbox,
+	sxPaper,
 	...rest
 }: Omit<Props<T, ChipComponent>, 'renderInput'>) => {
 	const [internalValue, setInternalValue] = useState<T | (string | number) | null>(externalValue || null);
@@ -185,10 +189,17 @@ export const NAutocomplete = <T extends DataProp, ChipComponent extends React.El
 				/>
 			)}
 			slotProps={{
+				paper: {
+					sx: {
+						...sxPaper
+					}
+				},
+
 				listbox: {
 					sx: {
 						maxHeight: '300px',
-						overflowY: 'auto'
+						overflowY: 'auto',
+						...sxListbox
 					}
 				}
 			}}
