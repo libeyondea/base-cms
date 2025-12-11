@@ -149,14 +149,18 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Target: $target" -ForegroundColor Yellow
 Write-Host ""
 
-# Kiểm tra xem có đang ở thư mục scripts không và có thể truy cập root directory
-if (-not (Test-Path "..\package.json")) {
-    Write-Host "❌ ERROR: Không tìm thấy package.json. Vui lòng chạy script từ thư mục scripts." -ForegroundColor Red
+# Kiểm tra và chuyển về root directory nếu cần
+if (Test-Path "package.json") {
+    # Đã ở root directory
+    Write-Host "📍 Running from root directory" -ForegroundColor Gray
+} elseif (Test-Path "..\package.json") {
+    # Đang ở thư mục scripts, chuyển về root
+    Write-Host "📍 Running from scripts directory, switching to root..." -ForegroundColor Gray
+    Set-Location ..
+} else {
+    Write-Host "❌ ERROR: Không tìm thấy package.json. Vui lòng chạy script từ root directory hoặc thư mục scripts." -ForegroundColor Red
     exit 1
 }
-
-# Chuyển về root directory để chạy các lệnh
-Set-Location ..
 
 # Build tất cả packages
 Write-Host "🔨 Building all packages..." -ForegroundColor Yellow

@@ -18,6 +18,9 @@
 		"lint": "npm run lint --workspace=@libeyondea/base-cms",
 		"dev:example": "npm run dev --workspace=base-cms-react",
 		"build:example": "npm run build --workspace=base-cms-react",
-		"preview:example": "npm run preview --workspace=base-cms-react"
+		"preview:example": "npm run preview --workspace=base-cms-react",
+		"publish": "pwsh -File scripts/publish.ps1",
+		"publish:base-cms": "pwsh -File scripts/publish.ps1 -target base-cms",
+		"publish:base-cms-dev": "pwsh -File scripts/publish.ps1 -target base-cms-dev"
 	}
 }
