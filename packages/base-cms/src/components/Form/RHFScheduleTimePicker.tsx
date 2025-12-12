@@ -85,6 +85,7 @@ interface RHFScheduleTimePickerProps {
 	type?: 'all' | 'entry' | 'exit'; // Loại hiển thị: all (cả entry và exit), entry (chỉ entry), exit (chỉ exit)
 	classes?: ClassOption[]; // Danh sách các lớp để chọn (checkbox)
 	classesLabel?: string; // Nhãn hiển thị cho phần chọn lớp, mặc định là "Chọn lớp"
+	allowDuplicateDays?: boolean; // Cho phép chọn ngày trùng nhau giữa các lịch, mặc định là false
 }
 
 export const RHFScheduleTimePicker = ({
@@ -93,7 +94,8 @@ export const RHFScheduleTimePicker = ({
 	simpleMode = false,
 	type = 'all',
 	classes = [],
-	classesLabel = 'Chọn lớp'
+	classesLabel = 'Chọn lớp',
+	allowDuplicateDays = false
 }: RHFScheduleTimePickerProps) => {
 	const { control, setValue, watch } = useFormContext();
 
@@ -219,20 +221,24 @@ export const RHFScheduleTimePicker = ({
 
 	// Thêm mục lịch mới
 	const addScheduleItem = () => {
-		// Kiểm tra xem tất cả các ngày đã được chọn chưa
-		if (areAllDaysCovered()) {
+		// Kiểm tra xem tất cả các ngày đã được chọn chưa (chỉ khi không cho phép trùng ngày)
+		if (!allowDuplicateDays && areAllDaysCovered()) {
 			return; // Không cho phép thêm mới nếu đã chọn đủ các ngày
 		}
 
-		// Tìm ngày đầu tiên chưa được sử dụng
+		// Tìm ngày đầu tiên chưa được sử dụng (chỉ khi không cho phép trùng ngày)
 		const allDays = ['0', '1', '2', '3', '4', '5', '6'];
-		const usedDays = new Set<string>();
-		scheduleItems.forEach((item) => {
-			item.days?.forEach((day) => usedDays.add(day));
-		});
+		let defaultDay = '1';
 
-		const availableDays = allDays.filter((day) => !usedDays.has(day));
-		const defaultDay = availableDays.length > 0 ? availableDays[0] : '1';
+		if (!allowDuplicateDays) {
+			const usedDays = new Set<string>();
+			scheduleItems.forEach((item) => {
+				item.days?.forEach((day) => usedDays.add(day));
+			});
+
+			const availableDays = allDays.filter((day) => !usedDays.has(day));
+			defaultDay = availableDays.length > 0 ? availableDays[0] : '1';
+		}
 
 		const checkedClassIds = getCheckedClassIds();
 		const newItem = simpleMode
@@ -271,19 +277,22 @@ export const RHFScheduleTimePicker = ({
 			return;
 		}
 
-		// Kiểm tra xem ngày đã được chọn trong lịch khác chưa
-		const usedDays = getUsedDaysExcept(index);
-		const oldDays = scheduleItems[index].days;
+		// Chỉ kiểm tra trùng ngày nếu không cho phép trùng ngày
+		if (!allowDuplicateDays) {
+			// Kiểm tra xem ngày đã được chọn trong lịch khác chưa
+			const usedDays = getUsedDaysExcept(index);
+			const oldDays = scheduleItems[index].days;
 
-		// Tìm các ngày mới được thêm vào
-		const newDaysToAdd = days.filter((day) => !oldDays.includes(day));
+			// Tìm các ngày mới được thêm vào
+			const newDaysToAdd = days.filter((day) => !oldDays.includes(day));
 
-		// Kiểm tra xem những ngày mới có bị trùng với các lịch khác không
-		const conflictDays = newDaysToAdd.filter((day) => usedDays.has(day));
+			// Kiểm tra xem những ngày mới có bị trùng với các lịch khác không
+			const conflictDays = newDaysToAdd.filter((day) => usedDays.has(day));
 
-		if (conflictDays.length > 0) {
-			// Nếu có ngày bị trùng, giữ nguyên lựa chọn cũ
-			return;
+			if (conflictDays.length > 0) {
+				// Nếu có ngày bị trùng, giữ nguyên lựa chọn cũ
+				return;
+			}
 		}
 
 		setDaySelectionError(null);
@@ -300,20 +309,61 @@ export const RHFScheduleTimePicker = ({
 		const timeString = value ? value.format('HH:mm') : '00:00';
 		newItems[index][field] = timeString;
 
-		// Tự động set giờ kết thúc bằng giờ bắt đầu + 1 tiếng khi thay đổi giờ bắt đầu
+		// Tự động set giờ kết thúc bằng giờ bắt đầu khi thay đổi giờ bắt đầu
 		if (field === 'start' && simpleMode) {
-			const endTime = value ? value.add(1, 'hour').format('HH:mm') : '01:00';
+			const endTime = value ? value.format('HH:mm') : '00:00';
 			newItems[index].end = endTime;
 		} else if (field === 'entry_start' && !simpleMode) {
-			const endTime = value ? value.add(1, 'hour').format('HH:mm') : '01:00';
+			const endTime = value ? value.format('HH:mm') : '00:00';
 			newItems[index].entry_end = endTime;
 		} else if (field === 'exit_start' && !simpleMode) {
-			const endTime = value ? value.add(1, 'hour').format('HH:mm') : '01:00';
+			const endTime = value ? value.format('HH:mm') : '00:00';
 			newItems[index].exit_end = endTime;
 		}
 
 		setScheduleItems(newItems);
 		setValue(name, JSON.stringify(newItems));
+	};
+
+	// Validate và điều chỉnh giờ kết thúc khi blur
+	const validateTimeOnBlur = (index: number, field: 'entry_end' | 'exit_end' | 'end') => {
+		const newItems = [...scheduleItems];
+		let needsUpdate = false;
+
+		if (simpleMode && field === 'end') {
+			const startTime = newItems[index].start ? dayjs(newItems[index].start, 'HH:mm') : null;
+			const endTime = newItems[index].end ? dayjs(newItems[index].end, 'HH:mm') : null;
+
+			if (startTime && endTime && endTime.isBefore(startTime)) {
+				newItems[index].end = startTime.format('HH:mm');
+				needsUpdate = true;
+			}
+		} else if (!simpleMode) {
+			if ((type === 'all' || type === 'entry') && field === 'entry_end') {
+				const entryStart = newItems[index].entry_start ? dayjs(newItems[index].entry_start, 'HH:mm') : null;
+				const entryEnd = newItems[index].entry_end ? dayjs(newItems[index].entry_end, 'HH:mm') : null;
+
+				if (entryStart && entryEnd && entryEnd.isBefore(entryStart)) {
+					newItems[index].entry_end = entryStart.format('HH:mm');
+					needsUpdate = true;
+				}
+			}
+
+			if ((type === 'all' || type === 'exit') && field === 'exit_end') {
+				const exitStart = newItems[index].exit_start ? dayjs(newItems[index].exit_start, 'HH:mm') : null;
+				const exitEnd = newItems[index].exit_end ? dayjs(newItems[index].exit_end, 'HH:mm') : null;
+
+				if (exitStart && exitEnd && exitEnd.isBefore(exitStart)) {
+					newItems[index].exit_end = exitStart.format('HH:mm');
+					needsUpdate = true;
+				}
+			}
+		}
+
+		if (needsUpdate) {
+			setScheduleItems(newItems);
+			setValue(name, JSON.stringify(newItems));
+		}
 	};
 
 	// Cập nhật classes đã chọn
@@ -366,7 +416,7 @@ export const RHFScheduleTimePicker = ({
 														key={day.id}
 														value={day.id}
 														sx={{ minWidth: 40 }}
-														disabled={!item.days?.includes(day.id) && usedDaysInOtherSchedules.has(day.id)}
+														disabled={!allowDuplicateDays && !item.days?.includes(day.id) && usedDaysInOtherSchedules.has(day.id)}
 													>
 														{day.name}
 													</ToggleButton>
@@ -458,7 +508,8 @@ export const RHFScheduleTimePicker = ({
 														ampm={false}
 														slotProps={{
 															textField: {
-																size: 'small'
+																size: 'small',
+																onBlur: () => validateTimeOnBlur(index, 'end')
 															}
 														}}
 													/>
@@ -510,7 +561,8 @@ export const RHFScheduleTimePicker = ({
 																ampm={false}
 																slotProps={{
 																	textField: {
-																		size: 'small'
+																		size: 'small',
+																		onBlur: () => validateTimeOnBlur(index, 'entry_end')
 																	}
 																}}
 															/>
@@ -572,7 +624,8 @@ export const RHFScheduleTimePicker = ({
 																ampm={false}
 																slotProps={{
 																	textField: {
-																		size: 'small'
+																		size: 'small',
+																		onBlur: () => validateTimeOnBlur(index, 'exit_end')
 																	}
 																}}
 															/>
@@ -586,10 +639,17 @@ export const RHFScheduleTimePicker = ({
 							);
 						})}
 
-						<Button startIcon={<AddIcon />} variant="outlined" size="small" onClick={addScheduleItem} disabled={areAllDaysCovered()} sx={{ mb: 1 }}>
+						<Button
+							startIcon={<AddIcon />}
+							variant="outlined"
+							size="small"
+							onClick={addScheduleItem}
+							disabled={!allowDuplicateDays && areAllDaysCovered()}
+							sx={{ mb: 1 }}
+						>
 							Thêm lịch
 						</Button>
-						{areAllDaysCovered() && (
+						{!allowDuplicateDays && areAllDaysCovered() && (
 							<Typography variant="caption" color="primary" sx={{ display: 'block', ml: 1 }}>
 								Đã chọn tất cả các ngày trong tuần
 							</Typography>

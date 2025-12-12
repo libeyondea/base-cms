@@ -284,6 +284,7 @@ const Dashboard = () => {
 										{ id: 3, name: 'Class 3', disabled: false, checked: true }
 									]}
 									simpleMode
+									allowDuplicateDays
 								/>
 							</Grid>
 							<Grid size={12}>
