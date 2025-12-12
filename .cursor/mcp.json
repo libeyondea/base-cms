@@ -1,0 +1,12 @@
+{
+	"mcpServers": {
+		"mui-mcp": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@mui/mcp@latest"]
+		},
+		"context7": {
+			"url": "https://mcp.context7.com/mcp"
+		}
+	}
+}
