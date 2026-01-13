@@ -77,12 +77,13 @@ const Sidebar = ({
 				dir={direction}
 				sx={{
 					width: toggleWidth,
+					minWidth: '250px',
 					flexShrink: 0,
 					fontFamily: 'inherit',
 					color: textColor
 				}}
 			>
-				<Box sx={{ width: toggleWidth }}>
+				<Box sx={{ width: toggleWidth, minWidth: '250px' }}>
 					<SidebarContext.Provider value={{ textColor, isCollapse, width, collapsewidth, themeColor }}>{children}</SidebarContext.Provider>
 					{showProfile ? (
 						<Profile userName={userName} designation={designation} userimg={userimg} isCollapse={isCollapse} onLogout={onLogout} />
