@@ -18,6 +18,25 @@ interface AvatarModalProps {
 	title?: string;
 }
 
+const getFileExtensionFromUrl = (url: string): string => {
+	const urlMatch = url.match(/\.(jpeg|jpg|png|gif|webp|svg|bmp|tiff|ico|avif)/i);
+	if (urlMatch) {
+		const ext = urlMatch[1].toLowerCase();
+		return ext === 'jpeg' ? 'jpg' : ext;
+	}
+	return 'jpg';
+};
+
+const downloadDirect = (url: string, filename: string): void => {
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = filename;
+	link.target = '_blank';
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+};
+
 export const AvatarModal = ({ open, onClose, imageUrl, title }: AvatarModalProps) => {
 	const [scale, setScale] = useState(1);
 	const [rotation, setRotation] = useState(0);
@@ -27,6 +46,7 @@ export const AvatarModal = ({ open, onClose, imageUrl, title }: AvatarModalProps
 	const [isEnhanced, setIsEnhanced] = useState(false);
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadSuccess, setUploadSuccess] = useState(false);
+	const [isDownloading, setIsDownloading] = useState(false);
 	const imageContainerRef = useRef<HTMLDivElement>(null);
 
 	// Reset position and scale when the modal opens with a new image
@@ -130,12 +150,16 @@ export const AvatarModal = ({ open, onClose, imageUrl, title }: AvatarModalProps
 	}, []);
 
 	const handleDownload = useCallback(() => {
-		const link = document.createElement('a');
-		link.href = imageUrl;
-		link.download = title || 'image';
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
+		try {
+			setIsDownloading(true);
+			const fileExtension = getFileExtensionFromUrl(imageUrl);
+			const filename = title ? `${title}.${fileExtension}` : `image.${fileExtension}`;
+			downloadDirect(imageUrl, filename);
+		} catch (error) {
+			console.error('Lỗi khi tải ảnh xuống:', error);
+		} finally {
+			setIsDownloading(false);
+		}
 	}, [imageUrl, title]);
 
 	const handleEnhanceImage = useCallback(() => {
@@ -433,8 +457,8 @@ export const AvatarModal = ({ open, onClose, imageUrl, title }: AvatarModalProps
 						</Typography>
 						<Box sx={{ display: 'flex', gap: 1 }}>
 							<Tooltip title="Tải ảnh xuống">
-								<IconButton size="small" onClick={handleDownload} sx={{ color: 'white' }}>
-									<DownloadIcon />
+								<IconButton size="small" onClick={handleDownload} disabled={isDownloading} sx={{ color: 'white' }}>
+									{isDownloading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : <DownloadIcon />}
 								</IconButton>
 							</Tooltip>
 							<Tooltip title={uploadSuccess ? 'Đã tải lên thành công' : 'Tải lên kho lưu trữ'}>
