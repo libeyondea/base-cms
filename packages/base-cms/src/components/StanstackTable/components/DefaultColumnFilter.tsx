@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { FilterList as FilterListIcon } from '@mui/icons-material';
-import { IconButton, InputAdornment, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { Clear, FilterList as FilterListIcon } from '@mui/icons-material';
+import { IconButton, InputAdornment, InputAdornmentProps, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Column } from '@tanstack/react-table';
 import dayjs, { Dayjs } from 'dayjs';
@@ -201,11 +201,28 @@ const DateFilter = ({ column }: { column: Column<any, any> }) => {
 		column.setFilterValue(stringValue || undefined);
 	};
 
+	const handleClear = () => {
+		setValue(null);
+		column.setFilterValue(undefined);
+	};
+
 	return (
 		<DatePicker
 			format="DD/MM/YYYY"
 			value={value}
 			onChange={handleDateChange}
+			slots={{
+				inputAdornment: (adornProps: InputAdornmentProps) => (
+					<InputAdornment {...adornProps} sx={{ gap: 1, margin: '0 !important' }}>
+						{adornProps.children}
+						{value && (
+							<IconButton size="small" onClick={handleClear} aria-label="Xóa ngày">
+								<Clear fontSize="small" />
+							</IconButton>
+						)}
+					</InputAdornment>
+				)
+			}}
 			slotProps={{
 				textField: {
 					variant: 'filled',
