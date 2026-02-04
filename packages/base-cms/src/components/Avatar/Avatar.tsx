@@ -11,14 +11,14 @@ interface AvatarProps {
 	};
 	size?: number;
 	sx?: SxProps;
+	defaultSrc?: string;
 }
 
-export const Avatar = ({ currentImage, size = 100, sx }: AvatarProps) => {
+export const Avatar = ({ currentImage, size = 100, sx, defaultSrc = '/images/camera.svg' }: AvatarProps) => {
 	const [imageModalOpen, setImageModalOpen] = useState(false);
 	const [hasError, setHasError] = useState(false);
 	const [frozenImageUrl, setFrozenImageUrl] = useState<string | undefined>(undefined);
 	const [frozenTitle, setFrozenTitle] = useState<string | undefined>(undefined);
-	const defaultSrc = '/images/camera.svg';
 	const computedSrc = hasError ? defaultSrc : currentImage.path || defaultSrc;
 
 	useEffect(() => {
