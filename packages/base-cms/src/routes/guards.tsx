@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { Navigate, useLocation } from 'react-router-dom';
 
@@ -91,7 +91,7 @@ export const AccessControl = ({
 }) => {
 	const { isInitialized, signin, signout } = useAuth();
 
-	const initialize = async () => {
+	const initialize = useCallback(async () => {
 		try {
 			const serviceToken = getCookie('service_token');
 			if (serviceToken) {
@@ -116,12 +116,11 @@ export const AccessControl = ({
 			removeCookie('service_token');
 			signout();
 		}
-	};
+	}, [profileAPI, keyDataProfile, signin, signout]);
 
 	useEffect(() => {
 		initialize();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [initialize]);
 
 	if (!isInitialized) {
 		return <LoadingScreen />;

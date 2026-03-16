@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { PaletteMode, Theme, ThemeProvider, createTheme } from '@mui/material/styles';
@@ -21,7 +21,9 @@ const defaultQueryClient = new QueryClient({
 	}
 });
 
-// Theme Context Types
+// ============================================================
+// Theme Context
+// ============================================================
 interface ThemeContextType {
 	theme: Theme;
 	mode: PaletteMode;
@@ -29,14 +31,112 @@ interface ThemeContextType {
 	setThemeMode: (mode: PaletteMode) => void;
 }
 
-// Sidebar Context Types
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+const ThemeContextProvider = ({ children, customTheme }: { children: ReactNode; customTheme?: (mode: PaletteMode) => any }) => {
+	const [mode, setMode] = useState<PaletteMode>('light');
+	const [isInitializedTheme, setIsInitializedTheme] = useState(false);
+
+	const themeConfig = customTheme ? customTheme(mode) : createCustomTheme(mode);
+	const theme = createTheme(themeConfig);
+
+	// Initialize theme from localStorage or system preference
+	useEffect(() => {
+		const initializeTheme = () => {
+			try {
+				const savedTheme = localStorage.getItem('themeMode') as PaletteMode;
+
+				if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+					setMode(savedTheme);
+				} else {
+					const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					const systemTheme: PaletteMode = systemPrefersDark ? 'dark' : 'light';
+					setMode(systemTheme);
+					localStorage.setItem('themeMode', systemTheme);
+				}
+			} catch (error) {
+				console.warn('Failed to initialize theme:', error);
+				setMode('light');
+			} finally {
+				setIsInitializedTheme(true);
+			}
+		};
+
+		initializeTheme();
+	}, []);
+
+	// Save theme changes to localStorage
+	useEffect(() => {
+		if (isInitializedTheme) {
+			try {
+				localStorage.setItem('themeMode', mode);
+			} catch (error) {
+				console.warn('Failed to save theme:', error);
+			}
+		}
+	}, [mode, isInitializedTheme]);
+
+	const toggleTheme = useCallback(() => {
+		setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+	}, []);
+
+	const setThemeMode = useCallback((newMode: PaletteMode) => {
+		setMode(newMode);
+	}, []);
+
+	const value = useMemo<ThemeContextType>(
+		() => ({
+			theme,
+			mode,
+			toggleTheme,
+			setThemeMode
+		}),
+		[theme, mode, toggleTheme, setThemeMode]
+	);
+
+	return (
+		<ThemeContext.Provider value={value}>
+			<ThemeProvider theme={theme}>
+				<CssBaseline />
+				{children}
+			</ThemeProvider>
+		</ThemeContext.Provider>
+	);
+};
+
+// ============================================================
+// Sidebar Context
+// ============================================================
 interface SidebarContextType {
 	drawerOpen: boolean;
 	toggleDrawer: () => void;
 	setDrawerOpen: (open: boolean) => void;
 }
 
-// Table Context Types
+const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
+
+const SidebarContextProvider = ({ children }: { children: ReactNode }) => {
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	const toggleDrawer = useCallback(() => {
+		setDrawerOpen((prev) => !prev);
+	}, []);
+
+	const value = useMemo<SidebarContextType>(
+		() => ({
+			drawerOpen,
+			toggleDrawer,
+			setDrawerOpen
+		}),
+		[drawerOpen, toggleDrawer]
+	);
+
+	return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
+};
+
+// ============================================================
+// Table Context
+// ============================================================
 interface TableContextType {
 	filters: {
 		[key: string]: {
@@ -48,7 +148,44 @@ interface TableContextType {
 	setFilterTable: (payload: { type: string; value: Record<string, string | number> }) => void;
 }
 
-// Auth Context Types
+const TableContext = createContext<TableContextType | undefined>(undefined);
+
+const TableContextProvider = ({ children }: { children: ReactNode }) => {
+	const [filters, setFilters] = useState<{
+		[key: string]: {
+			query: {
+				[key: string]: string | number;
+			};
+		};
+	}>({});
+
+	const setFilterTable = useCallback((payload: { type: string; value: Record<string, string | number> }) => {
+		setFilters((prevFilters) => {
+			const query = payload?.value || {};
+
+			return {
+				...prevFilters,
+				[payload.type]: {
+					query: { ...prevFilters[payload.type]?.query, ...query }
+				}
+			};
+		});
+	}, []);
+
+	const value = useMemo<TableContextType>(
+		() => ({
+			filters,
+			setFilterTable
+		}),
+		[filters, setFilterTable]
+	);
+
+	return <TableContext.Provider value={value}>{children}</TableContext.Provider>;
+};
+
+// ============================================================
+// Auth Context
+// ============================================================
 interface AuthContextType {
 	isAuthenticated: boolean;
 	isInitialized: boolean;
@@ -59,29 +196,85 @@ interface AuthContextType {
 	signup: (payload: { user: any }) => void;
 }
 
-// Custom Context Types
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isInitialized, setIsInitialized] = useState(false);
+	const [user, setUser] = useState<any>(null);
+	const [token, setToken] = useState<string | null>(null);
+
+	const signin = useCallback((payload: { user: any; token: string }) => {
+		setIsAuthenticated(true);
+		setIsInitialized(true);
+		setUser(payload.user);
+		setToken(payload.token);
+	}, []);
+
+	const signout = useCallback(() => {
+		setIsInitialized(true);
+		setIsAuthenticated(false);
+		setUser(null);
+		setToken(null);
+	}, []);
+
+	const signup = useCallback((payload: { user: any }) => {
+		setUser(payload.user);
+	}, []);
+
+	const value = useMemo<AuthContextType>(
+		() => ({
+			isAuthenticated,
+			isInitialized,
+			user,
+			token,
+			signin,
+			signout,
+			signup
+		}),
+		[isAuthenticated, isInitialized, user, token, signin, signout, signup]
+	);
+
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// ============================================================
+// Custom Context
+// ============================================================
 interface CustomContextType {
 	state: Record<string, any>;
 	setCustom: (next: Record<string, any> | ((prev: Record<string, any>) => Record<string, any>)) => void;
 	resetCustom: () => void;
 }
 
-// Combined App Context Type
-interface AppContextType {
-	// Theme
-	theme: ThemeContextType;
-	// Sidebar
-	sidebar: SidebarContextType;
-	// Table
-	table: TableContextType;
-	// Auth
-	auth: AuthContextType;
-	// Custom (user-defined extra state)
-	custom: CustomContextType;
-}
+const CustomContext = createContext<CustomContextType | undefined>(undefined);
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const CustomContextProvider = ({ children, initialCustom }: { children: ReactNode; initialCustom?: Record<string, any> }) => {
+	const [customState, setCustomState] = useState<Record<string, any>>(initialCustom || {});
 
+	const setCustom: CustomContextType['setCustom'] = useCallback((next) => {
+		setCustomState((prev) => (typeof next === 'function' ? (next as (p: Record<string, any>) => Record<string, any>)(prev) : next));
+	}, []);
+
+	const resetCustom = useCallback(() => {
+		setCustomState(initialCustom || {});
+	}, [initialCustom]);
+
+	const value = useMemo<CustomContextType>(
+		() => ({
+			state: customState,
+			setCustom,
+			resetCustom
+		}),
+		[customState, setCustom, resetCustom]
+	);
+
+	return <CustomContext.Provider value={value}>{children}</CustomContext.Provider>;
+};
+
+// ============================================================
+// AppProvider - Compose all contexts
+// ============================================================
 interface AppProviderProps {
 	children?: ReactNode;
 	customTheme?: (mode: PaletteMode) => any;
@@ -113,253 +306,83 @@ export const AppProvider = ({
 	keyDataProfile = 'data',
 	roleConfig
 }: AppProviderProps) => {
-	// Use custom queryClient if provided, otherwise use default
 	const client = queryClient || defaultQueryClient;
-
-	// Theme state
-	const [mode, setMode] = useState<PaletteMode>('light');
-	const [isInitializedTheme, setIsInitializedTheme] = useState(false);
-
-	// Use custom theme if provided, otherwise use default theme
-	const themeConfig = customTheme ? customTheme(mode) : createCustomTheme(mode);
-	const theme = createTheme(themeConfig);
-
-	// Sidebar state
-	const [drawerOpen, setDrawerOpen] = useState(false);
-
-	// Table state
-	const [filters, setFilters] = useState<{
-		[key: string]: {
-			query: {
-				[key: string]: string | number;
-			};
-		};
-	}>({});
-
-	// Auth state
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [isInitialized, setIsInitialized] = useState(false);
-	const [user, setUser] = useState<any>(null);
-	const [token, setToken] = useState<string | null>(null);
-
-	// Custom state
-	const [customState, setCustomState] = useState<Record<string, any>>(initialCustom || {});
-
-	// Theme effects
-	useEffect(() => {
-		const initializeTheme = () => {
-			try {
-				// First check localStorage
-				const savedTheme = localStorage.getItem('themeMode') as PaletteMode;
-
-				if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-					setMode(savedTheme);
-				} else {
-					// Fallback to system preference
-					const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-					const systemTheme: PaletteMode = systemPrefersDark ? 'dark' : 'light';
-					setMode(systemTheme);
-					// Save system preference to localStorage
-					localStorage.setItem('themeMode', systemTheme);
-				}
-			} catch (error) {
-				console.warn('Failed to initialize theme:', error);
-				// Fallback to light theme
-				setMode('light');
-			} finally {
-				setIsInitializedTheme(true);
-			}
-		};
-
-		initializeTheme();
-	}, []);
-
-	// Save theme changes to localStorage
-	useEffect(() => {
-		if (isInitializedTheme) {
-			try {
-				localStorage.setItem('themeMode', mode);
-			} catch (error) {
-				console.warn('Failed to save theme:', error);
-			}
-		}
-	}, [mode, isInitializedTheme]);
-
-	// Theme functions
-	const toggleTheme = () => {
-		setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-	};
-
-	const setThemeMode = (newMode: PaletteMode) => {
-		setMode(newMode);
-	};
-
-	// Sidebar functions
-	const toggleDrawer = () => {
-		setDrawerOpen((prev) => !prev);
-	};
-
-	// Table functions
-	const setFilterTable = (payload: { type: string; value: Record<string, string | number> }) => {
-		setFilters((prevFilters) => {
-			const isExistKey = Object.prototype.hasOwnProperty.call(prevFilters, payload?.type);
-			const query = payload?.value || {};
-
-			if (isExistKey) {
-				return {
-					...prevFilters,
-					[payload.type]: {
-						query: { ...prevFilters[payload.type]?.query, ...query }
-					}
-				};
-			} else {
-				return {
-					...prevFilters,
-					[payload.type]: {
-						query
-					}
-				};
-			}
-		});
-	};
-
-	// Auth functions
-	const signin = (payload: { user: any; token: string }) => {
-		setIsAuthenticated(true);
-		setIsInitialized(true);
-		setUser(payload.user);
-		setToken(payload.token);
-	};
-
-	const signout = () => {
-		setIsInitialized(true);
-		setIsAuthenticated(false);
-		setUser(null);
-		setToken(null);
-	};
-
-	const signup = (payload: { user: any }) => {
-		setUser(payload.user);
-	};
-
-	// Custom functions
-	const setCustom: CustomContextType['setCustom'] = (next) => {
-		setCustomState((prev) => (typeof next === 'function' ? (next as (p: Record<string, any>) => Record<string, any>)(prev) : next));
-	};
-
-	const resetCustom = () => {
-		setCustomState(initialCustom || {});
-	};
-
-	// Context values
-	const themeContextValue: ThemeContextType = {
-		theme,
-		mode,
-		toggleTheme,
-		setThemeMode
-	};
-
-	const sidebarContextValue: SidebarContextType = {
-		drawerOpen,
-		toggleDrawer,
-		setDrawerOpen
-	};
-
-	const tableContextValue: TableContextType = {
-		filters,
-		setFilterTable
-	};
-
-	const authContextValue: AuthContextType = {
-		isAuthenticated,
-		isInitialized,
-		user,
-		token,
-		signin,
-		signout,
-		signup
-	};
-
-	const customContextValue: CustomContextType = {
-		state: customState,
-		setCustom,
-		resetCustom
-	};
-
-	const appContextValue: AppContextType = {
-		theme: themeContextValue,
-		sidebar: sidebarContextValue,
-		table: tableContextValue,
-		auth: authContextValue,
-		custom: customContextValue
-	};
 
 	return (
 		<QueryClientProvider client={client}>
-			<AppContext.Provider value={appContextValue}>
-				<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<LocalizationProvider dateAdapter={AdapterDayjs}>
-						{routesConfig && (
-							<Routes
-								config={routesConfig}
-								basename={basename}
-								profileAPI={profileAPI}
-								redirectPrivateTo={redirectPrivateTo}
-								redirectAuthTo={redirectAuthTo}
-								keyDataProfile={keyDataProfile}
-								roleConfig={roleConfig}
-							/>
-						)}
-						{children}
-					</LocalizationProvider>
-				</ThemeProvider>
-			</AppContext.Provider>
+			<AuthContextProvider>
+				<ThemeContextProvider customTheme={customTheme}>
+					<SidebarContextProvider>
+						<TableContextProvider>
+							<CustomContextProvider initialCustom={initialCustom}>
+								<LocalizationProvider dateAdapter={AdapterDayjs}>
+									{routesConfig && (
+										<Routes
+											config={routesConfig}
+											basename={basename}
+											profileAPI={profileAPI}
+											redirectPrivateTo={redirectPrivateTo}
+											redirectAuthTo={redirectAuthTo}
+											keyDataProfile={keyDataProfile}
+											roleConfig={roleConfig}
+										/>
+									)}
+									{children}
+								</LocalizationProvider>
+							</CustomContextProvider>
+						</TableContextProvider>
+					</SidebarContextProvider>
+				</ThemeContextProvider>
+			</AuthContextProvider>
 		</QueryClientProvider>
 	);
 };
 
+// ============================================================
+// Hooks (backward-compatible public API)
+// ============================================================
+
 // Theme hook
 export const useTheme = (): ThemeContextType => {
-	const context = useContext(AppContext);
+	const context = useContext(ThemeContext);
 	if (!context) {
 		throw new Error('useTheme must be used within an AppProvider');
 	}
-	return context.theme;
+	return context;
 };
 
 // Sidebar hook
 export const useSidebar = (): SidebarContextType => {
-	const context = useContext(AppContext);
+	const context = useContext(SidebarContext);
 	if (!context) {
 		throw new Error('useSidebar must be used within an AppProvider');
 	}
-	return context.sidebar;
+	return context;
 };
 
 // Table hook
 export const useTableContext = (): TableContextType => {
-	const context = useContext(AppContext);
+	const context = useContext(TableContext);
 	if (!context) {
 		throw new Error('useTable must be used within an AppProvider');
 	}
-	return context.table;
+	return context;
 };
 
 // Auth hook
 export const useAuth = (): AuthContextType => {
-	const context = useContext(AppContext);
+	const context = useContext(AuthContext);
 	if (!context) {
 		throw new Error('useAuth must be used within an AppProvider');
 	}
-	return context.auth;
+	return context;
 };
 
 // Custom hook
 export const useCustom = (): CustomContextType => {
-	const context = useContext(AppContext);
+	const context = useContext(CustomContext);
 	if (!context) {
 		throw new Error('useCustom must be used within an AppProvider');
 	}
-	return context.custom;
+	return context;
 };

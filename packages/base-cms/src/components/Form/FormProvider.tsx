@@ -13,7 +13,7 @@ interface FormProviderProps {
 export const FormProvider = ({ id, methods, onSubmit, style, children }: FormProviderProps) => {
 	return (
 		<Form {...methods}>
-			<form id={id} style={{ ...style }} onSubmit={onSubmit}>
+			<form id={id} style={{ ...style }} noValidate onSubmit={onSubmit ? methods.handleSubmit(onSubmit) : undefined}>
 				{children}
 			</form>
 		</Form>

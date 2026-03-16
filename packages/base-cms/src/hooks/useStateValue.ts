@@ -20,7 +20,7 @@ export const useStateValue = (defaultValue: IValue = false): ReturnType => {
 	}, []);
 
 	const onFalse = useCallback(() => {
-		setValue('');
+		setValue(false);
 	}, []);
 
 	const onToggle = useCallback(() => {
