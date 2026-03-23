@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { PaletteMode, Theme, ThemeProvider, createTheme } from '@mui/material/styles';
@@ -10,6 +10,7 @@ import '~/assets/styles/globals.css';
 import { RoleConfig } from '~/components/Layout/SideBar/Sidebar.types';
 import { Routes, RoutesConfig } from '~/routes';
 import { createCustomTheme } from '~/theme';
+import { setAxiosBaseURL } from '~/utils/axios';
 
 // Default QueryClient instance
 const defaultQueryClient = new QueryClient({
@@ -283,6 +284,8 @@ interface AppProviderProps {
 	// Routes configuration
 	routesConfig?: RoutesConfig;
 	basename?: string;
+	/** Base URL cho API (ghi đè HOST_API từ env) */
+	hostAPI?: string;
 	profileAPI?: string;
 	redirectPrivateTo?: string;
 	redirectAuthTo?: string;
@@ -300,6 +303,7 @@ export const AppProvider = ({
 	initialCustom,
 	routesConfig,
 	basename,
+	hostAPI,
 	profileAPI = '/profile',
 	redirectPrivateTo = '/signin',
 	redirectAuthTo = '/',
@@ -307,6 +311,20 @@ export const AppProvider = ({
 	roleConfig
 }: AppProviderProps) => {
 	const client = queryClient || defaultQueryClient;
+
+	// Set axios baseURL trước khi bất kỳ component con nào gọi API
+	const isBaseURLSet = useRef(false);
+	if (hostAPI && !isBaseURLSet.current) {
+		setAxiosBaseURL(hostAPI);
+		isBaseURLSet.current = true;
+	}
+
+	// Cập nhật baseURL khi hostAPI thay đổi
+	useEffect(() => {
+		if (hostAPI) {
+			setAxiosBaseURL(hostAPI);
+		}
+	}, [hostAPI]);
 
 	return (
 		<QueryClientProvider client={client}>
