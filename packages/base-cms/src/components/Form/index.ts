@@ -13,3 +13,5 @@ export * from './RHFSwitch';
 export * from './RHFTextFieldAdvanced';
 export * from './RHFScheduleTimePicker';
 export * from './RHFMoney';
+export * from './RHFInteger';
+export * from './RHFDecimal';
