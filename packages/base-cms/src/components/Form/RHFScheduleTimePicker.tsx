@@ -25,6 +25,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { WEEK_DAYS_CONSTANT } from '~/utils/constant';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 // Json mẫu:
 // [
 //     {
@@ -81,6 +83,8 @@ interface ClassOption {
 interface RHFScheduleTimePickerProps {
 	name: string; // Tên trường form
 	label?: string; // Nhãn hiển thị
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	simpleMode?: boolean; // Có sử dụng chế độ đơn giản không
 	type?: 'all' | 'entry' | 'exit'; // Loại hiển thị: all (cả entry và exit), entry (chỉ entry), exit (chỉ exit)
 	classes?: ClassOption[]; // Danh sách các lớp để chọn (checkbox)
@@ -91,6 +95,7 @@ interface RHFScheduleTimePickerProps {
 export const RHFScheduleTimePicker = ({
 	name,
 	label,
+	info,
 	simpleMode = false,
 	type = 'all',
 	classes = [],
@@ -397,7 +402,7 @@ export const RHFScheduleTimePicker = ({
 				<>
 					<TextField {...field} type="hidden" sx={{ display: 'none' }} />
 					<Box>
-						{label && <FormLabel>{label}</FormLabel>}
+						{label && <FormLabel>{renderLabelWithInfo(label, info)}</FormLabel>}
 
 						{scheduleItems.map((item, index) => {
 							// Lấy danh sách ngày đã được sử dụng trong các lịch khác

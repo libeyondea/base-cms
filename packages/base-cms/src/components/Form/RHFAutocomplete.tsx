@@ -4,6 +4,8 @@ import { Autocomplete, AutocompleteProps, ChipTypeMap, SxProps, TextField } from
 import { debounce, get } from 'lodash-es';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type DataProp = {
 	id?: string | number;
 	[key: string]: any;
@@ -15,6 +17,8 @@ type Props<T extends DataProp, ChipComponent extends React.ElementType = ChipTyp
 > & {
 	name: string;
 	label?: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	valueKey?: string;
 	labelKey?: string;
 	helperText?: React.ReactNode;
@@ -54,6 +58,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 	hiddenKeys,
 	sx,
 	isIconSelect = true,
+	info,
 	...rest
 }: Omit<Props<T, ChipComponent>, 'renderInput'>) => {
 	const { control, setValue, trigger, watch } = useFormContext();
@@ -187,7 +192,7 @@ export const RHFAutocomplete = <T extends DataProp, ChipComponent extends React.
 							<TextField
 								{...params}
 								size={size}
-								label={label}
+								label={renderLabelWithInfo(label, info)}
 								error={!!fieldState.error}
 								helperText={fieldState.error ? fieldState.error.message : helperText}
 								slotProps={{

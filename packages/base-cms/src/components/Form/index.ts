@@ -1,3 +1,4 @@
+export * from './InfoTooltip';
 export * from './FormProvider';
 export * from './FormLabel';
 export * from './RHFPhone';

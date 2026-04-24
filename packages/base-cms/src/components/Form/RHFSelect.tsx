@@ -1,6 +1,8 @@
 import { FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, SelectProps, SxProps, Theme } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFSelectProps = Omit<SelectProps, 'startAdornment' | 'endAdornment'> & {
 	valueKey?: string | number;
 	labelKey?: string;
@@ -8,6 +10,8 @@ type RHFSelectProps = Omit<SelectProps, 'startAdornment' | 'endAdornment'> & {
 	disabledKey?: string;
 	label?: string;
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	options: any[];
 	handleOnchange?: (value: any) => void;
 	helperText?: string;
@@ -35,6 +39,7 @@ export const RHFSelect = ({
 	iconOffset = 40,
 	startAdornment,
 	endAdornment,
+	info,
 	...props
 }: RHFSelectProps) => {
 	const { control } = useFormContext();
@@ -61,7 +66,7 @@ export const RHFSelect = ({
 
 				return (
 					<FormControl fullWidth={fullWidth} size={size} error={!!fieldState.error}>
-						{label && <InputLabel id={`${name}-label`}>{label}</InputLabel>}
+						{label && <InputLabel id={`${name}-label`}>{renderLabelWithInfo(label, info)}</InputLabel>}
 						<Select
 							{...field}
 							{...props}

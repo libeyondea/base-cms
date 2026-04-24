@@ -4,6 +4,8 @@ import { TextField, TextFieldProps } from '@mui/material';
 import { Controller, FieldPath, FieldValues, useFormContext } from 'react-hook-form';
 import { NumericFormat, PatternFormat } from 'react-number-format';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 // Interface cho các props của numeric format
 interface NumericFormatProps {
 	onChange: (event: { target: { name: string; value: string } }) => void;
@@ -100,6 +102,8 @@ interface FormTextFieldProps<T extends FieldValues> extends Omit<TextFieldProps,
 
 	// Custom end adornment
 	endAdornment?: (option: any) => React.ReactNode;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 }
 
 // Component chính - hỗ trợ cả text và format
@@ -125,6 +129,7 @@ export const RHFTextFieldAdvanced = <T extends FieldValues>({
 	value, // custom value
 	size = 'medium',
 	endAdornment,
+	info,
 	...textFieldProps
 }: FormTextFieldProps<T>) => {
 	const { control } = useFormContext<T>();
@@ -154,7 +159,7 @@ export const RHFTextFieldAdvanced = <T extends FieldValues>({
 							onChange={field.onChange}
 							onBlur={field.onBlur}
 							name={field.name}
-							label={label}
+							label={renderLabelWithInfo(label as string, info)}
 							error={!!error}
 							helperText={error ? error.message : textFieldProps.helperText}
 							size={size}
@@ -203,7 +208,7 @@ export const RHFTextFieldAdvanced = <T extends FieldValues>({
 						onChange={field.onChange}
 						onBlur={field.onBlur}
 						name={field.name}
-						label={label}
+						label={renderLabelWithInfo(label as string, info)}
 						error={!!error}
 						helperText={error ? error.message : textFieldProps.helperText}
 						slotProps={{

@@ -1,6 +1,8 @@
 import { FormControl, InputAdornment, MenuItem, SxProps, TextField, TextFieldProps, Theme } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFTextFieldSelectProps = TextFieldProps & {
 	valueKey?: string | number;
 	labelKey?: string;
@@ -8,6 +10,8 @@ type RHFTextFieldSelectProps = TextFieldProps & {
 	disabledKey?: string;
 	label?: string;
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	options: any[];
 	handleOnchange?: (value: any) => void;
 	helperText?: string;
@@ -35,6 +39,7 @@ export const RHFTextFieldSelect = ({
 	iconOffset = 40,
 	startAdornment,
 	endAdornment,
+	info,
 	...props
 }: RHFTextFieldSelectProps) => {
 	const { control } = useFormContext();
@@ -66,7 +71,7 @@ export const RHFTextFieldSelect = ({
 						select
 						fullWidth={fullWidth}
 						size={size}
-						label={label}
+						label={renderLabelWithInfo(label, info)}
 						value={field.value}
 						error={!!fieldState.error}
 						helperText={fieldState.error ? fieldState.error.message : helperText}

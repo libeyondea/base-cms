@@ -3,8 +3,12 @@ import { DatePicker, DatePickerProps } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFDatePickerProps = DatePickerProps & {
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	helperText?: string;
 	fullWidth?: boolean;
 	size?: 'small' | 'medium';
@@ -12,7 +16,7 @@ type RHFDatePickerProps = DatePickerProps & {
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
-export const RHFDatePicker = ({ name, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, ...props }: RHFDatePickerProps) => {
+export const RHFDatePicker = ({ name, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, info, ...props }: RHFDatePickerProps) => {
 	const { control } = useFormContext();
 
 	return (
@@ -24,6 +28,7 @@ export const RHFDatePicker = ({ name, helperText, fullWidth = true, size = 'medi
 					{...field}
 					{...props}
 					format="DD/MM/YYYY"
+					label={renderLabelWithInfo(props.label as string, info)}
 					value={field.value ? dayjs(field.value, 'DD/MM/YYYY') : null}
 					onChange={(value: Dayjs | null) => {
 						const stringValue = value ? value.format('DD/MM/YYYY') : '';

@@ -5,8 +5,12 @@ import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFMoneyProps = TextFieldProps & {
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 	thousandSeparator?: string;
@@ -76,6 +80,7 @@ export const RHFMoney = ({
 	suffix = '',
 	max,
 	min,
+	info,
 	...textFieldProps
 }: RHFMoneyProps) => {
 	const { control } = useFormContext();
@@ -93,7 +98,7 @@ export const RHFMoney = ({
 						fullWidth={fullWidth}
 						size={size}
 						name={field.name}
-						label={label}
+						label={renderLabelWithInfo(label as string, info)}
 						value={inputValue}
 						onChange={field.onChange}
 						onBlur={field.onBlur}

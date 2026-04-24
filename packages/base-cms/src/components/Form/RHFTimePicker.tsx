@@ -3,8 +3,12 @@ import { MobileTimePicker, MobileTimePickerProps } from '@mui/x-date-pickers/Mob
 import dayjs, { Dayjs } from 'dayjs';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFTimePickerProps = MobileTimePickerProps & {
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	helperText?: string;
 	fullWidth?: boolean;
 	size?: 'small' | 'medium';
@@ -12,7 +16,7 @@ type RHFTimePickerProps = MobileTimePickerProps & {
 	endAdornment?: (value: any) => React.ReactNode;
 };
 
-export const RHFTimePicker = ({ name, label, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, ...props }: RHFTimePickerProps) => {
+export const RHFTimePicker = ({ name, label, helperText, fullWidth = true, size = 'medium', startAdornment, endAdornment, info, ...props }: RHFTimePickerProps) => {
 	const { control } = useFormContext();
 
 	return (
@@ -25,7 +29,7 @@ export const RHFTimePicker = ({ name, label, helperText, fullWidth = true, size 
 					{...props}
 					openTo="hours"
 					format="HH:mm"
-					label={label}
+					label={renderLabelWithInfo(label as string, info)}
 					value={field.value ? dayjs(field.value, 'HH:mm') : null}
 					onChange={(value: Dayjs | null) => {
 						const stringValue = value ? value.format('HH:mm') : '00:00';

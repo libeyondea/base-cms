@@ -5,8 +5,12 @@ import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { Controller, useFormContext } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFIntegerProps = TextFieldProps & {
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 	/** Giá trị tối thiểu (mặc định: 0) */
@@ -82,6 +86,7 @@ export const RHFInteger = ({
 	min = 0,
 	max,
 	thousandSeparator = false,
+	info,
 	...textFieldProps
 }: RHFIntegerProps) => {
 	const { control } = useFormContext();
@@ -98,6 +103,7 @@ export const RHFInteger = ({
 						{...textFieldProps}
 						fullWidth={fullWidth}
 						size={size}
+						label={renderLabelWithInfo(textFieldProps.label as string, info)}
 						name={field.name}
 						value={inputValue}
 						onChange={field.onChange}

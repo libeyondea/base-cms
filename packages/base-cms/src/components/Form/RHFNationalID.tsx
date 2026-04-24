@@ -5,8 +5,12 @@ import { InputBaseComponentProps } from '@mui/material/InputBase';
 import { Controller, useFormContext } from 'react-hook-form';
 import { PatternFormat } from 'react-number-format';
 
+import { renderLabelWithInfo } from './InfoTooltip';
+
 type RHFNationalIDProps = TextFieldProps & {
 	name: string;
+	/** Thông tin mô tả, hiển thị khi hover vào icon chấm than sau label */
+	info?: string;
 	startAdornment?: (value: any) => React.ReactNode;
 	endAdornment?: (value: any) => React.ReactNode;
 };
@@ -51,6 +55,7 @@ export const RHFNationalID = ({
 	size = 'medium',
 	startAdornment,
 	endAdornment,
+	info,
 	...textFieldProps
 }: RHFNationalIDProps) => {
 	const { control } = useFormContext();
@@ -68,7 +73,7 @@ export const RHFNationalID = ({
 						fullWidth={fullWidth}
 						size={size}
 						name={field.name}
-						label={label}
+						label={renderLabelWithInfo(label as string, info)}
 						value={inputValue}
 						onChange={field.onChange}
 						onBlur={field.onBlur}
