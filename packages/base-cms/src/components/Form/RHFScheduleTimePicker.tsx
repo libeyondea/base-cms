@@ -90,6 +90,7 @@ interface RHFScheduleTimePickerProps {
 	classes?: ClassOption[]; // Danh sách các lớp để chọn (checkbox)
 	classesLabel?: string; // Nhãn hiển thị cho phần chọn lớp, mặc định là "Chọn lớp"
 	allowDuplicateDays?: boolean; // Cho phép chọn ngày trùng nhau giữa các lịch, mặc định là false
+	allowMultipleSchedules?: boolean; // Cho phép thêm nhiều lịch, mặc định là true
 }
 
 export const RHFScheduleTimePicker = ({
@@ -100,7 +101,8 @@ export const RHFScheduleTimePicker = ({
 	type = 'all',
 	classes = [],
 	classesLabel = 'Chọn lớp',
-	allowDuplicateDays = false
+	allowDuplicateDays = false,
+	allowMultipleSchedules = true
 }: RHFScheduleTimePickerProps) => {
 	const { control, setValue, watch } = useFormContext();
 
@@ -115,6 +117,35 @@ export const RHFScheduleTimePicker = ({
 	// Lấy danh sách ID các class có checked === true
 	const getCheckedClassIds = () => {
 		return classes.filter((classItem) => classItem.checked === true).map((classItem) => classItem.id);
+	};
+
+	const normalizeScheduleItemsByMultipleMode = (items: ScheduleItem[]) => {
+		return allowMultipleSchedules ? items : items.slice(0, 1);
+	};
+
+	const createDefaultScheduleItem = (defaultDay = '1'): ScheduleItem => {
+		const checkedClassIds = getCheckedClassIds();
+
+		if (simpleMode) {
+			return { days: [defaultDay], start: '00:00', end: '00:00', selectedClasses: checkedClassIds };
+		}
+
+		if (type === 'entry') {
+			return { days: [defaultDay], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds };
+		}
+
+		if (type === 'exit') {
+			return { days: [defaultDay], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds };
+		}
+
+		return {
+			days: [defaultDay],
+			entry_start: '00:00',
+			entry_end: '00:00',
+			exit_start: '00:00',
+			exit_end: '00:00',
+			selectedClasses: checkedClassIds
+		};
 	};
 
 	// Tính toán ngày đã được chọn trong các lịch khác
@@ -153,37 +184,20 @@ export const RHFScheduleTimePicker = ({
 					const mergedClasses = [...new Set([...currentClasses, ...checkedClassIds])];
 					return { ...item, selectedClasses: mergedClasses };
 				});
-				setScheduleItems(updatedSchedule);
-				setValue(name, JSON.stringify(updatedSchedule));
+				const normalizedSchedule = normalizeScheduleItemsByMultipleMode(updatedSchedule);
+				const nextSchedule = !allowMultipleSchedules && normalizedSchedule.length === 0 ? [createDefaultScheduleItem()] : normalizedSchedule;
+				setScheduleItems(nextSchedule);
+				setValue(name, JSON.stringify(nextSchedule));
 			} catch (e) {
 				// Nếu parse lỗi, tạo một mục mặc định theo chế độ hiện tại và type
-				const defaultItem = simpleMode
-					? { days: ['1'], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
-					: type === 'entry'
-						? { days: ['1'], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
-						: type === 'exit'
-							? { days: ['1'], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
-							: {
-									days: ['1'],
-									entry_start: '00:00',
-									entry_end: '00:00',
-									exit_start: '00:00',
-									exit_end: '00:00',
-									selectedClasses: checkedClassIds
-								};
+				const defaultItem = createDefaultScheduleItem();
 
 				setScheduleItems([defaultItem]);
 				setValue(name, JSON.stringify([defaultItem]));
 			}
 		} else {
 			// Nếu chưa có giá trị, tạo mục mặc định theo chế độ hiện tại và type
-			const defaultItem = simpleMode
-				? { days: ['1'], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
-				: type === 'entry'
-					? { days: ['1'], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
-					: type === 'exit'
-						? { days: ['1'], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
-						: { days: ['1'], entry_start: '00:00', entry_end: '00:00', exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds };
+			const defaultItem = createDefaultScheduleItem();
 
 			setScheduleItems([defaultItem]);
 			setValue(name, JSON.stringify([defaultItem]));
@@ -191,6 +205,16 @@ export const RHFScheduleTimePicker = ({
 		isInitialized.current = true;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	// Khi tắt chế độ nhiều lịch, chỉ giữ lại lịch đầu tiên
+	useEffect(() => {
+		if (isInitialized.current && !allowMultipleSchedules && scheduleItems.length > 1) {
+			const normalizedSchedule = normalizeScheduleItemsByMultipleMode(scheduleItems);
+			setScheduleItems(normalizedSchedule);
+			setValue(name, JSON.stringify(normalizedSchedule));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allowMultipleSchedules, scheduleItems.length]);
 
 	// Cập nhật scheduleValue khi type thay đổi
 	useEffect(() => {
@@ -226,6 +250,10 @@ export const RHFScheduleTimePicker = ({
 
 	// Thêm mục lịch mới
 	const addScheduleItem = () => {
+		if (!allowMultipleSchedules) {
+			return;
+		}
+
 		// Kiểm tra xem tất cả các ngày đã được chọn chưa (chỉ khi không cho phép trùng ngày)
 		if (!allowDuplicateDays && areAllDaysCovered()) {
 			return; // Không cho phép thêm mới nếu đã chọn đủ các ngày
@@ -245,21 +273,7 @@ export const RHFScheduleTimePicker = ({
 			defaultDay = availableDays.length > 0 ? availableDays[0] : '1';
 		}
 
-		const checkedClassIds = getCheckedClassIds();
-		const newItem = simpleMode
-			? { days: [defaultDay], start: '00:00', end: '00:00', selectedClasses: checkedClassIds }
-			: type === 'entry'
-				? { days: [defaultDay], entry_start: '00:00', entry_end: '00:00', selectedClasses: checkedClassIds }
-				: type === 'exit'
-					? { days: [defaultDay], exit_start: '00:00', exit_end: '00:00', selectedClasses: checkedClassIds }
-					: {
-							days: [defaultDay],
-							entry_start: '00:00',
-							entry_end: '00:00',
-							exit_start: '00:00',
-							exit_end: '00:00',
-							selectedClasses: checkedClassIds
-						};
+		const newItem = createDefaultScheduleItem(defaultDay);
 
 		const newItems = [...scheduleItems, newItem];
 		setScheduleItems(newItems);
@@ -268,6 +282,10 @@ export const RHFScheduleTimePicker = ({
 
 	// Xóa mục lịch
 	const removeScheduleItem = (index: number) => {
+		if (!allowMultipleSchedules) {
+			return;
+		}
+
 		const newItems = scheduleItems.filter((_, i) => i !== index);
 		setScheduleItems(newItems);
 		setValue(name, JSON.stringify(newItems));
@@ -434,15 +452,17 @@ export const RHFScheduleTimePicker = ({
 											)}
 										</Box>
 
-										<IconButton
-											edge="end"
-											color="error"
-											onClick={() => removeScheduleItem(index)}
-											sx={{ ml: 'auto' }}
-											disabled={scheduleItems.length <= 1}
-										>
-											<DeleteIcon />
-										</IconButton>
+										{allowMultipleSchedules && (
+											<IconButton
+												edge="end"
+												color="error"
+												onClick={() => removeScheduleItem(index)}
+												sx={{ ml: 'auto' }}
+												disabled={scheduleItems.length <= 1}
+											>
+												<DeleteIcon />
+											</IconButton>
+										)}
 									</Stack>
 									{classes.length > 0 && (
 										<Box sx={{ mb: 2 }}>
@@ -644,20 +664,24 @@ export const RHFScheduleTimePicker = ({
 							);
 						})}
 
-						<Button
-							startIcon={<AddIcon />}
-							variant="outlined"
-							size="small"
-							onClick={addScheduleItem}
-							disabled={!allowDuplicateDays && areAllDaysCovered()}
-							sx={{ mb: 1 }}
-						>
-							Thêm lịch
-						</Button>
-						{!allowDuplicateDays && areAllDaysCovered() && (
-							<Typography variant="caption" color="primary" sx={{ display: 'block', ml: 1 }}>
-								Đã chọn tất cả các ngày trong tuần
-							</Typography>
+						{allowMultipleSchedules && (
+							<>
+								<Button
+									startIcon={<AddIcon />}
+									variant="outlined"
+									size="small"
+									onClick={addScheduleItem}
+									disabled={!allowDuplicateDays && areAllDaysCovered()}
+									sx={{ mb: 1 }}
+								>
+									Thêm lịch
+								</Button>
+								{!allowDuplicateDays && areAllDaysCovered() && (
+									<Typography variant="caption" color="primary" sx={{ display: 'block', ml: 1 }}>
+										Đã chọn tất cả các ngày trong tuần
+									</Typography>
+								)}
+							</>
 						)}
 						{error && (
 							<Typography variant="caption" color="error" sx={{ display: 'block', mt: 1 }}>
